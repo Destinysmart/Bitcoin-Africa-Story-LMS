@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Space Grotesk", sans-serif;
+  
+  --color-brand-gold: #FDB813;
+  --color-brand-black: var(--theme-brand-black);
+  --color-brand-dark-1: var(--theme-brand-dark-1);
+  --color-brand-dark-2: var(--theme-brand-dark-2);
+  
+  --color-white: var(--theme-white);
+  --color-black: var(--theme-black);
+  --color-gray-200: var(--theme-gray-200);
+  --color-gray-300: var(--theme-gray-300);
+  --color-gray-400: var(--theme-gray-400);
+  --color-gray-500: var(--theme-gray-500);
+  
+  --color-status-success: #22C55E;
+  --color-status-error: #EF4444;
+  --color-status-warning: #F59E0B;
+}
+
+:root {
+  --theme-brand-black: #000000;
+  --theme-brand-dark-1: #111111;
+  --theme-brand-dark-2: #1A1A1A;
+  
+  --theme-white: #ffffff;
+  --theme-black: #000000;
+  --theme-gray-200: #e5e7eb;
+  --theme-gray-300: #d1d5db;
+  --theme-gray-400: #9ca3af;
+  --theme-gray-500: #6b7280;
+}
+
+html.light {
+  --theme-brand-black: #f3f4f6; /* gray-100 base */
+  --theme-brand-dark-1: #ffffff; /* white sidebar */
+  --theme-brand-dark-2: #f9fafb; /* gray-50 panels */
+  
+  --theme-white: #111827; /* inverts plain white to very dark gray */
+  --theme-black: #ffffff; /* inverts trans-overlays (e.g. bg-black/40) to white overlays */
+  --theme-gray-200: #4b5563; /* darken gray scale */
+  --theme-gray-300: #374151;
+  --theme-gray-400: #1f2937;
+  --theme-gray-500: #6b7280; /* mid stays mid */
+}
+
+body {
+  @apply bg-brand-black text-white font-sans antialiased selection:bg-brand-gold selection:text-[#000000];
+  min-height: 100vh;
+}
+
+/* Glassmorphism utility */
+.glass-panel {
+  background: var(--glass-bg, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--glass-border, rgba(253, 184, 19, 0.15));
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+}
+
+html.light .glass-panel {
+  --glass-bg: rgba(0, 0, 0, 0.03);
+  --glass-border: rgba(253, 184, 19, 0.3);
+}
+
+.gold-glow {
+  box-shadow: 0 0 24px var(--gold-shadow, rgba(253, 184, 19, 0.25));
+}
+
+html.light .gold-glow {
+  --gold-shadow: rgba(253, 184, 19, 0.4);
+}
+
+.gold-glow-hover:hover {
+  box-shadow: 0 0 24px var(--gold-shadow, rgba(253, 184, 19, 0.25));
+  transform: translateY(-2px);
+  transition: all 200ms ease;
+}
+
+html.light .gold-glow-hover:hover {
+  --gold-shadow: rgba(253, 184, 19, 0.4);
+}
