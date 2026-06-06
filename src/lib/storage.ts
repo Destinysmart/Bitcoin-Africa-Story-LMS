@@ -37,10 +37,72 @@ export const initStorage = () => {
   if (!localStorage.getItem('bas_users')) {
     localStorage.setItem('bas_users', JSON.stringify({}));
   }
+
+  if (!localStorage.getItem('bas_admin_logs')) {
+    localStorage.setItem('bas_admin_logs', JSON.stringify([]));
+  }
+
+  if (!localStorage.getItem('bas_content_versions')) {
+    localStorage.setItem('bas_content_versions', JSON.stringify([]));
+  }
 };
 
 export const getContent = () => {
   return JSON.parse(localStorage.getItem('bas_content') || '{"chapters":{},"announcements":[]}');
+};
+
+export const getAdminLogs = () => {
+  return JSON.parse(localStorage.getItem('bas_admin_logs') || '[]');
+};
+
+export const addAdminLog = (adminEmail: string, action: string, details: string) => {
+  const logs = getAdminLogs();
+  logs.unshift({ id: Date.now().toString(), date: new Date().toISOString(), adminEmail, action, details });
+  localStorage.setItem('bas_admin_logs', JSON.stringify(logs.slice(0, 500))); // keep latest 500
+};
+
+export const getContentVersions = () => {
+  return JSON.parse(localStorage.getItem('bas_content_versions') || '[]');
+};
+
+export const saveContentVersion = (name: string, adminEmail: string) => {
+  const versions = getContentVersions();
+  const currentContent = getContent();
+  versions.unshift({
+    id: Date.now().toString(),
+    date: new Date().toISOString(),
+    name,
+    createdBy: adminEmail,
+    content: currentContent
+  });
+  localStorage.setItem('bas_content_versions', JSON.stringify(versions));
+  addAdminLog(adminEmail, 'Created Version', `Named: ${name}`);
+};
+
+export const restoreContentVersion = (versionId: string, adminEmail: string) => {
+  const versions = getContentVersions();
+  const target = versions.find((v: any) => v.id === versionId);
+  if (target) {
+    localStorage.setItem('bas_content', JSON.stringify(target.content));
+    addAdminLog(adminEmail, 'Restored Version', `Restored from: ${target.name}`);
+  }
+};
+
+export const getChapterWiki = (chapterId: string) => {
+  const wikis = JSON.parse(localStorage.getItem('bas_chapter_wikis') || '{}');
+  return wikis[chapterId] || [];
+};
+
+export const addChapterWikiPost = (chapterId: string, post: any) => {
+  const wikis = JSON.parse(localStorage.getItem('bas_chapter_wikis') || '{}');
+  if (!wikis[chapterId]) wikis[chapterId] = [];
+  wikis[chapterId].push({
+    ...post,
+    id: Date.now().toString() + Math.random().toString(),
+    createdAt: new Date().toISOString()
+  });
+  localStorage.setItem('bas_chapter_wikis', JSON.stringify(wikis));
+  return wikis[chapterId];
 };
 
 export const getAnnouncements = () => {

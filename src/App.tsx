@@ -18,6 +18,7 @@ import Profile from './pages/Profile';
 import Leaderboard from './pages/Leaderboard';
 import Certificate from './pages/Certificate';
 import AdminPanel from './pages/AdminPanel';
+import InstructorDashboard from './pages/InstructorDashboard';
 
 import Courses from './pages/Courses';
 
@@ -84,6 +85,10 @@ export default function App() {
           
           <Route path="/admin" element={
             <ProtectedRoute><AdminPanel /></ProtectedRoute>
+          } />
+          
+          <Route path="/instructor" element={
+            <ProtectedRoute><InstructorDashboard /></ProtectedRoute>
           } />
           
           <Route path="/courses" element={

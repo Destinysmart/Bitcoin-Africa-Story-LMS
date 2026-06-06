@@ -18,18 +18,18 @@ export default function LogIn() {
     e.preventDefault();
     setLoading(true);
     
-    try {
-      setTimeout(() => {
+    setTimeout(() => {
+      try {
         const user = loginUser(email, password);
         toast(`Welcome back! ⚡`, 'success');
         if (user.role === 'admin') navigate('/admin');
         else if (!user.onboardingComplete) navigate('/onboarding');
         else navigate('/dashboard');
-      }, 600);
-    } catch (err: any) {
-      toast(err.message || 'Login failed', 'error');
-      setLoading(false);
-    }
+      } catch (err: any) {
+        toast(err.message || 'Login failed', 'error');
+        setLoading(false);
+      }
+    }, 600);
   };
 
   return (

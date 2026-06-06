@@ -1,22 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { getCurrentUser, getContent, updateUser, getUsers } from '../lib/storage';
+import { getCurrentUser, getContent, updateUser, getUsers, getChapterWiki, addChapterWikiPost } from '../lib/storage';
 import { useToast } from '../contexts/ToastContext';
 import { Button } from '../components/ui/Button';
 import { GlassCard } from '../components/ui/GlassCard';
-import { CheckCircle2, PlayCircle, Lock, Zap, ArrowLeft, ExternalLink, FileText, FileDown, Headphones, Trophy, Twitter, Linkedin, Share2 } from 'lucide-react';
+import { Input } from '../components/ui/Input';
+import { VideoEmbedder } from '../components/ui/VideoEmbedder';
+import { CourseCompanion } from '../components/ui/CourseCompanion';
+import { CheckCircle2, PlayCircle, Lock, Zap, ArrowLeft, ExternalLink, FileText, FileDown, Headphones, Trophy, Twitter, Linkedin, Share2, MessageSquare, Send } from 'lucide-react';
 
 export default function Chapter() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
   
-  const [activeTab, setActiveTab] = useState<'videos' | 'resources' | 'quiz'>('videos');
+  const [activeTab, setActiveTab] = useState<'videos' | 'resources' | 'quiz' | 'wiki'>('videos');
   const [quizMode, setQuizMode] = useState<boolean>(false);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [quizResult, setQuizResult] = useState<any>(null);
+  
+  const [wikiPosts, setWikiPosts] = useState<any[]>([]);
+  const [newWikiPost, setNewWikiPost] = useState('');
   
   const user = getCurrentUser();
   const content = getContent();
@@ -44,7 +50,22 @@ export default function Chapter() {
       newProg[id] = { ...userProg, status: 'in_progress' };
       updateUser(user.email, { progress: newProg });
     }
+    setWikiPosts(getChapterWiki(id));
   }, [id]);
+
+  const handlePostWiki = () => {
+    if (!newWikiPost.trim()) return;
+    const authorRole = user.role === 'admin' || user.role === 'instructor' ? user.role : 'student';
+    const updated = addChapterWikiPost(id, {
+      content: newWikiPost.trim(),
+      authorName: user.name,
+      authorEmail: user.email,
+      authorRole
+    });
+    setWikiPosts(updated);
+    setNewWikiPost('');
+    toast('Note added to chapter Wiki!', 'success');
+  };
 
   const allVideosWatched = chapter.videos.length === 0 || chapter.videos.every((v: any) => userProg.videosWatched.includes(v.id));
 
@@ -287,6 +308,14 @@ export default function Chapter() {
             </div>
             {userProg.quizPassed && <CheckCircle2 size={16} className="text-status-success hidden md:block" />}
           </button>
+
+          <button 
+            onClick={() => setActiveTab('wiki')}
+            className={`flex items-center gap-3 p-4 rounded-xl text-left border whitespace-nowrap transition-all ${activeTab === 'wiki' ? 'bg-brand-gold/10 border-brand-gold/30 gold-glow text-white' : 'bg-brand-dark-2 border-transparent text-gray-400 hover:bg-white/5'}`}
+          >
+            <MessageSquare size={18} className={activeTab === 'wiki' ? 'text-brand-gold' : ''} />
+            <span className="font-medium">Community Wiki</span>
+          </button>
         </div>
 
         {/* Tab Content */}
@@ -302,14 +331,11 @@ export default function Chapter() {
                     const isWatched = userProg.videosWatched.includes(videoObj.id);
                     return (
                       <GlassCard key={videoObj.id || idx} className={`p-4 ${isWatched ? 'border-status-success/30' : ''}`}>
-                        <div className="aspect-video w-full rounded-xl overflow-hidden bg-black mb-4 realtive">
-                          <iframe 
-                            src={videoObj.youtubeUrl || "https://www.youtube.com/embed/dQw4w9WgXcQ"}
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                            className="w-full h-full"
-                          />
-                        </div>
+                        <VideoEmbedder 
+                          url={videoObj.youtubeUrl || "https://www.youtube.com/embed/dQw4w9WgXcQ"} 
+                          title={videoObj.title}
+                          className="mb-4"
+                        />
                         <div className="flex justify-between items-start">
                           <div>
                             <h3 className="text-xl font-bold mb-1">{videoObj.title}</h3>
@@ -451,9 +477,66 @@ export default function Chapter() {
               </motion.div>
             )}
 
+            {activeTab === 'wiki' && (
+              <motion.div key="wiki" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex flex-col gap-6">
+                <GlassCard className="p-6">
+                  <h3 className="text-xl font-bold mb-2">Community Wiki</h3>
+                  <p className="text-gray-400 text-sm mb-6">Contribute notes, community FAQs, and additional resource links. This wiki is shared among students and instructors.</p>
+                  
+                  <div className="flex gap-4">
+                    <Input 
+                      value={newWikiPost}
+                      onChange={(e) => setNewWikiPost(e.target.value)}
+                      placeholder="Share a useful note or link..."
+                      className="flex-1"
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') handlePostWiki();
+                      }}
+                    />
+                    <Button onClick={handlePostWiki} className="shrink-0">
+                      <Send size={16} className="mr-2" /> Post
+                    </Button>
+                  </div>
+                </GlassCard>
+
+                <div className="space-y-4">
+                  {wikiPosts.slice().reverse().map((post: any) => (
+                    <GlassCard key={post.id} className="p-4 md:p-6 transition-all hover:border-white/20 hover:bg-white/5">
+                      <div className="flex justify-between items-start mb-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-brand-gold/10 text-brand-gold flex items-center justify-center font-bold">
+                            {post.authorName?.charAt(0).toUpperCase()}
+                          </div>
+                          <div>
+                            <div className="font-bold flex items-center gap-2">
+                              {post.authorName} 
+                              {post.authorRole === 'instructor' && <span className="bg-brand-gold/20 text-brand-gold text-[10px] px-2 py-0.5 rounded-full uppercase tracking-widest font-black">Instructor</span>}
+                              {post.authorRole === 'admin' && <span className="bg-brand-gold text-brand-black text-[10px] px-2 py-0.5 rounded-full uppercase tracking-widest font-black">Admin</span>}
+                            </div>
+                            <div className="text-xs text-gray-500">{new Date(post.createdAt).toLocaleString()}</div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-gray-300 leading-relaxed whitespace-pre-wrap">
+                        {post.content}
+                      </div>
+                    </GlassCard>
+                  ))}
+                  
+                  {wikiPosts.length === 0 && (
+                    <div className="text-center p-12 text-gray-500 border border-t-white/5 border-transparent bg-white/[0.02] rounded-2xl">
+                      <MessageSquare size={32} className="mx-auto mb-4 opacity-50" />
+                      <p>Be the first to share a note for this chapter!</p>
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            )}
+
           </AnimatePresence>
         </div>
       </div>
+      <CourseCompanion chapterTitle={chapter.title} chapterDescription={chapter.description || ''} />
     </div>
   );
 }

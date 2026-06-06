@@ -23,17 +23,17 @@ export default function SignUp() {
     e.preventDefault();
     setLoading(true);
     
-    try {
-      // Simulate network
-      setTimeout(() => {
+    // Simulate network
+    setTimeout(() => {
+      try {
         registerUser(formData);
         toast('Account created successfully! ⚡', 'success');
         navigate('/onboarding');
-      }, 800);
-    } catch (err: any) {
-      toast(err.message || 'Failed to sign up', 'error');
-      setLoading(false);
-    }
+      } catch (err: any) {
+        toast(err.message || 'Failed to sign up', 'error');
+        setLoading(false);
+      }
+    }, 800);
   };
 
   return (

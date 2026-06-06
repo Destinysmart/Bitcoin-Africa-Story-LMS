@@ -32,6 +32,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     { label: 'Settings', icon: Settings, path: '/settings' },
   ];
 
+  if (user?.role === 'admin' || user?.role === 'instructor') {
+    navItems.push({ label: 'Instructor', icon: User, path: '/instructor' });
+  }
   if (user?.role === 'admin') {
     navItems.push({ label: 'Admin Panel', icon: ShieldCheck, path: '/admin' });
   }
