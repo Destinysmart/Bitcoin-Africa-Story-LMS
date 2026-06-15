@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { getCurrentUser, updateUser } from '../lib/storage';
 import { useToast } from '../contexts/ToastContext';
+import { triggerSuccessConfetti } from '../lib/confetti';
 
 export const BADGE_DEFS = [
   { id: 'first_step', name: 'First Step', xp: 100, desc: 'Complete Chapter 1' },
@@ -111,6 +112,8 @@ export function useBadgeSystem() {
              toast(`🏆 Badge Unlocked: ${def.name}! (+${def.xp} XP)`, 'success');
           }
         });
+
+        triggerSuccessConfetti();
         
         updateUser(user.email, {
           badges: Array.from(earnedBadges),

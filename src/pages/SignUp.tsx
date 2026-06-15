@@ -75,38 +75,6 @@ export default function SignUp() {
               onChange={e => setFormData({ ...formData, password: e.target.value })}
             />
             
-            <div className="flex flex-col gap-1.5 w-full">
-              <label className="text-sm font-medium text-gray-300">Country</label>
-              <select 
-                required
-                className="flex h-11 w-full rounded-xl border border-white/10 bg-brand-dark-2 px-3 py-2 text-sm text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-gold focus-visible:border-brand-gold"
-                value={formData.country}
-                onChange={e => setFormData({ ...formData, country: e.target.value })}
-              >
-                <option value="" disabled>Select your country</option>
-                <optgroup label="Africa">
-                  <option value="Nigeria">Nigeria</option>
-                  <option value="Kenya">Kenya</option>
-                  <option value="South Africa">South Africa</option>
-                  <option value="Ghana">Ghana</option>
-                  <option value="Uganda">Uganda</option>
-                  <option value="Tanzania">Tanzania</option>
-                </optgroup>
-                <optgroup label="Other">
-                  <option value="Other">Other</option>
-                </optgroup>
-              </select>
-            </div>
-
-            <Input 
-              type="tel" 
-              label="WhatsApp Number" 
-              required 
-              placeholder="+234..."
-              value={formData.whatsapp}
-              onChange={e => setFormData({ ...formData, whatsapp: e.target.value })}
-            />
-            
             <Button type="submit" className="w-full mt-2 lg:mt-4" disabled={loading}>
               {loading ? 'Creating account...' : 'Sign Up'}
             </Button>

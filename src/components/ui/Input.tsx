@@ -3,7 +3,7 @@ import { cn } from '../../lib/utils';
 import { Eye, EyeOff } from 'lucide-react';
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label: string;
+  label?: string;
 }
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -13,7 +13,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
     return (
       <div className="flex flex-col gap-1.5 w-full">
-        <label className="text-sm font-medium text-gray-300">{label}</label>
+        {label && <label className="text-sm font-medium text-gray-300">{label}</label>}
         <div className="relative">
           <input
             type={isPassword && showPassword ? 'text' : type}

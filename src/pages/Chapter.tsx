@@ -9,6 +9,7 @@ import { Input } from '../components/ui/Input';
 import { VideoEmbedder } from '../components/ui/VideoEmbedder';
 import { CourseCompanion } from '../components/ui/CourseCompanion';
 import { CheckCircle2, PlayCircle, Lock, Zap, ArrowLeft, ExternalLink, FileText, FileDown, Headphones, Trophy, Twitter, Linkedin, Share2, MessageSquare, Send } from 'lucide-react';
+import { triggerSuccessConfetti, triggerMilestoneConfetti } from '../lib/confetti';
 
 export default function Chapter() {
   const { id } = useParams<{ id: string }>();
@@ -113,6 +114,15 @@ export default function Chapter() {
         xp: user.xp + 100 + (isFirstAttempt ? 75 : 40)
       });
       setQuizResult({ passed: true, score, satsEarned: satsToEarn });
+
+      // Celebrate!
+      const totalChapters = Object.keys(getContent().chapters || {}).length;
+      const completedChaptersCount = Object.values(newProg).filter((p: any) => p.status === 'completed').length;
+      if (completedChaptersCount >= totalChapters && totalChapters > 0) {
+        triggerMilestoneConfetti();
+      } else {
+        triggerSuccessConfetti();
+      }
     } else {
       updateUser(user.email, { progress: newProg });
       setQuizResult({ passed: false, score, satsEarned: 0 });

@@ -7,6 +7,7 @@ import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Trophy, Zap, Share2, Send, CheckCircle2, GraduationCap } from 'lucide-react';
 import { useToast } from '../contexts/ToastContext';
+import { triggerMilestoneConfetti } from '../lib/confetti';
 
 export default function Certificate() {
   const navigate = useNavigate();
@@ -22,6 +23,12 @@ export default function Certificate() {
     country: user?.country || '',
     btcAddress: user?.btcAddress || '',
   });
+
+  useEffect(() => {
+    if (step === 1) {
+      triggerMilestoneConfetti();
+    }
+  }, [step]);
 
   useEffect(() => {
     if (!user) {
