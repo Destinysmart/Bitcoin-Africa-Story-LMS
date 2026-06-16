@@ -26,6 +26,7 @@ import Courses from './pages/Courses';
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const user = getCurrentUser();
   if (!user) return <Navigate to="/login" />;
+  if (user.role !== 'admin' && !user.onboardingComplete) return <Navigate to="/onboarding" />;
   
   // Enforce AppLayout for protected routes (except onboarding)
   return (
@@ -38,7 +39,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 function OnboardingRoute({ children }: { children: React.ReactNode }) {
   const user = getCurrentUser();
   if (!user) return <Navigate to="/login" />;
-  if (user.onboardingComplete) return <Navigate to="/dashboard" />;
+  if (user.role === 'admin' || user.onboardingComplete) return <Navigate to="/dashboard" />;
   return <>{children}</>;
 }
 

@@ -94,11 +94,11 @@ export function CourseCompanion({ chapterTitle, chapterDescription }: CourseComp
                 </div>
               )}
               {messages.map((msg, idx) => (
-                <div key={idx} className={`flex gap-3 \${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                  <div className={`w-8 h-8 rounded-full flex justify-center items-center shrink-0 \${msg.role === 'user' ? 'bg-brand-gold text-black' : 'bg-black text-brand-gold'}`}>
+                <div key={idx} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                  <div className={`w-8 h-8 rounded-full flex justify-center items-center shrink-0 ${msg.role === 'user' ? 'bg-brand-gold text-black' : 'bg-black text-brand-gold'}`}>
                     {msg.role === 'user' ? <User size={16} /> : <Bot size={16} />}
                   </div>
-                  <div className={`px-4 py-2 rounded-2xl max-w-[80%] text-sm \${msg.role === 'user' ? 'bg-brand-gold text-black rounded-tr-none' : 'bg-white/5 text-gray-200 rounded-tl-none'}`}>
+                  <div className={`px-4 py-2 rounded-2xl max-w-[80%] text-sm ${msg.role === 'user' ? 'bg-brand-gold text-black rounded-tr-none' : 'bg-white/5 text-gray-200 rounded-tl-none'}`}>
                     {msg.content}
                   </div>
                 </div>

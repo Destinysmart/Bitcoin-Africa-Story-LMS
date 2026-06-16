@@ -20,6 +20,7 @@ export default function Chapter() {
   const [quizMode, setQuizMode] = useState<boolean>(false);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [answers, setAnswers] = useState<Record<number, string>>({});
   const [quizResult, setQuizResult] = useState<any>(null);
   
   const [wikiPosts, setWikiPosts] = useState<any[]>([]);
@@ -27,6 +28,11 @@ export default function Chapter() {
   
   const user = getCurrentUser();
   const content = getContent();
+
+  // Sync chosen answer when question index changes
+  useEffect(() => {
+    setSelectedAnswer(answers[currentQuestion] || null);
+  }, [currentQuestion, answers]);
   
   if (!user || !id || !content.chapters[id]) {
     return <div className="p-8"><Button onClick={() => navigate('/dashboard')}>Return Home</Button></div>;
@@ -94,15 +100,32 @@ export default function Chapter() {
   };
 
   const handleSubmitQuiz = () => {
-    // Basic mock of submitting quiz
-    // Let's just say they pass for now as we don't have true quiz state
-    const passed = true;
-    const score = 100;
+    const questions = chapter.quiz?.length > 0 ? chapter.quiz : [{
+      id: 'mock1',
+      question: "What is the primary innovation that allows Bitcoin to solve the double-spending problem?",
+      options: { A: "Blockchain", B: "Proof of Work consensus", C: "Digital signatures", D: "Smart contracts" },
+      correct: "B"
+    }];
+
+    // Evaluate answers
+    let correctCount = 0;
+    questions.forEach((q: any, idx: number) => {
+      const chosen = idx === currentQuestion ? selectedAnswer : answers[idx];
+      if (chosen === q.correct) {
+        correctCount++;
+      }
+    });
+
+    const score = Math.round((correctCount / questions.length) * 100);
+    const passed = score >= 70; // 70% passing grade
     const isFirstAttempt = userProg.quizAttempts.length === 0;
     
     const newProg = { ...user.progress };
+    if (!newProg[id].quizAttempts) {
+      newProg[id].quizAttempts = [];
+    }
     newProg[id].quizAttempts.push({ date: new Date().toISOString(), score, passed });
-    newProg[id].quizPassed = passed;
+    newProg[id].quizPassed = passed || userProg.quizPassed;
     
     if (passed) {
       newProg[id].status = 'completed';
@@ -110,10 +133,10 @@ export default function Chapter() {
       const satsToEarn = 100 + (isFirstAttempt ? 75 : 50); // chapter finish + quiz finish
       updateUser(user.email, { 
         progress: newProg, 
-        totalSats: user.totalSats + satsToEarn,
+        totalSats: user.totalSats + (userProg.quizPassed ? 0 : satsToEarn),
         xp: user.xp + 100 + (isFirstAttempt ? 75 : 40)
       });
-      setQuizResult({ passed: true, score, satsEarned: satsToEarn });
+      setQuizResult({ passed: true, score, satsEarned: userProg.quizPassed ? 0 : satsToEarn });
 
       // Celebrate!
       const totalChapters = Object.keys(getContent().chapters || {}).length;
@@ -191,6 +214,44 @@ export default function Chapter() {
     );
   }
 
+  if (quizResult && !quizResult.passed) {
+    return (
+      <div className="fixed inset-0 z-50 bg-brand-black flex flex-col items-center justify-center p-6 text-center">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-status-error/10 via-brand-black to-brand-black pointer-events-none" />
+        <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="relative z-10 flex flex-col items-center max-w-lg w-full">
+          <div className="w-24 h-24 mb-6 rounded-full bg-status-error/20 flex items-center justify-center text-4xl font-bold text-status-error">
+            ✕
+          </div>
+          <h1 className="text-4xl font-bold mb-4">Quiz Unsuccessful</h1>
+          <p className="text-xl text-gray-300 mb-8">You got {quizResult.score}% (70% required to pass)</p>
+          
+          <p className="text-gray-400 text-sm mb-8 leading-relaxed max-w-sm">
+            Don't worry! Review the materials or ask the AI Course Companion at the right to clarify any concepts.
+          </p>
+          
+          <div className="w-full flex flex-col gap-3">
+            <Button size="lg" className="w-full bg-brand-gold text-[#000000] hover:bg-brand-gold/80" onClick={() => {
+              setQuizResult(null);
+              setCurrentQuestion(0);
+              setSelectedAnswer(null);
+              setAnswers({});
+              setQuizMode(true);
+            }}>
+              Try Again
+            </Button>
+            <Button variant="ghost" size="lg" className="w-full text-gray-400 border border-white/5 hover:border-white/10" onClick={() => {
+              setQuizResult(null);
+              setQuizMode(false);
+              setActiveTab('videos');
+            }}>
+              Back to Chapter Videos
+            </Button>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
   // Quiz Overlay
   if (quizMode) {
     const questions = chapter.quiz?.length > 0 ? chapter.quiz : [{
@@ -218,7 +279,10 @@ export default function Chapter() {
               return (
                 <button
                   key={key}
-                  onClick={() => setSelectedAnswer(key)}
+                  onClick={() => {
+                    setSelectedAnswer(key);
+                    setAnswers(prev => ({ ...prev, [currentQuestion]: key }));
+                  }}
                   className={`text-left p-6 rounded-xl border transition-all ${
                     isSelected ? 'bg-brand-gold/10 border-brand-gold gold-glow' : 'bg-brand-dark-2 border-white/10 hover:border-white/30'
                   }`}

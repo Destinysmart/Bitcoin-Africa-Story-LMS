@@ -26,6 +26,7 @@ import { triggerSuccessConfetti, triggerMilestoneConfetti } from '../lib/confett
 
 // Define structures for TypeScript
 interface SyllabusItem {
+  id?: string | number;
   title: string;
   duration: string;
   desc: string;
@@ -164,6 +165,7 @@ export default function Courses() {
   // Dynamically load the Bitcoin Diploma Program's chapters to build its syllabus
   const diplomaSyllabus = useMemo(() => {
     return chapters.map((ch: any) => ({
+      id: ch.id,
       title: ch.title,
       duration: `${ch.estimatedMinutes || 45} mins`,
       desc: ch.description || "In-depth overview of the chapter's core concepts, practical setups, and real-world considerations."
@@ -613,34 +615,68 @@ export default function Courses() {
                     </h3>
                     
                     {/* Interactive tip for enrolled electives */}
-                    {activeCourseIds.includes(previewCourse.id) && previewCourse.id !== 'course-diploma' && (
+                    {previewCourse.id === 'course-diploma' ? (
                       <div className="mb-4 bg-brand-gold/10 border border-brand-gold/20 rounded-xl p-3.5 flex gap-3 text-xs text-brand-gold">
                         <Sparkles size={16} className="shrink-0 mt-0.5 animate-pulse" />
                         <div>
-                          <span className="font-bold">Interact with Your Syllabus:</span> Toggle the check circles below to mark units as read and simulate completing your advanced specialty training!
+                          <span className="font-bold">Fully Functional Syllabus:</span> Every chapter below is active! Click any chapter card to jump straight into the classroom, watch videos, read wiki logs, or answer quizzes to stack real sats!
                         </div>
                       </div>
+                    ) : (
+                      activeCourseIds.includes(previewCourse.id) && (
+                        <div className="mb-4 bg-brand-gold/10 border border-brand-gold/20 rounded-xl p-3.5 flex gap-3 text-xs text-brand-gold">
+                          <Sparkles size={16} className="shrink-0 mt-0.5 animate-pulse" />
+                          <div>
+                            <span className="font-bold">Interact with Your Syllabus:</span> Toggle the check circles below to mark units as read and simulate completing your advanced specialty training!
+                          </div>
+                        </div>
+                      )
                     )}
 
                     <div className="space-y-3">
                       {previewCourse.syllabus.map((lesson: any, idx: number) => {
-                        const isLessonCompleted = isUnitCompleted(previewCourse.id, lesson.title);
+                        const isDiploma = previewCourse.id === 'course-diploma';
+                        const isLessonCompleted = isDiploma 
+                          ? user.progress?.[lesson.id]?.status === 'completed'
+                          : isUnitCompleted(previewCourse.id, lesson.title);
                         const isModuleActive = activeCourseIds.includes(previewCourse.id);
                         return (
                           <div 
                             key={idx} 
-                            className={`p-4 rounded-xl border transition-all ${
+                            onClick={() => {
+                              if (isDiploma && lesson.id) {
+                                setPreviewCourse(null);
+                                navigate(`/chapter/${lesson.id}`);
+                              } else if (!isDiploma && isModuleActive) {
+                                toggleUnitCompletion(previewCourse.id, lesson.title);
+                              }
+                            }}
+                            className={`p-4 rounded-xl border transition-all relative overflow-hidden group/row ${
+                              isDiploma 
+                                ? 'cursor-pointer hover:bg-brand-gold/10 hover:border-brand-gold/30' 
+                                : ''
+                            } ${
                               isLessonCompleted 
                                 ? 'bg-brand-gold/5 border-brand-gold/20' 
                                 : 'bg-white/[0.01] border-white/5 hover:border-white/10'
                             }`}
                           >
-                            <div className="flex justify-between items-start gap-3">
+                            <div className="flex justify-between items-start gap-3 relative z-10">
                               <div className="flex gap-3">
                                 {/* Interactive Check circles if course is active */}
-                                {isModuleActive && previewCourse.id !== 'course-diploma' ? (
+                                {isDiploma ? (
+                                  <span className="shrink-0 mt-0.5" title={isLessonCompleted ? "Completed" : "In Progress"}>
+                                    <CheckCircle 
+                                      size={18} 
+                                      className={isLessonCompleted ? "text-brand-gold fill-brand-gold/20" : "text-gray-600"} 
+                                    />
+                                  </span>
+                                ) : isModuleActive ? (
                                   <button 
-                                    onClick={() => toggleUnitCompletion(previewCourse.id, lesson.title)}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      toggleUnitCompletion(previewCourse.id, lesson.title);
+                                    }}
                                     type="button"
                                     className="shrink-0 mt-0.5 transition-transform active:scale-90"
                                     title={isLessonCompleted ? "Mark incomplete" : "Mark complete"}
@@ -657,8 +693,15 @@ export default function Courses() {
                                 )}
 
                                 <div>
-                                  <h4 className={`text-sm font-bold ${isLessonCompleted ? 'text-brand-gold line-through' : 'text-gray-200'}`}>
+                                  <h4 className={`text-sm font-bold flex items-center gap-1.5 transition-colors ${
+                                    isDiploma ? 'group-hover/row:text-brand-gold' : ''
+                                  } ${isLessonCompleted ? 'text-brand-gold line-through' : 'text-gray-200'}`}>
                                     {lesson.title}
+                                    {isDiploma && (
+                                      <span className="opacity-0 group-hover/row:opacity-100 text-[10px] text-brand-gold bg-brand-gold/10 px-2 py-0.5 rounded font-normal transition-opacity duration-200">
+                                        Enter Class →
+                                      </span>
+                                    )}
                                   </h4>
                                   <p className="text-xs text-gray-400 mt-1 leading-relaxed">{lesson.desc}</p>
                                 </div>

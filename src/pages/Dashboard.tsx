@@ -5,6 +5,7 @@ import { getCurrentUser, getContent, getAnnouncements, updateUser } from '../lib
 import { CircularProgress } from '../components/dashboard/ProgressRing';
 import { GlassCard } from '../components/ui/GlassCard';
 import { Button } from '../components/ui/Button';
+import { AIInstructorBot } from '../components/dashboard/AIInstructorBot';
 import { Flame, Zap, BookOpen, Trophy, PlayCircle, Lock, CheckCircle2, TrendingUp, Target } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -187,56 +188,67 @@ export default function Dashboard() {
           </GlassCard>
         </motion.div>
 
-        {/* Weekly Study Goal */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="h-full"
-        >
-          <GlassCard className="bg-brand-dark-2 relative overflow-hidden border border-white/5 h-full flex flex-col">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <Target className="text-brand-gold" size={24} />
-                <h2 className="text-xl font-bold">Weekly Goal</h2>
-              </div>
-              {isEditingGoal ? (
-                <div className="flex gap-2">
-                  <input 
-                    type="number"
-                    min="1" max="10"
-                    value={weeklyGoal}
-                    onChange={(e) => setWeeklyGoal(parseInt(e.target.value) || 1)}
-                    className="w-16 bg-black border border-white/10 rounded px-2 text-center text-white outline-none focus:border-brand-gold"
-                  />
-                  <Button size="sm" onClick={handleSaveGoal} className="px-3 py-1 text-xs">Save</Button>
+        {/* Right column: Weekly Goal & AI Instructor Bot */}
+        <div className="flex flex-col gap-6">
+          {/* Weekly Study Goal */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <GlassCard className="bg-brand-dark-2 relative overflow-hidden border border-white/5 flex flex-col p-5">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Target className="text-brand-gold" size={24} />
+                  <h2 className="text-xl font-bold">Weekly Goal</h2>
                 </div>
-              ) : (
-                <Button size="sm" variant="ghost" onClick={() => setIsEditingGoal(true)} className="px-3 py-1 text-xs">Edit Goals</Button>
-              )}
-            </div>
-            
-            <div className="flex-1 flex flex-col justify-center">
-               <div className="flex justify-between text-sm mb-2 text-gray-400">
-                 <span>{Math.min(completedChapters, weeklyGoal)} / {weeklyGoal} Chapters Completed</span>
-                 <span>{Math.round(Math.min(completedChapters / (weeklyGoal || 1), 1) * 100)}%</span>
-               </div>
-               <div className="h-4 w-full bg-black/40 rounded-full overflow-hidden border border-white/10">
-                 <motion.div 
-                   initial={{ width: 0 }}
-                   animate={{ width: `${Math.min((completedChapters / (weeklyGoal || 1)) * 100, 100)}%` }}
-                   transition={{ duration: 1, delay: 0.5, type: 'spring', stiffness: 50 }}
-                   className="h-full bg-brand-gold" 
-                 />
-               </div>
-               <p className="text-xs text-gray-500 mt-4 text-center">
-                 {completedChapters >= weeklyGoal 
-                    ? "You've reached your weekly goal! Great job!" 
-                    : "Keep going! You're making good progress towards your goal this week."}
-               </p>
-            </div>
-          </GlassCard>
-        </motion.div>
+                {isEditingGoal ? (
+                  <div className="flex gap-2">
+                    <input 
+                      type="number"
+                      min="1" max="10"
+                      value={weeklyGoal}
+                      onChange={(e) => setWeeklyGoal(parseInt(e.target.value) || 1)}
+                      className="w-16 bg-black border border-white/10 rounded px-2 text-center text-white outline-none focus:border-brand-gold"
+                    />
+                    <Button size="sm" onClick={handleSaveGoal} className="px-3 py-1 text-xs">Save</Button>
+                  </div>
+                ) : (
+                  <Button size="sm" variant="ghost" onClick={() => setIsEditingGoal(true)} className="px-3 py-1 text-xs">Edit Goals</Button>
+                )}
+              </div>
+              
+              <div className="flex flex-col justify-center">
+                 <div className="flex justify-between text-sm mb-2 text-gray-400">
+                   <span>{Math.min(completedChapters, weeklyGoal)} / {weeklyGoal} Chapters Completed</span>
+                   <span>{Math.round(Math.min(completedChapters / (weeklyGoal || 1), 1) * 100)}%</span>
+                 </div>
+                 <div className="h-4 w-full bg-black/40 rounded-full overflow-hidden border border-white/10">
+                   <motion.div 
+                     initial={{ width: 0 }}
+                     animate={{ width: `${Math.min((completedChapters / (weeklyGoal || 1)) * 100, 100)}%` }}
+                     transition={{ duration: 1, delay: 0.5, type: 'spring', stiffness: 50 }}
+                     className="h-full bg-brand-gold" 
+                   />
+                 </div>
+                 <p className="text-xs text-gray-500 mt-4 text-center">
+                   {completedChapters >= weeklyGoal 
+                      ? "You've reached your weekly goal! Great job!" 
+                      : "Keep going! You're making good progress towards your goal this week."}
+                 </p>
+              </div>
+            </GlassCard>
+          </motion.div>
+
+          {/* AI Instructor bot */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <AIInstructorBot />
+          </motion.div>
+        </div>
       </div>
 
       {/* Chapters Grid Section */}
@@ -251,10 +263,8 @@ export default function Dashboard() {
             const chapProg = user.progress?.[chapter.id];
             const status = chapProg?.status || 'locked';
             
-            // Allow clicking if in_progress or completed, or if it's the very first locked chapter
-            // For prototype simplicity, assuming sequential unlock: previous chapter completed unlocks next.
-            const prevCompleted = chapter.id === 1 || user.progress?.[chapter.id - 1]?.status === 'completed';
-            const isClickable = status === 'completed' || status === 'in_progress' || prevCompleted || user.studyPath?.unlockMode === 'all';
+            // For learning flexibility, all chapters are clickable in the curriculum grid.
+            const isClickable = true;
             
             return (
               <motion.div

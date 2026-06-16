@@ -7,12 +7,20 @@ interface VideoEmbedderProps {
 }
 
 export function VideoEmbedder({ url, className = '', title = 'Video Player' }: VideoEmbedderProps) {
-  // Regex to extract YouTube video ID
+  // Regex to extract YouTube video ID with advanced query parameter and raw ID support
   const getYouTubeId = (urlStr: string) => {
     if (!urlStr) return null;
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=|shorts\/)([^#&?]*).*/;
-    const match = urlStr.match(regExp);
-    return (match && match[2].length === 11) ? match[2] : null;
+    const trimmed = urlStr.trim();
+    
+    // Check if the input is already a raw 11-char YouTube ID
+    if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) {
+      return trimmed;
+    }
+    
+    // Match standard watch, shorts, embed, or youtu.be links
+    const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/|youtube\.com\/shorts\/)([^"&?\/\s]{11})/;
+    const match = trimmed.match(regExp);
+    return match ? match[1] : null;
   };
 
   const videoId = getYouTubeId(url);

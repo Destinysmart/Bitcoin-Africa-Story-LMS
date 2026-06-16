@@ -11,7 +11,7 @@ export default function Landing() {
   useEffect(() => {
     const user = getCurrentUser();
     if (user) {
-      if (user.onboardingComplete) {
+      if (user.role === 'admin' || user.onboardingComplete) {
         navigate('/dashboard');
       } else {
         navigate('/onboarding');

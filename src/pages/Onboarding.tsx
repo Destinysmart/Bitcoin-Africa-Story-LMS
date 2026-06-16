@@ -64,6 +64,30 @@ export default function Onboarding() {
 
   const user = getCurrentUser();
 
+  const handleSkip = () => {
+    if (!user) return;
+    try {
+      const estDate = new Date();
+      estDate.setMonth(estDate.getMonth() + 4);
+      updateUser(user.email, {
+        onboardingComplete: true,
+        weeklyGoalHours: 3,
+        studyPath: {
+          level: 'know_basics',
+          hoursPerWeek: 3,
+          goal: 'personal',
+          chaptersPerWeek: 0.6,
+          unlockMode: 'all',
+          estimatedCompletion: estDate.toISOString()
+        }
+      });
+      toast('Welcome! You have skipped onboarding and can start learning.', 'info');
+      navigate('/dashboard');
+    } catch (e: any) {
+      toast(e.message || 'Error saving onboarding', 'error');
+    }
+  };
+
   const handleNext = () => {
     if (step === 1 && exp) setStep(2);
     if (step === 2 && time) setStep(3);
@@ -128,10 +152,19 @@ export default function Onboarding() {
           
           {/* Progress Dots */}
           {step < 4 && (
-            <div className="flex justify-center gap-2 mb-8">
-              {[1, 2, 3].map(i => (
-                <div key={i} className={`w-10 h-1.5 rounded-full ${i === step ? 'bg-brand-gold' : i < step ? 'bg-brand-gold/50' : 'bg-white/10'}`} />
-              ))}
+            <div className="flex items-center justify-between mb-8">
+              <div className="w-12 h-1" /> {/* Spacer */}
+              <div className="flex justify-center gap-2 flex-1">
+                {[1, 2, 3].map(i => (
+                  <div key={i} className={`w-10 h-1.5 rounded-full ${i === step ? 'bg-brand-gold' : i < step ? 'bg-brand-gold/50' : 'bg-white/10'}`} />
+                ))}
+              </div>
+              <button 
+                onClick={handleSkip} 
+                className="text-xs font-semibold text-brand-gold/80 hover:text-brand-gold hover:underline transition-all cursor-pointer px-3 py-1 rounded bg-white/5 border border-white/5 hover:border-white/10"
+              >
+                Skip ✕
+              </button>
             </div>
           )}
 

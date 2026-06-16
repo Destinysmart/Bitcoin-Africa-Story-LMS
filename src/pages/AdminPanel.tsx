@@ -72,7 +72,7 @@ export default function AdminPanel() {
         resources: [...(editingChapterContent?.resources || []), ...formatted]
       });
       
-      toast('Generated resources with Claude API!', 'success');
+      toast('Generated resources with Gemini AI!', 'success');
     } catch (err: any) {
       console.error(err);
       toast(`Error generating resources: ${err.message}`, 'error');
@@ -110,7 +110,7 @@ export default function AdminPanel() {
         description: parsed.description
       });
       
-      toast('Generated description with Claude API!', 'success');
+      toast('Generated description with Gemini AI!', 'success');
     } catch (err: any) {
       console.error(err);
       toast(`Error generating description: ${err.message}`, 'error');
@@ -150,7 +150,7 @@ export default function AdminPanel() {
         quiz: [...(editingChapterContent?.quiz || []), ...formatted]
       });
       
-      toast('Generated quiz with Claude API!', 'success');
+      toast('Generated quiz with Gemini AI!', 'success');
     } catch (err: any) {
       console.error(err);
       toast(`Error generating quiz: ${err.message}`, 'error');
@@ -834,20 +834,14 @@ export default function AdminPanel() {
               <div className="space-y-6">
                 <GlassCard className="space-y-6">
                   <div>
-                    <h3 className="font-bold mb-2 flex items-center gap-2"><Zap size={18} className="text-brand-gold" /> AI Quiz Generator Integration</h3>
-                    <p className="text-sm text-gray-400 mb-4">You need an Anthropic API Key to use the automatic quiz generation feature.</p>
-                    <Input 
-                      type="password" 
-                      label="AI Agent API Key" 
-                      placeholder="Optional backend provider config" 
-                      className="mb-4"
-                      value={anthropicKey}
-                      onChange={(e) => setAnthropicKey(e.target.value)}
-                    />
-                    <Button onClick={() => {
-                      localStorage.setItem('anthropic_api_key', anthropicKey);
-                      toast('Configuration Saved', 'success');
-                    }}>Save Configuration</Button>
+                    <h3 className="font-bold mb-2 flex items-center gap-2"><Zap size={18} className="text-brand-gold" /> built-in Gemini AI Assistant</h3>
+                    <p className="text-sm text-gray-400 mb-4">
+                      The platform\'s auto-generation engine is fully functional out of the box using our highly secure server-side Gemini API. No manual API setup is required.
+                    </p>
+                    <div className="bg-brand-gold/10 border border-brand-gold/20 p-4 rounded-xl text-xs text-brand-gold mb-4 leading-relaxed">
+                      <span className="font-bold uppercase tracking-wider block mb-1">⚡ Service Status: ACTIVE</span>
+                      All features like AI Quiz Generation, automated Module Descriptions, Reading Material Recommendations, and student Companion Chat are pre-installed and ready.
+                    </div>
                   </div>
                 </GlassCard>
 

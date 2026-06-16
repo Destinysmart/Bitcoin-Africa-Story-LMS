@@ -122,14 +122,19 @@ async function startServer() {
       if (history && Array.isArray(history)) {
          formattedHistory = history.map((msg: any) => ({
              role: msg.role === 'assistant' ? 'model' : 'user',
-             parts: [{ text: msg.content }],
+             parts: [{ text: msg.content || "" }],
          }));
       }
 
-      const chatContents = [
-         ...formattedHistory,
-         { role: 'user', parts: [{ text: question }] }
-      ];
+      const chatContents = [...formattedHistory];
+      if (question) {
+         chatContents.push({ role: 'user', parts: [{ text: question }] });
+      }
+
+      // If chatContents is empty, return a friendly welcome
+      if (chatContents.length === 0) {
+         return res.json({ answer: "Hello! I am your Bitcoin Course Companion. Ask me any questions about this chapter!" });
+      }
 
       const response = await ai.models.generateContent({
         model: 'gemini-2.5-flash',
@@ -144,6 +149,63 @@ async function startServer() {
     } catch (err: any) {
       console.error(err);
       res.status(err.status || 500).json({ error: err.message || "Failed to generate answer" });
+    }
+  });
+
+  app.post("/api/instructor-bot", async (req, res) => {
+    try {
+      const { question, history } = req.body;
+      const ai = getAiParams();
+
+      const systemInstruction = `You are 'Satoshi', the AI Lead Instructor Bot for My First Bitcoin's Bitcoin Diploma.
+      Your goal is to provide positive, educational, and inspiring guidance strictly focused on Bitcoin and the Bitcoin Diploma curriculum.
+
+      CORE CURRICULUM TRAINING KNOWLEDGE:
+      - Module 1 (What is Money?): Functions of Money (Store of Value, Medium of Exchange, Unit of Account), Properties (Durability, Portability, Divisibility, Acceptability, Scarcity, Fungibility), Types of Money (Commodity, Representative, Fiat), Scarcity & Time Preference, Opportunity Cost.
+      - Module 2 (The History of Money): Barter and the "Double Coincidence of Wants", Commodity standards (Gold/Silver), Paper Receipts, Bretton Woods, and the Nixon Shock (1971) which ended gold convertibility.
+      - Module 3 (What Is Fiat Money?): Money decreed by government, Fractional reserve banking, centralization, debt-driven money creation, Central Bank Digital Currencies (CBDCs) and control.
+      - Module 4 (How Problems Lead to Solutions): Monetary inflation reduces purchasing power, wealth inequality (the Cantillon Effect - closest to the money printer benefits first), Cypherpunks, Hal Finney, Eric Hughes, Timothy C. May.
+      - Module 5 (What Is Bitcoin?): Satoshi Nakamoto's October 2008 Whitepaper, Genesis Block (Jan 3, 2009), Consensus rules, 21 million absolute limit.
+      - Module 6 (How to Use Bitcoin): Private/Public keys, seed phrases ("Not your keys, not your coins"), self-custodial vs custodial wallets, Cold/Hot storage.
+      - Module 7 (Using Bitcoin in Daily Life): Lightning Network (Layer 2 micro-payments, scaling off-chain, speed, low fees), BTCPay Server, BTCMap.org, circular economies (Bitcoin Beach El Salvador, Kenya, Arnhem).
+      - Module 8 (How Bitcoin Works): Public-key cryptography, SHA-256 hash function (Deterministic, Pre-image resistance, Avalanche effect, Collision resistance, Fast to verify), UTXO model ("change" output).
+      - Module 9 (How Does Bitcoin Mining Work?): Nodes (Gatekeepers of validation, run by ordinary people, verify rules) vs Miners (architects of security, perform Proof-of-Work to solve hashes, earn block rewards & fees), Halvings (rewards cut in half every 210,000 blocks - e.g., 2028 reward will be 1.5625 BTC), Difficulty adjustment (every 2,016 blocks or ~2 weeks).
+      - Module 10 (What Future Can Bitcoin Build?): Hyperbitcoinization, strategic reserves, philosophy of personal responsibility, energy stabilization (mining stranded energy).
+
+      STRICT BITCOIN-ONLY BEHAVIOR:
+      1. This chatbot is strictly for Bitcoin Diploma and Bitcoin Education queries.
+      2. Keep responses 100% focused on Bitcoin and sound money.
+      3. If asked about other cryptocurrencies (altcoins/shitcoins) or CBDCs, objectively contrast how they lack absolute scarcity, expose users to centralization, pre-mines, or compromise privacy, while Bitcoin remains the ultimate neutral sound asset.
+      4. If user asks questions completely unrelated to Bitcoin education, finance, or monetary history, warmly decline: "As your Bitcoin Diploma lead instructor, I'm here to guide you through sound money and Bitcoin! Let's stay focused on the syllabus so we can stack real Sats in this info-packed course. What question can I answer for you about any of our 10 modules?"
+      5. Provide positive, encouraging, and highly educational feedback. Maintain a clean, professional, and inspiring tone. Never give negative sentiment about the long-term utility of Bitcoin. Be helpful, clear, and informative. Ensure any answers directly map to the Bitcoin Diploma principles.`;
+
+      // Format history
+      let formattedHistory: Array<{ role: string; parts: Array<{ text: string }> }> = [];
+      if (history && Array.isArray(history)) {
+         formattedHistory = history.map((msg: any) => ({
+             role: msg.role === 'assistant' ? 'model' : 'user',
+             parts: [{ text: msg.content || "" }],
+         }));
+      }
+
+      const chatContents = [...formattedHistory];
+      if (question) {
+         chatContents.push({ role: 'user', parts: [{ text: question }] });
+      }
+
+      const response = await ai.models.generateContent({
+        model: 'gemini-3.5-flash',
+        contents: chatContents,
+        config: {
+          systemInstruction,
+        }
+      });
+      
+      res.json({ answer: (response.text || "").trim() });
+
+    } catch (err: any) {
+      console.error(err);
+      res.status(err.status || 500).json({ error: err.message || "Failed to generate answer from Instructor Bot" });
     }
   });
 
