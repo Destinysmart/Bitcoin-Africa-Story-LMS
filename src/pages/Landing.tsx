@@ -54,8 +54,8 @@ export default function Landing() {
             Master Bitcoin.<br className="hidden md:block"/> Form the Future.
           </h1>
           
-          <p className="text-lg md:text-xl text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed">
-            A premium, self-paced 10-chapter diploma program designed for African students. Learn the foundations of Bitcoin, self-custody, and the lightning network while earning actual sats.
+          <p className="text-lg md:text-xl text-gray-400 mb-10 max-w-2xl mx-auto leading-relaxed font-sans">
+            An easy-to-follow, self-paced learning program designed specifically for absolute beginners. Discover how money works, master Bitcoin, and learn self-custody step-by-step while earning real satoshis!
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

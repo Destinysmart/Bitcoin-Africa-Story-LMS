@@ -67,7 +67,8 @@ export default function Chapter() {
       content: newWikiPost.trim(),
       authorName: user.name,
       authorEmail: user.email,
-      authorRole
+      authorRole,
+      authorAvatar: user.avatar || ''
     });
     setWikiPosts(updated);
     setNewWikiPost('');
@@ -578,8 +579,12 @@ export default function Chapter() {
                     <GlassCard key={post.id} className="p-4 md:p-6 transition-all hover:border-white/20 hover:bg-white/5">
                       <div className="flex justify-between items-start mb-3">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-brand-gold/10 text-brand-gold flex items-center justify-center font-bold">
-                            {post.authorName?.charAt(0).toUpperCase()}
+                          <div className="w-10 h-10 rounded-full bg-brand-gold/10 text-brand-gold flex items-center justify-center overflow-hidden font-bold">
+                            {post.authorAvatar ? (
+                              <img src={post.authorAvatar} alt={post.authorName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                            ) : (
+                              post.authorName?.charAt(0).toUpperCase()
+                            )}
                           </div>
                           <div>
                             <div className="font-bold flex items-center gap-2">

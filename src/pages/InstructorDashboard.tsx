@@ -70,6 +70,7 @@ export default function InstructorDashboard() {
             submissions.push({
               studentName: u.name,
               studentEmail: u.email,
+              studentAvatar: u.avatar || '',
               chapterTitle: chapters.find(c => c.id === cid)?.title || `Chapter ${cid}`,
               chapterId: cid,
               // We'll mock the date since we didn't store completion date on progress.
@@ -173,8 +174,12 @@ export default function InstructorDashboard() {
                 {recentSubmissions.map((sub: any, i: number) => (
                   <div key={i} className="p-4 flex items-center justify-between hover:bg-white/5 transition-colors gap-4">
                     <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-brand-gold/10 text-brand-gold flex items-center justify-center font-bold relative shrink-0">
-                        {sub.studentName.charAt(0).toUpperCase()}
+                      <div className="w-10 h-10 rounded-full bg-brand-gold/10 text-brand-gold flex items-center justify-center overflow-hidden font-bold relative shrink-0">
+                        {sub.studentAvatar ? (
+                          <img src={sub.studentAvatar} alt={sub.studentName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                        ) : (
+                          sub.studentName.charAt(0).toUpperCase()
+                        )}
                         <div className="absolute -bottom-1 -right-1 bg-green-500 text-black rounded-full p-0.5 border border-black">
                           <CheckCircle size={10} />
                         </div>

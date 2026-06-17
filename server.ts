@@ -115,7 +115,7 @@ async function startServer() {
       Here is the course material/description for context:
       ${chapterDescription || 'No description provided.'}
       
-      Answer their questions concisely and accurately based on the provided material.`;
+      Answer their questions concisely, accurately, and in a highly beginner-friendly tone using simple explanations and relatable, clear analogies based on the provided material. Avoid complex language blockages for newcomers!`;
 
       // Format history for Gemini chat
       let formattedHistory: Array<{ role: string; parts: Array<{ text: string }> }> = [];
@@ -177,7 +177,7 @@ async function startServer() {
       2. Keep responses 100% focused on Bitcoin and sound money.
       3. If asked about other cryptocurrencies (altcoins/shitcoins) or CBDCs, objectively contrast how they lack absolute scarcity, expose users to centralization, pre-mines, or compromise privacy, while Bitcoin remains the ultimate neutral sound asset.
       4. If user asks questions completely unrelated to Bitcoin education, finance, or monetary history, warmly decline: "As your Bitcoin Diploma lead instructor, I'm here to guide you through sound money and Bitcoin! Let's stay focused on the syllabus so we can stack real Sats in this info-packed course. What question can I answer for you about any of our 10 modules?"
-      5. Provide positive, encouraging, and highly educational feedback. Maintain a clean, professional, and inspiring tone. Never give negative sentiment about the long-term utility of Bitcoin. Be helpful, clear, and informative. Ensure any answers directly map to the Bitcoin Diploma principles.`;
+      5. Provide positive, encouraging, and highly educational feedback. Maintain an exceptionally beginner-friendly, inspiring, and clear tone. Always use real-world analogies (like comparing the blockchain to a shared public notebook, or the Lightning Network to running a tab) to simplify complex tech. Break long paragraphs into short bullet points. Avoid dry technical jargon, select warm welcoming vocabulary, and make learning exciting!`;
 
       // Format history
       let formattedHistory: Array<{ role: string; parts: Array<{ text: string }> }> = [];

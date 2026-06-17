@@ -8,10 +8,19 @@ import { getCurrentUser, updateUser, getContent } from '../lib/storage';
 import { useToast } from '../contexts/ToastContext';
 import { Camera, Edit2, Zap, Flame, Trophy, CheckCircle2, Circle, User, BookOpen, GraduationCap, Brain, Globe, Rocket, Sprout } from 'lucide-react';
 
+const PRESET_AVATARS = [
+  { name: "Pioneer", url: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=150&h=150" },
+  { name: "Bitcoin", url: "https://images.unsplash.com/photo-1621761191319-c6fb62004040?auto=format&fit=crop&q=80&w=150&h=150" },
+  { name: "Neon", url: "https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&q=80&w=150&h=150" },
+  { name: "Cyber", url: "https://images.unsplash.com/photo-1614741118887-7a4ee193a5fa?auto=format&fit=crop&q=80&w=150&h=150" },
+  { name: "Savannah", url: "https://images.unsplash.com/photo-1547483238-f400e65ccd56?auto=format&fit=crop&q=80&w=150&h=150" },
+  { name: "Gold", url: "https://images.unsplash.com/photo-1518546305927-5a555bb7020d?auto=format&fit=crop&q=80&w=150&h=150" }
+];
+
 const BADGES = [
   { id: 'first_step', name: 'First Step', xp: 100, desc: 'Complete Chapter 1', icon: <Zap size={24} className="text-brand-gold drop-shadow-[0_0_8px_rgba(253,184,19,0.8)]" /> },
   { id: 'knowledge_seeker', name: 'Knowledge Seeker', xp: 250, desc: 'Complete Chapter 5', icon: <BookOpen size={24} className="text-blue-400 drop-shadow-[0_0_8px_rgba(96,165,250,0.8)]" /> },
-  { id: 'diplomat', name: 'Bitcoin Diplomat', xp: 1000, desc: 'Complete all 10 chapters', icon: <GraduationCap size={24} className="text-purple-400 drop-shadow-[0_0_8px_rgba(192,132,252,0.8)]" /> },
+  { id: 'diplomat', name: 'Bitcoin Diploma', xp: 1000, desc: 'Complete all 10 chapters', icon: <GraduationCap size={24} className="text-purple-400 drop-shadow-[0_0_8px_rgba(192,132,252,0.8)]" /> },
   { id: 'quiz_master', name: 'Quiz Master', xp: 300, desc: 'Pass 5 quizzes on first attempt', icon: <Brain size={24} className="text-pink-400 drop-shadow-[0_0_8px_rgba(244,114,182,0.8)]" /> },
   { id: 'consistent', name: 'Consistent', xp: 200, desc: 'Achieve a 7-day streak', icon: <Flame size={24} className="text-red-400 drop-shadow-[0_0_8px_rgba(248,113,113,0.8)]" /> },
   { id: 'african_pioneer', name: 'African Pioneer', xp: 50, desc: 'Sign up from an African country', icon: <Globe size={24} className="text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.8)]" /> },
@@ -24,6 +33,8 @@ export default function Profile() {
   const user = getCurrentUser();
   const content = getContent();
   
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
   const location = useLocation();
   const initialTab = location.pathname === '/settings' ? 'settings' : 'overview';
   const [activeTab, setActiveTab] = useState<'overview' | 'badges' | 'settings'>(initialTab);
@@ -46,6 +57,33 @@ export default function Profile() {
 
   if (!user) return null;
 
+  const handleImageFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 1.2 * 1024 * 1024) {
+      toast('Please upload an image smaller than 1.2MB for custom avatar storage.', 'error');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64 = event.target?.result as string;
+      if (base64) {
+        updateUser(user.email, { avatar: base64 });
+        toast('Profile picture uploaded successfully!', 'success');
+        setTimeout(() => window.location.reload(), 600);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSelectPreset = (url: string) => {
+    updateUser(user.email, { avatar: url });
+    toast('Profile avatar updated!', 'success');
+    setTimeout(() => window.location.reload(), 400);
+  };
+
   const chapters = Object.values(content.chapters || {}) as any[];
   const completedChapters = chapters.filter(c => user.progress?.[c.id]?.status === 'completed').length;
   const quizzesPassed = chapters.filter(c => user.progress?.[c.id]?.quizPassed).length;
@@ -63,6 +101,15 @@ export default function Profile() {
   return (
     <div className="p-4 md:p-8 max-w-5xl mx-auto pb-24 md:pb-8 flex flex-col gap-6">
       
+      {/* Hidden File Input */}
+      <input 
+        type="file" 
+        ref={fileInputRef} 
+        onChange={handleImageFileChange} 
+        accept="image/*" 
+        className="hidden" 
+      />
+
       {/* Header Profile Card */}
       <GlassCard className="relative overflow-hidden bg-brand-dark-2">
         <div className="absolute top-0 right-0 w-64 h-64 bg-brand-gold/10 blur-[80px] pointer-events-none rounded-full" />
@@ -70,12 +117,20 @@ export default function Profile() {
         <div className="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-left">
           
           {/* Avatar */}
-          <div className="relative group cursor-pointer">
-            <div className="w-24 h-24 rounded-full bg-brand-gold text-[#000000] flex items-center justify-center text-4xl font-bold shadow-[0_0_20px_rgba(253,184,19,0.3)]">
-              {user.name.charAt(0).toUpperCase()}
+          <div 
+            className="relative group cursor-pointer shrink-0"
+            onClick={() => fileInputRef.current?.click()}
+            title="Click to upload custom profile picture"
+          >
+            <div className="w-24 h-24 rounded-full bg-brand-gold text-[#000000] flex items-center justify-center overflow-hidden text-4xl font-bold shadow-[0_0_20px_rgba(253,184,19,0.3)]">
+              {user.avatar ? (
+                <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+              ) : (
+                user.name.charAt(0).toUpperCase()
+              )}
             </div>
             <div className="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <Camera size={24} className="text-white" />
+              <Camera size={24} className="text-white animate-pulse" />
             </div>
           </div>
           
@@ -268,6 +323,73 @@ export default function Profile() {
 
                   <Button type="submit" className="mt-4">Save Changes</Button>
                 </form>
+              </GlassCard>
+
+              <GlassCard>
+                <h3 className="font-bold text-xl mb-3 flex items-center gap-2"><Camera size={20} className="text-brand-gold" /> Profile Picture & Avatar</h3>
+                <p className="text-gray-400 text-sm mb-6">
+                  Upload an image from your device or select one of our premium educational presets to show off your rank on the leaderboards.
+                </p>
+                
+                <div className="flex flex-col sm:flex-row items-center gap-6 mb-6">
+                  {/* Current Preview */}
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="w-20 h-20 rounded-full bg-brand-gold text-[#000000] flex items-center justify-center overflow-hidden text-3xl font-bold shadow-lg border border-white/10">
+                      {user.avatar ? (
+                        <img src={user.avatar} alt="Current profile preview" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                      ) : (
+                        user.name.charAt(0).toUpperCase()
+                      )}
+                    </div>
+                    <span className="text-xs text-gray-400 font-medium">Preview</span>
+                  </div>
+
+                  {/* Actions & Presets */}
+                  <div className="flex-1 w-full">
+                    <div className="flex flex-wrap gap-2 mb-4 justify-center sm:justify-start">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => fileInputRef.current?.click()}
+                        className="flex items-center gap-2"
+                      >
+                        <Camera size={14} /> Upload Custom Photo
+                      </Button>
+                      
+                      {user.avatar && (
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => {
+                            updateUser(user.email, { avatar: '' });
+                            toast('Avatar reset to default!', 'success');
+                            setTimeout(() => window.location.reload(), 400);
+                          }}
+                          className="hover:border-red-500 hover:text-red-400"
+                        >
+                          Reset to Initials
+                        </Button>
+                      )}
+                    </div>
+
+                    <div className="text-xs text-secondary-text mb-2 text-center sm:text-left font-semibold uppercase tracking-wider">Fast Presets</div>
+                    <div className="grid grid-cols-6 gap-2 max-w-xs mx-auto sm:mx-0">
+                      {PRESET_AVATARS.map((preset) => {
+                        const isSelected = user.avatar === preset.url;
+                        return (
+                          <button
+                            key={preset.name}
+                            onClick={() => handleSelectPreset(preset.url)}
+                            className={`relative aspect-square rounded-full overflow-hidden border-2 transition-all p-0.5 hover:scale-105 ${isSelected ? 'border-brand-gold scale-105 shadow-[0_0_8px_rgba(253,184,19,0.5)]' : 'border-transparent hover:border-white/20'}`}
+                            title={`Choose ${preset.name} preset`}
+                          >
+                            <img src={preset.url} alt={preset.name} className="w-full h-full object-cover rounded-full" referrerPolicy="no-referrer" />
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
               </GlassCard>
 
               <GlassCard className="border-brand-gold/30 gold-glow relative overflow-hidden">

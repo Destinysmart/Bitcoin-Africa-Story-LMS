@@ -42,7 +42,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-brand-black text-white flex flex-col lg:flex-row">
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-gold/5 blur-[120px] pointer-events-none rounded-full" />
       
       {/* Side Slide-Over Drawer for Mobile & Tablet Nav */}
       <AnimatePresence>
@@ -94,17 +93,21 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 ))}
               </nav>
 
-              <div className="mt-auto pt-6 border-t border-white/5 space-y-2">
-                <button 
-                  onClick={() => {
-                    toggleTheme();
-                    setIsDrawerOpen(false);
-                  }}
-                  className="flex items-center gap-3 px-4 py-3 w-full rounded-xl transition-all font-medium text-gray-400 hover:text-white hover:bg-white/5"
-                >
-                  {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-                  Toggle {theme === 'dark' ? 'Light' : 'Dark'}
-                </button>
+              <div className="mt-auto pt-6 border-t border-white/5 space-y-4">
+                <div className="flex items-center justify-between px-4 py-2 border border-white/5 bg-brand-dark-2/40 rounded-xl">
+                  <span className="text-sm font-medium text-gray-400">Appearance</span>
+                  <button
+                    onClick={() => toggleTheme()}
+                    className="relative flex items-center justify-between gap-1 p-1 bg-brand-black border border-white/5 rounded-lg text-gray-400 transition-all cursor-pointer"
+                  >
+                    <div className={`p-1 rounded-md transition-all ${theme === 'light' ? 'bg-brand-gold text-brand-black' : 'hover:text-white'}`}>
+                      <Sun size={16} />
+                    </div>
+                    <div className={`p-1 rounded-md transition-all ${theme === 'dark' ? 'bg-brand-gold text-brand-black' : 'hover:text-white'}`}>
+                      <Moon size={16} />
+                    </div>
+                  </button>
+                </div>
                 
                 <button 
                   onClick={() => {
@@ -146,14 +149,21 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           ))}
         </nav>
 
-        <div className="p-4 mt-auto">
-          <button 
-            onClick={toggleTheme}
-            className="flex items-center gap-3 px-4 py-3 w-full rounded-xl transition-all font-medium text-gray-400 hover:text-white hover:bg-white/5 mb-2"
-          >
-            {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-            Toggle {theme === 'dark' ? 'Light' : 'Dark'}
-          </button>
+        <div className="p-4 mt-auto space-y-4">
+          <div className="flex items-center justify-between px-4 py-2 border border-white/5 bg-brand-dark-2/40 rounded-xl">
+            <span className="text-sm font-medium text-gray-400">Appearance</span>
+            <button
+              onClick={toggleTheme}
+              className="relative flex items-center justify-between gap-1 p-1 bg-brand-black border border-white/5 rounded-lg text-gray-400 transition-all cursor-pointer"
+            >
+              <div className={`p-1 rounded-md transition-all ${theme === 'light' ? 'bg-brand-gold text-brand-black' : 'hover:text-white'}`}>
+                <Sun size={16} />
+              </div>
+              <div className={`p-1 rounded-md transition-all ${theme === 'dark' ? 'bg-brand-gold text-brand-black' : 'hover:text-white'}`}>
+                <Moon size={16} />
+              </div>
+            </button>
+          </div>
           
           <button 
             onClick={handleLogout}
@@ -198,8 +208,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               <div className="absolute top-0 right-0 w-2 h-2 bg-brand-gold rounded-full" />
             </button>
             <div className="flex items-center gap-3 cursor-pointer group">
-              <div className="w-10 h-10 rounded-full bg-brand-gold/20 flex items-center justify-center border border-brand-gold/30 text-brand-gold font-bold group-hover:bg-brand-gold/30 transition-colors">
-                {user?.name?.charAt(0).toUpperCase() || 'U'}
+              <div className="w-10 h-10 rounded-full bg-brand-gold/20 flex items-center justify-center overflow-hidden border border-brand-gold/30 text-brand-gold font-bold group-hover:bg-brand-gold/30 transition-colors">
+                {user?.avatar ? (
+                  <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                ) : (
+                  user?.name?.charAt(0).toUpperCase() || 'U'
+                )}
               </div>
               <div className="flex flex-col">
                 <span className="text-sm font-medium">{user?.name || 'User'}</span>

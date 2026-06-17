@@ -6,7 +6,7 @@ import { CircularProgress } from '../components/dashboard/ProgressRing';
 import { GlassCard } from '../components/ui/GlassCard';
 import { Button } from '../components/ui/Button';
 import { AIInstructorBot } from '../components/dashboard/AIInstructorBot';
-import { Flame, Zap, BookOpen, Trophy, PlayCircle, Lock, CheckCircle2, TrendingUp, Target } from 'lucide-react';
+import { Flame, Zap, BookOpen, Trophy, PlayCircle, Lock, CheckCircle2, TrendingUp, Target, Sparkles } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function Dashboard() {
@@ -108,29 +108,48 @@ export default function Dashboard() {
         </GlassCard>
 
         {/* Stats Grid Widget */}
-        <div className="grid grid-cols-2 grid-rows-2 gap-4">
-          <div className="bg-brand-dark-2 rounded-xl p-5 border border-white/5 flex flex-col items-center justify-center text-center">
-            <BookOpen className="text-gray-400 mb-2" size={24} />
-            <span className="text-2xl font-bold">{completedChapters}</span>
-            <span className="text-xs text-gray-400 uppercase tracking-wider">Chapters</span>
+        <GlassCard className="bg-gradient-to-br from-brand-dark-2/40 to-brand-dark-1/80 border border-white/5 p-6 flex flex-col justify-between h-full relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-brand-gold/5 blur-[50px] pointer-events-none rounded-full" />
+          <div className="relative z-10 flex items-center justify-between mb-6">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400 font-mono flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-gold inline-block animate-pulse" />
+              Satoshi Analytics
+            </h3>
           </div>
-          <div className="bg-brand-dark-2 rounded-xl p-5 border border-white/5 flex flex-col items-center justify-center text-center">
-            <CheckCircle2 className="text-status-success mb-2" size={24} />
-            <span className="text-2xl font-bold">{quizzesPassed}</span>
-            <span className="text-xs text-gray-400 uppercase tracking-wider">Quizzes OK</span>
+          <div className="grid grid-cols-2 gap-y-6 gap-x-4 relative z-10">
+            <div className="flex flex-col">
+              <div className="flex items-center gap-1.5 text-gray-400 mb-1">
+                <BookOpen size={14} className="text-gray-500 shrink-0" />
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[#94a3b8]">Chapters</span>
+              </div>
+              <span className="text-3xl font-bold text-white tracking-tight">{completedChapters}</span>
+            </div>
+            
+            <div className="flex flex-col border-l border-white/5 pl-4 sm:pl-6">
+              <div className="flex items-center gap-1.5 text-gray-400 mb-1">
+                <CheckCircle2 size={14} className="text-status-success shrink-0" />
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[#94a3b8]">Quizzes ok</span>
+              </div>
+              <span className="text-3xl font-bold text-white tracking-tight">{quizzesPassed}</span>
+            </div>
+
+            <div className="flex flex-col border-t border-white/5 pt-4">
+              <div className="flex items-center gap-1.5 text-gray-400 mb-1">
+                <Trophy size={14} className="text-brand-gold shrink-0" />
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[#94a3b8]">Total XP</span>
+              </div>
+              <span className="text-3xl font-bold text-white tracking-tight">{user.xp || 0}</span>
+            </div>
+
+            <div className="flex flex-col border-t border-l border-white/5 pt-4 pl-4 sm:pl-6 relative overflow-hidden group">
+              <div className="flex items-center gap-1.5 text-gray-400 mb-1">
+                <Zap size={14} className="text-brand-gold shrink-0 animate-pulse" />
+                <span className="text-[10px] font-bold uppercase tracking-widest text-brand-gold/90">Pending Payout</span>
+              </div>
+              <span className="text-3xl font-bold text-brand-gold tracking-tight">{user.totalSats || 0} <span className="text-xs text-brand-gold/60 font-medium font-sans">sats</span></span>
+            </div>
           </div>
-          <div className="bg-brand-dark-2 rounded-xl p-5 border border-white/5 flex flex-col items-center justify-center text-center">
-            <Trophy className="text-brand-gold mb-2" size={24} />
-            <span className="text-2xl font-bold">{user.xp || 0}</span>
-            <span className="text-xs text-gray-400 uppercase tracking-wider">Total XP</span>
-          </div>
-          <div className="bg-brand-dark-2 rounded-xl p-5 border border-white/5 flex flex-col items-center justify-center text-center relative overflow-hidden group">
-            <div className="absolute inset-0 bg-brand-gold/5 group-hover:bg-brand-gold/10 transition-colors" />
-            <Zap className="text-brand-gold mb-2" size={24} />
-            <span className="text-2xl font-bold text-brand-gold">{user.totalSats || 0}</span>
-            <span className="text-[10px] text-gray-400 uppercase tracking-wider font-medium relative z-10">Pending Payout</span>
-          </div>
-        </div>
+        </GlassCard>
       </div>
 
       {/* Learning Progress & Weekly Goal */}
@@ -188,15 +207,16 @@ export default function Dashboard() {
           </GlassCard>
         </motion.div>
 
-        {/* Right column: Weekly Goal & AI Instructor Bot */}
-        <div className="flex flex-col gap-6">
+        {/* Right column: Weekly Goal */}
+        <div className="flex flex-col h-full">
           {/* Weekly Study Goal */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
+            className="h-full"
           >
-            <GlassCard className="bg-brand-dark-2 relative overflow-hidden border border-white/5 flex flex-col p-5">
+            <GlassCard className="bg-brand-dark-2 relative overflow-hidden border border-white/5 flex flex-col p-6 h-full justify-between min-h-[338px]">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Target className="text-brand-gold" size={24} />
@@ -218,7 +238,7 @@ export default function Dashboard() {
                 )}
               </div>
               
-              <div className="flex flex-col justify-center">
+              <div className="flex flex-col justify-center flex-1">
                  <div className="flex justify-between text-sm mb-2 text-gray-400">
                    <span>{Math.min(completedChapters, weeklyGoal)} / {weeklyGoal} Chapters Completed</span>
                    <span>{Math.round(Math.min(completedChapters / (weeklyGoal || 1), 1) * 100)}%</span>
@@ -239,17 +259,37 @@ export default function Dashboard() {
               </div>
             </GlassCard>
           </motion.div>
-
-          {/* AI Instructor bot */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-          >
-            <AIInstructorBot />
-          </motion.div>
         </div>
       </div>
+
+      {/* Dedicated AI Study Assistant Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.25 }}
+        className="space-y-6 pt-4"
+      >
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-white via-slate-200 to-brand-gold bg-clip-text text-transparent flex items-center gap-2.5">
+              <Sparkles className="text-brand-gold fill-brand-gold/70 shrink-0 animate-pulse" size={24} />
+              AI Study Assistant
+            </h2>
+            <p className="text-sm text-[#94a3b8] mt-1 pr-6">
+              Ask Satoshi clarifying questions, clear study doubts instantly, or deep-dive on core concepts within the Bitcoin Diploma.
+            </p>
+          </div>
+          
+          <div className="flex items-center gap-2 shrink-0">
+            <span className="text-[11px] font-mono font-medium text-[#94a3b8] bg-white/[0.03] px-3.5 py-1.5 rounded-full border border-white/5 flex items-center gap-2 self-start sm:self-center">
+              <span className="w-1.5 h-1.5 bg-status-success rounded-full animate-pulse" />
+              Satoshi Engine Online
+            </span>
+          </div>
+        </div>
+
+        <AIInstructorBot />
+      </motion.div>
 
       {/* Chapters Grid Section */}
       <div>
@@ -269,14 +309,14 @@ export default function Dashboard() {
             return (
               <motion.div
                 key={chapter.id}
-                whileHover={isClickable ? { y: -4, scale: 1.01 } : {}}
+                whileHover={isClickable ? { y: -6, scale: 1.02 } : {}}
                 onClick={() => isClickable && navigate(`/chapter/${chapter.id}`)}
                 className={`
-                  p-5 rounded-xl border relative overflow-hidden transition-all duration-300 flex flex-col
-                  ${isClickable ? 'cursor-pointer hover:shadow-[0_4px_24px_rgba(253,184,19,0.15)] hover:border-brand-gold/40' : 'opacity-60 cursor-not-allowed'}
-                  ${status === 'completed' ? 'bg-status-success/5 border-status-success/20' : 
-                    status === 'in_progress' ? 'bg-brand-gold/5 border-brand-gold/30 gold-glow' : 
-                    'bg-brand-dark-2 border-white/5'}
+                  p-6 rounded-2xl border relative overflow-hidden transition-all duration-300 flex flex-col shadow-lg
+                  ${isClickable ? 'cursor-pointer hover:shadow-[0_8px_32px_rgba(253,184,19,0.06)] hover:border-brand-gold/30' : 'opacity-60 cursor-not-allowed'}
+                  ${status === 'completed' ? 'bg-status-success/[0.02] border-status-success/15' : 
+                    status === 'in_progress' ? 'bg-brand-gold/[0.03] border-brand-gold/25 gold-glow' : 
+                    'bg-white/[0.01] border-white/[0.04]'}
                 `}
               >
                 {/* Header Row */}

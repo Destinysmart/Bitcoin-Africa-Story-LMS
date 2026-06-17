@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { GlassCard } from '../components/ui/GlassCard';
 import { getUsers, getCurrentUser } from '../lib/storage';
 import { Trophy, Zap, CheckCircle2 } from 'lucide-react';
+import leaderboardBanner from '../assets/images/leaderboard_banner_1781653328086.jpg';
 
 export default function Leaderboard() {
   const [activeTab, setActiveTab] = useState<'xp' | 'sats' | 'completion'>('xp');
@@ -56,15 +57,27 @@ export default function Leaderboard() {
     <div className="p-4 md:p-8 max-w-4xl mx-auto pb-24 md:pb-8 flex flex-col gap-6">
       
       {/* Hero */}
-      <GlassCard className="relative overflow-hidden bg-brand-dark-2 text-center py-12">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] h-[400px] bg-brand-gold/10 blur-[100px] pointer-events-none rounded-full" />
+      <GlassCard className="relative overflow-hidden bg-brand-dark-2 p-6 md:p-8">
+        <div className="absolute top-0 left-1/4 w-[350px] h-[350px] bg-brand-gold/5 blur-[120px] pointer-events-none rounded-full" />
         
-        <div className="relative z-10 flex flex-col items-center">
-          <div className="w-20 h-20 bg-brand-gold/20 rounded-full flex items-center justify-center mb-6">
-            <Trophy size={40} className="text-brand-gold" />
+        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex-1 text-center md:text-left flex flex-col items-center md:items-start">
+            <div className="w-14 h-14 bg-brand-gold/20 rounded-full flex items-center justify-center mb-4">
+              <Trophy size={28} className="text-brand-gold" />
+            </div>
+            <h1 className="text-3xl md:text-4xl font-bold mb-2">Hall of Fame</h1>
+            <p className="text-gray-400 max-w-md">See how you rank globally across the Bitcoin Africa Story cohort.</p>
           </div>
-          <h1 className="text-4xl font-bold mb-2">Hall of Fame</h1>
-          <p className="text-gray-400 max-w-md mx-auto">See how you rank globally across the Bitcoin Africa Story cohort.</p>
+          
+          <div className="w-full md:w-2/5 shrink-0 max-h-[160px] md:max-h-[180px] overflow-hidden rounded-2xl border border-white/10 shadow-2xl relative group">
+            <img 
+              src={leaderboardBanner} 
+              alt="Leaderboard Hall of Fame Illustration" 
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              referrerPolicy="no-referrer"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
+          </div>
         </div>
       </GlassCard>
 
@@ -123,10 +136,14 @@ export default function Leaderboard() {
                         {renderMedal(i)}
                       </div>
                     </td>
-                    <td className="p-4">
+                     <td className="p-4">
                       <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold shadow-md ${isMe ? 'bg-brand-gold text-[#000000]' : 'bg-brand-dark-1 border border-white/10 text-white'}`}>
-                          {u.name.charAt(0).toUpperCase()}
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center overflow-hidden font-bold shadow-md ${isMe ? 'bg-brand-gold text-[#000000]' : 'bg-brand-dark-1 border border-white/10 text-white'}`}>
+                          {u.avatar ? (
+                            <img src={u.avatar} alt={u.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                          ) : (
+                            u.name.charAt(0).toUpperCase()
+                          )}
                         </div>
                         <div className="flex flex-col">
                           <span className={`font-bold ${isMe ? 'text-brand-gold' : 'text-white'}`}>
@@ -166,8 +183,12 @@ export default function Leaderboard() {
                     </td>
                     <td className="p-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold bg-brand-gold text-[#000000] shadow-[0_0_10px_rgba(253,184,19,0.3)]">
-                          {user.name.charAt(0).toUpperCase()}
+                        <div className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden font-bold bg-brand-gold text-[#000000] shadow-[0_0_10px_rgba(253,184,19,0.3)]">
+                          {user.avatar ? (
+                            <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                          ) : (
+                            user.name.charAt(0).toUpperCase()
+                          )}
                         </div>
                         <div className="flex flex-col">
                           <span className="font-bold text-brand-gold">{user.name} (You)</span>

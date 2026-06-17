@@ -1,6 +1,6 @@
 {
   "name": "Bitcoin Education Platform",
   "description": "Interactive learning curriculum based on the Bitcoin Diploma, with real-time AI-powered instructor feedback and quizzes to track student mastery.",
-  "requestFramePermissions": [],
+  "requestFramePermissions": ["microphone"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
