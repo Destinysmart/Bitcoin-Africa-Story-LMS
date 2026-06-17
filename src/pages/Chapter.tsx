@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { getCurrentUser, getContent, updateUser, getUsers, getChapterWiki, addChapterWikiPost, addNotification } from '../lib/storage';
@@ -8,7 +8,7 @@ import { GlassCard } from '../components/ui/GlassCard';
 import { Input } from '../components/ui/Input';
 import { VideoEmbedder } from '../components/ui/VideoEmbedder';
 import { CourseCompanion } from '../components/ui/CourseCompanion';
-import { CheckCircle2, PlayCircle, Lock, Zap, ArrowLeft, ExternalLink, FileText, FileDown, Headphones, Trophy, Twitter, Linkedin, Share2, MessageSquare, Send } from 'lucide-react';
+import { CheckCircle2, PlayCircle, Lock, Zap, ArrowLeft, ExternalLink, FileText, FileDown, Headphones, Trophy, Twitter, Linkedin, Share2, MessageSquare, Send, Volume2, VolumeX, Play, Pause, Square } from 'lucide-react';
 import { triggerSuccessConfetti, triggerMilestoneConfetti } from '../lib/confetti';
 import SEO from '../components/ui/SEO';
 
@@ -26,6 +26,126 @@ export default function Chapter() {
   
   const [wikiPosts, setWikiPosts] = useState<any[]>([]);
   const [newWikiPost, setNewWikiPost] = useState('');
+  
+  // TTS State variables
+  const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
+  const [selectedVoiceName, setSelectedVoiceName] = useState<string>('');
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [isPaused, setIsPaused] = useState<boolean>(false);
+  const [playRate, setPlayRate] = useState<number>(1.0);
+  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
+
+  // Initialize Speech Voices
+  useEffect(() => {
+    const updateVoices = () => {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        const availableVoices = window.speechSynthesis.getVoices();
+        // Prefer English first, then list others
+        const sorted = [...availableVoices].sort((a, b) => {
+          const aEng = a.lang.toLowerCase().startsWith('en');
+          const bEng = b.lang.toLowerCase().startsWith('en');
+          if (aEng && !bEng) return -1;
+          if (!aEng && bEng) return 1;
+          return a.name.localeCompare(b.name);
+        });
+        setVoices(sorted);
+        if (sorted.length > 0) {
+          const defaultVoice = sorted.find(v => v.lang.startsWith('en')) || sorted[0];
+          setSelectedVoiceName(prev => prev || defaultVoice.name);
+        }
+      }
+    };
+    updateVoices();
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = updateVoices;
+    }
+    return () => {
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.onvoiceschanged = null;
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, [id]);
+
+  const handleSpeakToggle = () => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
+      toast('Speech synthesis is not supported in this browser.', 'error');
+      return;
+    }
+
+    if (isPlaying) {
+      if (isPaused) {
+        window.speechSynthesis.resume();
+        setIsPaused(false);
+      } else {
+        window.speechSynthesis.pause();
+        setIsPaused(true);
+      }
+    } else {
+      window.speechSynthesis.cancel();
+      // Combine chapter title and description for reading
+      const textToSpeak = `${chapter.title}. ${chapter.description || ''}`;
+      const utterance = new SpeechSynthesisUtterance(textToSpeak);
+      
+      if (selectedVoiceName) {
+        const voice = voices.find(v => v.name === selectedVoiceName);
+        if (voice) {
+          utterance.voice = voice;
+        }
+      }
+      
+      utterance.rate = playRate;
+      utterance.onend = () => {
+        setIsPlaying(false);
+        setIsPaused(false);
+      };
+      utterance.onerror = (e) => {
+        console.error("SpeechSynthesisUtterance error:", e);
+        setIsPlaying(false);
+        setIsPaused(false);
+      };
+
+      utteranceRef.current = utterance;
+      setIsPlaying(true);
+      setIsPaused(false);
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
+  const handleStopSpeaking = () => {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      setIsPlaying(false);
+      setIsPaused(false);
+    }
+  };
+
+  const handleRateChange = (newRate: number) => {
+    setPlayRate(newRate);
+    if (isPlaying && !isPaused) {
+      // Re-trigger speak with new rate
+      setTimeout(() => {
+        window.speechSynthesis.cancel();
+        const textToSpeak = `${chapter.title}. ${chapter.description || ''}`;
+        const utterance = new SpeechSynthesisUtterance(textToSpeak);
+        if (selectedVoiceName) {
+          const voice = voices.find(v => v.name === selectedVoiceName);
+          if (voice) utterance.voice = voice;
+        }
+        utterance.rate = newRate;
+        utterance.onend = () => {
+          setIsPlaying(false);
+          setIsPaused(false);
+        };
+        utterance.onerror = () => {
+          setIsPlaying(false);
+          setIsPaused(false);
+        };
+        utteranceRef.current = utterance;
+        window.speechSynthesis.speak(utterance);
+      }, 50);
+    }
+  };
   
   const user = getCurrentUser();
   const content = getContent();
@@ -372,6 +492,122 @@ export default function Chapter() {
             </span>
             <h1 className="text-3xl lg:text-5xl font-bold tracking-tight">{chapter.title}</h1>
             
+            <p className="text-gray-300 mt-2 max-w-4xl text-sm md:text-base leading-relaxed">
+              {chapter.description}
+            </p>
+
+            {/* Curriculum Audio Companion (Web Speech API) */}
+            <div className="mt-4 p-4 rounded-xl bg-white/[0.02] border border-white/5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 max-w-4xl">
+              <div className="flex items-center gap-3">
+                <div className={`p-2.5 rounded-xl bg-brand-gold/10 text-brand-gold ${isPlaying && !isPaused ? 'animate-pulse' : ''}`}>
+                  <Headphones size={20} />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-white flex items-center gap-2">
+                    Listen to Lesson
+                    {isPlaying && !isPaused && (
+                      <span className="flex h-2 w-2 relative">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-gold opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-gold"></span>
+                      </span>
+                    )}
+                  </h4>
+                  <p className="text-xs text-gray-400 mt-0.5">
+                    {isPlaying ? (isPaused ? 'Audio paused.' : 'Reading chapter curriculum...') : 'Click Listen to start hands-free voice narration.'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Controls */}
+              <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+                {/* Voice Selector */}
+                {voices.length > 0 && (
+                  <div className="flex flex-col gap-1 w-full md:w-44">
+                    <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Voice Narrator</span>
+                    <select
+                      value={selectedVoiceName}
+                      onChange={(e) => {
+                        setSelectedVoiceName(e.target.value);
+                        if (isPlaying) {
+                          handleStopSpeaking();
+                          setTimeout(() => {
+                            const textToSpeak = `${chapter.title}. ${chapter.description || ''}`;
+                            const utterance = new SpeechSynthesisUtterance(textToSpeak);
+                            const voice = voices.find(v => v.name === e.target.value);
+                            if (voice) utterance.voice = voice;
+                            utterance.rate = playRate;
+                            utterance.onend = () => {
+                              setIsPlaying(false);
+                              setIsPaused(false);
+                            };
+                            utterance.onerror = () => {
+                              setIsPlaying(false);
+                              setIsPaused(false);
+                            };
+                            utteranceRef.current = utterance;
+                            setIsPlaying(true);
+                            setIsPaused(false);
+                            window.speechSynthesis.speak(utterance);
+                          }, 100);
+                        }
+                      }}
+                      className="bg-brand-dark-1 border border-white/10 text-xs text-gray-300 rounded-lg p-1.5 focus:outline-none focus:border-brand-gold cursor-pointer w-full"
+                    >
+                      {voices.map((voice) => (
+                        <option key={voice.name} value={voice.name}>
+                          {voice.name} ({voice.lang})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {/* Speed Selector */}
+                <div className="flex flex-col gap-1 w-20 md:w-24">
+                  <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Speed</span>
+                  <select
+                    value={playRate}
+                    onChange={(e) => handleRateChange(parseFloat(e.target.value))}
+                    className="bg-brand-dark-1 border border-white/10 text-xs text-gray-300 rounded-lg p-1.5 focus:outline-none focus:border-brand-gold cursor-pointer w-full"
+                  >
+                    <option value="0.75">0.75x</option>
+                    <option value="1.0">1.0x</option>
+                    <option value="1.25">1.25x</option>
+                    <option value="1.5">1.5x</option>
+                    <option value="2.0">2.0x</option>
+                  </select>
+                </div>
+
+                {/* Primary Action Buttons */}
+                <div className="flex items-center gap-1.5 mt-auto">
+                  <Button
+                    onClick={handleSpeakToggle}
+                    className="h-8 py-0 px-3 bg-brand-gold text-brand-black hover:bg-brand-gold/90 font-bold text-xs flex items-center gap-1 shrink-0"
+                  >
+                    {isPlaying && !isPaused ? (
+                      <>
+                        <Pause size={12} /> Pause
+                      </>
+                    ) : (
+                      <>
+                        <Play size={12} /> {isPaused ? 'Resume' : 'Listen'}
+                      </>
+                    )}
+                  </Button>
+
+                  {isPlaying && (
+                    <Button
+                      variant="secondary"
+                      onClick={handleStopSpeaking}
+                      className="h-8 py-0 px-3 bg-brand-dark-2 text-white hover:bg-white/5 border border-white/5 font-semibold text-xs flex items-center gap-1 shrink-0"
+                    >
+                      <Square size={10} /> Stop
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+
             <div className="flex flex-wrap items-center gap-6 mt-4 opacity-80">
               <div className="flex items-center gap-2 text-gray-300">
                 <PlayCircle size={18} /> {chapter.videos?.length || 0} Videos

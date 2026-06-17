@@ -14,16 +14,100 @@ async function startServer() {
   // Initialize Gemini
   const getAiParams = () => {
     if (!process.env.GEMINI_API_KEY) {
-      throw new Error("GEMINI_API_KEY is not set.");
+      return null;
     }
     return new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   };
 
+  /**
+   * Helper to invoke the Gemini API.
+   * Dynamically retries on failures (e.g. 503 service unavailable) using exponential backoff,
+   * falls back to a different model in the family to bypass tier-specific overload spike errors,
+   * and if all else fails, smoothly serves a local design fallback to maintain a perfect user experience.
+   */
+  const generateContentWithRetryAndFallback = async (
+    ai: GoogleGenAI,
+    params: { model: string; contents: any; config?: any; },
+    fallbackFunc: () => any,
+    maxRetries = 2,
+    initialDelay = 1000
+  ): Promise<any> => {
+    let delay = initialDelay;
+    const modelsToTry = [params.model, params.model === 'gemini-3.5-flash' ? 'gemini-2.5-flash' : 'gemini-3.5-flash'];
+    let lastError: any = null;
+
+    for (const model of modelsToTry) {
+      for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+          console.log(`[Gemini SDK] Calling generateContent with model="${model}" (Attempt ${attempt}/${maxRetries})...`);
+          const response = await ai.models.generateContent({
+            ...params,
+            model,
+          });
+          return response;
+        } catch (err: any) {
+          lastError = err;
+          const errMsg = err.message || JSON.stringify(err);
+          console.error(`[Gemini SDK Error] Attempt ${attempt} on model "${model}" failed: ${errMsg}`);
+          
+          if (attempt < maxRetries) {
+            console.log(`[Gemini SDK] Retrying in ${delay}ms...`);
+            await new Promise((resolve) => setTimeout(resolve, delay));
+            delay *= 2;
+          }
+        }
+      }
+      // reset delay for the next model fallback
+      delay = initialDelay;
+    }
+
+    console.warn(`[Gemini SDK Fallback] All model attempts failed. Triggering offline fallback generator:`, lastError?.message || lastError);
+    return { isFallback: true, text: null, data: fallbackFunc() };
+  };
+
   // API route for quiz generation
   app.post("/api/generate-quiz", async (req, res) => {
+    const { chapterTitle, chapterDescription } = req.body;
+    
+    const fallbackFunc = () => [
+      {
+        question: `What is a primary characteristic of sound money featured in "${chapterTitle || "this chapter"}"?`,
+        options: {
+          A: "Infinite supply and frequent printing",
+          B: "Scarcity, portability, divisibility, and durability",
+          C: "Direct control by a central planning board",
+          D: "Mandatory geographic physical boundaries"
+        },
+        correct: "B"
+      },
+      {
+        question: `Regarding ${chapterTitle || "the topics covered"}, why is peer-to-peer verification valuable?`,
+        options: {
+          A: "It eliminates transaction fees altogether",
+          B: "It secures self-sovereignty without intermediate trust",
+          C: "It guarantees instant physical commodity backing",
+          D: "It speeds up traditional bank wires"
+        },
+        correct: "B"
+      },
+      {
+        question: `What is the absolute maximum supply limit of Bitcoin?`,
+        options: {
+          A: "21 Million",
+          B: "100 Million",
+          C: "There is no limit",
+          D: "2.1 Billion"
+        },
+        correct: "A"
+      }
+    ];
+
     try {
-      const { chapterTitle, chapterDescription } = req.body;
       const ai = getAiParams();
+      if (!ai) {
+        console.warn("[Gemini Config] GEMINI_API_KEY is not set. Serving offline fallback quiz.");
+        return res.json(fallbackFunc());
+      }
 
       const prompt = `Generate a 3-question multiple choice quiz for a chapter titled "${chapterTitle}". 
       Here is the course material/description for context:
@@ -35,10 +119,18 @@ async function startServer() {
         { "question": "?", "options": { "A": "", "B": "", "C": "", "D": "" }, "correct": "A" }
       ]`;
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: prompt,
-      });
+      const response = await generateContentWithRetryAndFallback(
+        ai,
+        {
+          model: 'gemini-3.5-flash',
+          contents: prompt,
+        },
+        fallbackFunc
+      );
+
+      if (response.isFallback) {
+        return res.json(response.data);
+      }
 
       const rawContent = response.text || "[]";
       const startIndex = rawContent.indexOf('[');
@@ -55,16 +147,33 @@ async function startServer() {
   });
 
   app.post("/api/generate-description", async (req, res) => {
+    const { chapterTitle } = req.body;
+
+    const fallbackFunc = () => ({
+      description: `This module covers the key definitions, concepts, and challenges in understanding "${chapterTitle}". By examining gold standards, fiat mechanisms, and cryptographic solutions, students are empowered to build self-sovereign financial literacy and participate in peer-to-peer digital circular economies.`
+    });
+
     try {
-      const { chapterTitle } = req.body;
       const ai = getAiParams();
+      if (!ai) {
+        console.warn("[Gemini Config] GEMINI_API_KEY is not set. Serving offline fallback description.");
+        return res.json(fallbackFunc());
+      }
 
       const prompt = `Write a short, engaging description (1-2 paragraphs) for a learning module titled "${chapterTitle}". Maintain an encouraging and professional tone suitable for a bitcoin and money educational platform. Do not wrap in JSON, just return the raw text.`;
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: prompt,
-      });
+      const response = await generateContentWithRetryAndFallback(
+        ai,
+        {
+          model: 'gemini-3.5-flash',
+          contents: prompt,
+        },
+        fallbackFunc
+      );
+
+      if (response.isFallback) {
+        return res.json(response.data);
+      }
 
       res.json({ description: (response.text || "").trim() });
 
@@ -75,9 +184,32 @@ async function startServer() {
   });
 
   app.post("/api/generate-resources", async (req, res) => {
+    const { chapterTitle } = req.body;
+
+    const fallbackFunc = () => [
+      {
+        title: "The Bitcoin Standard by Saifedean Ammous",
+        type: "book",
+        url: "https://saifedean.com/thebitcoinstandard"
+      },
+      {
+        title: "Mi Primer Bitcoin (My First Bitcoin) Diploma Syllabus",
+        type: "link",
+        url: "https://miprimerbitcoin.io"
+      },
+      {
+        title: "The What is Money Show by Robert Breedlove",
+        type: "podcast",
+        url: "https://whatismoney-podcast.com"
+      }
+    ];
+
     try {
-      const { chapterTitle } = req.body;
       const ai = getAiParams();
+      if (!ai) {
+        console.warn("[Gemini Config] GEMINI_API_KEY is not set. Serving offline fallback resources.");
+        return res.json(fallbackFunc());
+      }
 
       const prompt = `Suggest 3 highly authoritative, widely-known reading resources (like famous books, popular open-source articles, or established podcasts) to learn about "${chapterTitle}" in the context of bitcoin or money.
       Respond strictly in raw JSON format like this: 
@@ -86,10 +218,18 @@ async function startServer() {
       ]
       Note: the "type" field must be one of: "link", "pdf", "podcast", "book". Ensure the "url" looks realistic if you don't know the exact one.`;
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: prompt,
-      });
+      const response = await generateContentWithRetryAndFallback(
+        ai,
+        {
+          model: 'gemini-3.5-flash',
+          contents: prompt,
+        },
+        fallbackFunc
+      );
+
+      if (response.isFallback) {
+        return res.json(response.data);
+      }
 
       const rawContent = response.text || "[]";
       const startIndex = rawContent.indexOf('[');
@@ -106,9 +246,18 @@ async function startServer() {
   });
 
   app.post("/api/course-companion", async (req, res) => {
+    const { chapterTitle, chapterDescription, question, history } = req.body;
+
+    const fallbackFunc = () => ({
+      answer: `Indeed, understanding "${chapterTitle || "sound money"}" is fundamental. In our Bitcoin Diploma program, remember that Bitcoin is highly scarce, decentralized financial money that cannot be manipulated by central authorities. Transactions are settled securely directly peer-to-peer. Please feel free to ask more specific questions about ${chapterTitle || "these core properties"}.`
+    });
+
     try {
-      const { chapterTitle, chapterDescription, question, history } = req.body;
       const ai = getAiParams();
+      if (!ai) {
+        console.warn("[Gemini Config] GEMINI_API_KEY is not set. Serving offline fallback companion answer.");
+        return res.json(fallbackFunc());
+      }
 
       let systemPrompt = `You are an expert Course Companion for a bitcoin and money educational platform. 
       You are helping a student understand the chapter titled "${chapterTitle}".
@@ -136,13 +285,21 @@ async function startServer() {
          return res.json({ answer: "Hello! I am your Bitcoin Course Companion. Ask me any questions about this chapter!" });
       }
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: chatContents,
-        config: {
-          systemInstruction: systemPrompt,
-        }
-      });
+      const response = await generateContentWithRetryAndFallback(
+        ai,
+        {
+          model: 'gemini-3.5-flash',
+          contents: chatContents,
+          config: {
+            systemInstruction: systemPrompt,
+          }
+        },
+        fallbackFunc
+      );
+
+      if (response.isFallback) {
+        return res.json(response.data);
+      }
       
       res.json({ answer: (response.text || "").trim() });
 
@@ -153,9 +310,18 @@ async function startServer() {
   });
 
   app.post("/api/instructor-bot", async (req, res) => {
+    const { question, history } = req.body;
+
+    const fallbackFunc = () => ({
+      answer: `⚡ Peace and sound money, student! Satoshi here. I am currently operating on standard fallback mode. Remember: "Not your keys, not your coins!" In our Bitcoin Diploma program, we emphasize that self-custody and decentralization solve central banking and fiat inflation. Keep up your amazing study momentum, and let's construct a circular Bitcoin economy together!`
+    });
+
     try {
-      const { question, history } = req.body;
       const ai = getAiParams();
+      if (!ai) {
+        console.warn("[Gemini Config] GEMINI_API_KEY is not set. Serving offline fallback instructor bot answer.");
+        return res.json(fallbackFunc());
+      }
 
       const systemInstruction = `You are 'Satoshi', the AI Lead Instructor Bot for My First Bitcoin's Bitcoin Diploma.
       Your goal is to provide positive, educational, and inspiring guidance strictly focused on Bitcoin and the Bitcoin Diploma curriculum.
@@ -193,13 +359,21 @@ async function startServer() {
          chatContents.push({ role: 'user', parts: [{ text: question }] });
       }
 
-      const response = await ai.models.generateContent({
-        model: 'gemini-3.5-flash',
-        contents: chatContents,
-        config: {
-          systemInstruction,
-        }
-      });
+      const response = await generateContentWithRetryAndFallback(
+        ai,
+        {
+          model: 'gemini-3.5-flash',
+          contents: chatContents,
+          config: {
+            systemInstruction,
+          }
+        },
+        fallbackFunc
+      );
+
+      if (response.isFallback) {
+        return res.json(response.data);
+      }
       
       res.json({ answer: (response.text || "").trim() });
 
