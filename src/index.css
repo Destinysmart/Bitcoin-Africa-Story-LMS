@@ -15,6 +15,7 @@
   --color-gray-300: var(--theme-gray-300);
   --color-gray-400: var(--theme-gray-400);
   --color-gray-500: var(--theme-gray-500);
+  --color-gray-600: var(--theme-gray-600);
   
   --color-status-success: #22C55E;
   --color-status-error: #EF4444;
@@ -23,8 +24,8 @@
 
 :root {
   --theme-brand-black: #000000; /* Pure black background */
-  --theme-brand-dark-1: #16161a; /* Slate panel backdrop (noticeably lighter) */
-  --theme-brand-dark-2: #212127; /* Card backdrop (distinctly lighter grey-black for contrast) */
+  --theme-brand-dark-1: #1c1e29; /* Slate panel backdrop (more distinct, elegant slate grey) */
+  --theme-brand-dark-2: #2a2e40; /* Card backdrop (noticeably lighter, beautiful graphite gray for gorgeous contrast) */
   
   --theme-white: #ffffff;
   --theme-black: #000000;
@@ -32,19 +33,21 @@
   --theme-gray-300: #cbd5e1;
   --theme-gray-400: #94a3b8;
   --theme-gray-500: #64748b;
+  --theme-gray-600: #4b5563;
 }
 
 html.light {
-  --theme-brand-black: #ffffff; /* Pure white background */
-  --theme-brand-dark-1: #ffffff; /* pure white sidebar card */
-  --theme-brand-dark-2: #f4f4f7; /* sleek clean white panel canvas */
+  --theme-brand-black: #faf9f6; /* Soft, executive warm off-white */
+  --theme-brand-dark-1: #ffffff; /* Crisp white for sidebar/cards */
+  --theme-brand-dark-2: #f1f3f7; /* Very light cool grey for sub-panels */
   
-  --theme-white: #09090b; /* deep navy text */
+  --theme-white: #0f172a; /* Deep slate font color representing original white texts */
   --theme-black: #ffffff;
-  --theme-gray-200: #e4e4e7;
-  --theme-gray-300: #d4d4d8;
-  --theme-gray-400: #71717a;
-  --theme-gray-500: #a1a1aa;
+  --theme-gray-200: #1e293b; /* Crisp dark slate for text-gray-200 */
+  --theme-gray-300: #334155; /* Medium dark slate for text-gray-300 */
+  --theme-gray-400: #64748b; /* Soft elegant slate for text-gray-400 (secondary text) */
+  --theme-gray-500: #94a3b8; /* Muted slate for text-gray-500 */
+  --theme-gray-600: #cbd5e1; /* Light slate for text-gray-600 (borders / light dividers) */
 }
 
 body {
@@ -54,15 +57,15 @@ body {
 
 /* Glassmorphism utility - completely redesigned to be extremely thin and premium */
 .glass-panel {
-  background: var(--glass-bg, rgba(255, 255, 255, 0.03));
-  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.08));
+  background: var(--glass-bg, rgba(48, 51, 68, 0.72));
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.15));
   backdrop-filter: blur(24px);
   border-radius: 20px;
 }
 
 html.light .glass-panel {
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(0, 0, 0, 0.05);
+  --glass-bg: rgba(235, 238, 246, 0.85);
+  --glass-border: rgba(15, 23, 42, 0.09);
 }
 
 .gold-glow {
@@ -82,3 +85,67 @@ html.light .gold-glow {
 html.light .gold-glow-hover:hover {
   --gold-shadow: rgba(253, 184, 19, 0.2);
 }
+
+/* Global Light Mode Polish & Auto-Contrast overrides */
+html.light input, 
+html.light select, 
+html.light textarea {
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+  background-color: #ffffff !important;
+}
+
+html.light input::placeholder, 
+html.light textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+html.light .border-white\/5,
+html.light .border-white\/10,
+html.light .border-white\/20,
+html.light .divide-white\/5,
+html.light .border-t-brand-gold\/30 {
+  border-color: #e2e8f0 !important;
+}
+
+html.light .bg-brand-dark-2 {
+  background-color: #f1f3f7 !important;
+}
+
+html.light .bg-brand-dark-1 {
+  background-color: #ffffff !important;
+}
+
+html.light .bg-black\/40,
+html.light .bg-black\/20 {
+  background-color: rgba(15, 23, 42, 0.05) !important;
+}
+
+html.light .text-gray-400 {
+  color: #64748b !important;
+}
+
+html.light .text-gray-300 {
+  color: #475569 !important;
+}
+
+html.light .text-gray-500 {
+  color: #94a3b8 !important;
+}
+
+/* Custom modern scrollbars */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.25);
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.45);
+}
+

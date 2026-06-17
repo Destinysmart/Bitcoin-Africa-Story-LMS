@@ -19,7 +19,7 @@ export const initStorage = () => {
       title: "Introduction to Money & Bitcoin",
       description: "Understand the evolutionary history of human money, from barter and commodity money to gold standards, modern centralized fiat, and how the sovereign scarcity of Bitcoin solves digital double-spending.",
       estimatedMinutes: 30,
-      satsPossible: 165,
+      satsPossible: 2,
       enabled: true,
       quizMode: 'manual',
       googleFormUrl: "",
@@ -42,7 +42,7 @@ export const initStorage = () => {
       title: "How Bitcoin Works — The Basics",
       description: "Explore the mechanics of transactions, blockchain databases, and miner verification. Learn how peer-to-peer miners secure the public ledger using proof-of-work without trusting central institutions.",
       estimatedMinutes: 40,
-      satsPossible: 165,
+      satsPossible: 2,
       enabled: true,
       quizMode: 'manual',
       googleFormUrl: "",
@@ -62,7 +62,7 @@ export const initStorage = () => {
       title: "Bitcoin Wallets & Keys",
       description: "Demystify private keys, public keys, and seed phrases. Learn how to securely generate and protect your digital gold vault using private offline keys and standard seed words.",
       estimatedMinutes: 35,
-      satsPossible: 165,
+      satsPossible: 2,
       enabled: true,
       quizMode: 'manual',
       googleFormUrl: "",
@@ -82,7 +82,7 @@ export const initStorage = () => {
       title: "Making Bitcoin Transactions",
       description: "Understand transaction structures, miner incentives, TxIDs, mempools, and transaction fees. Learn how to send, track, and verify on-chain ledger operations.",
       estimatedMinutes: 45,
-      satsPossible: 165,
+      satsPossible: 2,
       enabled: true,
       quizMode: 'manual',
       googleFormUrl: "",
@@ -102,7 +102,7 @@ export const initStorage = () => {
       title: "Bitcoin Security & Self-Custody",
       description: "Learn high-grade security practices, from hardware wallets to multi-layered seed storage. Deep dive into the self-sovereignty mindset where you are your own central bank.",
       estimatedMinutes: 50,
-      satsPossible: 165,
+      satsPossible: 2,
       enabled: true,
       quizMode: 'manual',
       googleFormUrl: "",
@@ -121,7 +121,7 @@ export const initStorage = () => {
       title: "The Lightning Network",
       description: "Speed up transactions to millisecond scaling with sub-penny fees! Understand micropayment routing channels, payment invoices, and off-chain scaling innovations.",
       estimatedMinutes: 45,
-      satsPossible: 165,
+      satsPossible: 2,
       enabled: true,
       quizMode: 'manual',
       googleFormUrl: "",
@@ -141,7 +141,7 @@ export const initStorage = () => {
       title: "Bitcoin in Africa — Use Cases",
       description: "Discover real-world empowerment in countries like Nigeria, Kenya, Ghana, and Zimbabwe. See how inflation hedge, remittance cost-saving, and borderless trade build local financial resilience.",
       estimatedMinutes: 35,
-      satsPossible: 165,
+      satsPossible: 2,
       enabled: true,
       quizMode: 'manual',
       googleFormUrl: "",
@@ -160,7 +160,7 @@ export const initStorage = () => {
       title: "Bitcoin & the Economy",
       description: "Understand the economic shift from credit-fueled inflationary models to hard-money deflationary ones. See how price signals behave on sound digital reserves.",
       estimatedMinutes: 45,
-      satsPossible: 165,
+      satsPossible: 2,
       enabled: true,
       quizMode: 'manual',
       googleFormUrl: "",
@@ -179,7 +179,7 @@ export const initStorage = () => {
       title: "Bitcoin Mining & Energy",
       description: "Deconstruct the energy debate. Learn how miners utilize wasted energy, power remote grids, and transform global energy economics using computational competition.",
       estimatedMinutes: 40,
-      satsPossible: 165,
+      satsPossible: 2,
       enabled: true,
       quizMode: 'manual',
       googleFormUrl: "",
@@ -198,7 +198,7 @@ export const initStorage = () => {
       title: "The Future of Bitcoin",
       description: "Look ahead at smart contracts, decentralized privacy upgrades (Taproot/Schnorr), and global game theory as nation-states adopt Bitcoin into strategic treasury reserves.",
       estimatedMinutes: 50,
-      satsPossible: 165,
+      satsPossible: 2,
       enabled: true,
       quizMode: 'manual',
       googleFormUrl: "",
@@ -223,6 +223,18 @@ export const initStorage = () => {
       const chapters = parsed.chapters || {};
       if (!chapters[1] || !chapters[1].videos || chapters[1].videos.length === 0) {
         deservesSeeding = true;
+      } else {
+        // Automatically force all existing chapters to be 2 sats reward
+        let contentModified = false;
+        Object.keys(chapters).forEach((cid) => {
+          if (chapters[cid].satsPossible !== 2) {
+            chapters[cid].satsPossible = 2;
+            contentModified = true;
+          }
+        });
+        if (contentModified) {
+          localStorage.setItem('bas_content', JSON.stringify(parsed));
+        }
       }
     } catch (e) {
       deservesSeeding = true;
@@ -254,7 +266,7 @@ export const initStorage = () => {
           quiz: [
             { id: `q${id}_1`, question: "What serves as the primary utility of decentralized digital proof-of-work money?", options: { A: "Trustless currency ownership without third-parties", B: "Central government stabilization", C: "E-mail message encryption", D: "Credit card clearing speed" }, correct: "A" }
           ],
-          satsPossible: 165
+          satsPossible: 2
         };
       }
     }
@@ -330,7 +342,7 @@ export const initStorage = () => {
         "7": { status: "completed", quizScore: 3, quizPassed: true },
         "8": { status: "completed", quizScore: 2, quizPassed: true },
       },
-      totalSats: 1320,
+      totalSats: 16,
       satsLog: [],
       xp: 880,
       xpLog: [],
@@ -359,7 +371,7 @@ export const initStorage = () => {
         "9": { status: "completed", quizScore: 3, quizPassed: true },
         "10": { status: "completed", quizScore: 3, quizPassed: true },
       },
-      totalSats: 1650,
+      totalSats: 20,
       xp: 1450,
       xpLog: [],
       level: "Satoshi Scholar",
@@ -381,7 +393,7 @@ export const initStorage = () => {
         "3": { status: "completed", quizScore: 3, quizPassed: true },
         "4": { status: "completed", quizScore: 3, quizPassed: true },
       },
-      totalSats: 660,
+      totalSats: 8,
       xp: 450,
       xpLog: [],
       level: "Bitcoin Cadet",
@@ -408,7 +420,7 @@ export const initStorage = () => {
         "8": { status: "completed", quizScore: 3, quizPassed: true },
         "9": { status: "completed", quizScore: 3, quizPassed: true },
       },
-      totalSats: 1485,
+      totalSats: 18,
       xp: 1120,
       xpLog: [],
       level: "Sovereign Node",
@@ -433,7 +445,7 @@ export const initStorage = () => {
         "6": { status: "completed", quizScore: 3, quizPassed: true },
         "7": { status: "completed", quizScore: 3, quizPassed: true },
       },
-      totalSats: 1155,
+      totalSats: 14,
       xp: 810,
       xpLog: [],
       level: "Lightning Pioneer",
@@ -461,7 +473,7 @@ export const initStorage = () => {
         "9": { status: "completed", quizScore: 3, quizPassed: true },
         "10": { status: "completed", quizScore: 3, quizPassed: true },
       },
-      totalSats: 1650,
+      totalSats: 20,
       xp: 1390,
       xpLog: [],
       level: "Satoshi Scholar",
@@ -485,7 +497,7 @@ export const initStorage = () => {
         "5": { status: "completed", quizScore: 3, quizPassed: true },
         "6": { status: "completed", quizScore: 2, quizPassed: true },
       },
-      totalSats: 990,
+      totalSats: 12,
       xp: 680,
       xpLog: [],
       level: "Hal Finney Disciple",
@@ -508,7 +520,7 @@ export const initStorage = () => {
         "4": { status: "completed", quizScore: 2, quizPassed: true },
         "5": { status: "completed", quizScore: 3, quizPassed: true },
       },
-      totalSats: 825,
+      totalSats: 10,
       xp: 560,
       xpLog: [],
       level: "Node Runner",
@@ -524,6 +536,17 @@ export const initStorage = () => {
     }
   });
 
+  // Dynamically normalize active users totalSats values to fit the 2 sats per chapter rule
+  Object.keys(users).forEach((email) => {
+    const u = users[email];
+    if (u && u.progress && u.role === 'student') {
+      const completedCount = Object.values(u.progress).filter((p: any) => p.status === 'completed' || p.quizPassed).length;
+      if (u.totalSats > completedCount * 2) {
+        u.totalSats = completedCount * 2;
+      }
+    }
+  });
+
   localStorage.setItem('bas_users', JSON.stringify(users));
 
   if (!localStorage.getItem('bas_admin_logs')) {
@@ -536,7 +559,132 @@ export const initStorage = () => {
 };
 
 export const getContent = () => {
-  return JSON.parse(localStorage.getItem('bas_content') || '{"chapters":{},"announcements":[]}');
+  const content = JSON.parse(localStorage.getItem('bas_content') || '{"chapters":{},"announcements":[]}');
+  if (!content.courses || content.courses.length === 0) {
+    content.courses = [
+      {
+        id: 'course-lightning',
+        title: 'Lightning Node Operator',
+        description: 'Learn how to set up, secure, and manage your own Lightning node. Route payments and earn routing fees.',
+        longDescription: 'Operating a Lightning Node is the pinnacle of supporting the Bitcoin network\'s scaling layer. This specialty program teaches students the theory and practice of liquidity optimization, security, channel backup, and routing policies to maximize efficiency and earn routing fees.',
+        icon: 'Server',
+        color: 'text-blue-400',
+        bg: 'bg-blue-400/10',
+        tags: ['Advanced', 'Infrastructure'],
+        duration: '4 Weeks',
+        tag: 'Advanced',
+        estimatedMinutes: 240,
+        outcomes: [
+          "Assemble and configure dedicated node hardware or virtual private servers (VPS).",
+          "Manage channel liquidity (inbound, outbound, routing metrics) using advanced tools.",
+          "Set up dynamic fee schedules and routing algorithms to optimize node profitability.",
+          "Configure automated backups and static channel backups (SCB) for bulletproof recovery."
+        ],
+        syllabus: [
+          { title: "Node Setup & Hardware Choices", duration: "60 mins", desc: "Raspberry Pi setups vs virtual private servers, operating system choice, and chain synchronization." },
+          { title: "Lightning Softwares & Configurations", duration: "60 mins", desc: "Comparing node software client configurations and terminal shell setups." },
+          { title: "Liquidity Management", duration: "60 mins", desc: "Inbound and outbound liquidity, managing channel exhaustion, peer balancing, and loop mechanics." },
+          { title: "Routing Policies & Earnings", duration: "60 mins", desc: "Setting node routing fees, evaluating peer connectivity, and analyzing payment trails." },
+          { title: "Backups and Security Protocols", duration: "60 mins", desc: "Static Channel Backups (SCB), watchtower client creation, and emergency protocols." }
+        ]
+      },
+      {
+        id: 'course-markets',
+        title: 'Bitcoin in Emerging Markets',
+        description: 'Deep dive into how Bitcoin is being adopted for cross-border payments and inflation hedging across the global south.',
+        longDescription: 'Emerging economies face the highest hurdles in banking access, hyperinflation, and remittance friction. This course analyzes how grass-roots communities across Africa, Latin America, and Southeast Asia utilize Bitcoin daily to protect capital and bypass archaic banking walls.',
+        icon: 'Globe2',
+        color: 'text-emerald-400',
+        bg: 'bg-emerald-400/10',
+        tags: ['Economics', 'Intermediate'],
+        duration: '3 Weeks',
+        tag: 'Intermediate',
+        estimatedMinutes: 180,
+        outcomes: [
+          "Analyze fiat currency failures, capital controls, and hyperinflation history in developing countries.",
+          "Design low-friction, circular-economy Bitcoin adoption protocols for local merchants and circular communities.",
+          "Understand cross-border trade mechanics, liquidity pathways, and mobile money integration.",
+          "Identify legal and regulatory landscapes affecting community groups and P2P desks."
+        ],
+        syllabus: [
+          { title: "Hyperinflation & Currency Collapse", duration: "45 mins", desc: "Monetary failure history and how residents safeguard local purchasing power using hard digital assets." },
+          { title: "Remittance Corridors & Fees", duration: "45 mins", desc: "Bypassing high-fee remittance agency networks using automated Lightning rails." },
+          { title: "Micro-payments & Circular Economies", duration: "45 mins", desc: "Community-driven circular economies (like Bitcoin Ekasi) and local merchant onboarding." },
+          { title: "Financial Inclusion & Mobile Partnerships", duration: "45 mins", desc: "Interacting with local ecosystems and linking Bitcoin to mobile money systems (M-Pesa, Wave)." }
+        ]
+      },
+      {
+        id: 'course-script',
+        title: 'Mastering Bitcoin Script',
+        description: 'Explore the technical foundations of Bitcoin. Learn about UTXOs, sighhashes, and basic smart contracts.',
+        longDescription: 'Unlock the code driving the Bitcoin protocol. This course explores the stack-based language Bitcoin Script, covering everything from simple single-key transactions to multi-signature contracts, relative time-locks, and taproot smart contracts.',
+        icon: 'BookOpen',
+        color: 'text-purple-400',
+        bg: 'bg-purple-400/10',
+        tags: ['Developer', 'Advanced'],
+        duration: '6 Weeks',
+        tag: 'Advanced',
+        estimatedMinutes: 300,
+        outcomes: [
+          "Read and write raw Bitcoin Script opcodes, interpreting how they execute on the virtual stack.",
+          "Construct custom multi-signature locks to enforce organizational custody rules.",
+          "Implement absolute and relative time-locks to delay and sequence outputs.",
+          "Leverage Schnorr signatures, MAST, and Taproot trees to optimize performance and privacy."
+        ],
+        syllabus: [
+          { title: "OpCodes and Stack Fundamentals", duration: "75 mins", desc: "Forth-like stack mechanics, arithmetic opcodes, and cryptography check verbs." },
+          { title: "Multi-Signature Contracts & P2SH", duration: "75 mins", desc: "Implementing multi-key authorization, redeem scripts, and the pay-to-script-hash standard." },
+          { title: "Time-Locks and Payment Channels", duration: "75 mins", desc: "Absolute time-locks, relative time-locks, and hashed timelock contracts (HTLC)." },
+          { title: "Taproot & Masters of Script", duration: "75 mins", desc: "Schnorr signatures, MAST, Pay-to-Taproot (P2TR), and contract privacy." }
+        ]
+      }
+    ];
+    localStorage.setItem('bas_content', JSON.stringify(content));
+  }
+  return content;
+};
+
+export const saveCourse = (course: any) => {
+  const content = getContent();
+  if (!content.courses) {
+    content.courses = [];
+  }
+  const idx = content.courses.findIndex((c: any) => c.id === course.id);
+  if (idx > -1) {
+    content.courses[idx] = course;
+  } else {
+    content.courses.push(course);
+  }
+  localStorage.setItem('bas_content', JSON.stringify(content));
+  window.dispatchEvent(new CustomEvent('bas_content_updated'));
+};
+
+export const deleteCourse = (courseId: string) => {
+  const content = getContent();
+  if (content.courses) {
+    content.courses = content.courses.filter((c: any) => c.id !== courseId);
+    localStorage.setItem('bas_content', JSON.stringify(content));
+    window.dispatchEvent(new CustomEvent('bas_content_updated'));
+  }
+};
+
+export const saveDiplomaChapter = (chapter: any) => {
+  const content = getContent();
+  if (!content.chapters) {
+    content.chapters = {};
+  }
+  content.chapters[chapter.id] = chapter;
+  localStorage.setItem('bas_content', JSON.stringify(content));
+  window.dispatchEvent(new CustomEvent('bas_content_updated'));
+};
+
+export const deleteDiplomaChapter = (chapterId: string | number) => {
+  const content = getContent();
+  if (content.chapters) {
+    delete content.chapters[chapterId];
+    localStorage.setItem('bas_content', JSON.stringify(content));
+    window.dispatchEvent(new CustomEvent('bas_content_updated'));
+  }
 };
 
 export const getAdminLogs = () => {
@@ -680,3 +828,76 @@ export const loginUser = (email: string, password: string) => {
   setCurrentUser(email);
   return user;
 };
+
+export interface AppNotification {
+  id: string;
+  title: string;
+  message: string;
+  timestamp: string;
+  read: boolean;
+  type: 'info' | 'success' | 'alert';
+  actionUrl?: string;
+}
+
+export const getNotifications = (email: string): AppNotification[] => {
+  const key = `bas_notifications_${email}`;
+  const stored = localStorage.getItem(key);
+  if (!stored) {
+    const initial: AppNotification[] = [
+      {
+        id: 'initial_wel_1',
+        title: 'Welcome to Bitcoin Diploma! 🎓',
+        message: 'Start your learning journey. Complete lessons and quizzes to earn satoshis!',
+        timestamp: new Date().toISOString(),
+        read: false,
+        type: 'success',
+        actionUrl: '/courses'
+      }
+    ];
+    localStorage.setItem(key, JSON.stringify(initial));
+    return initial;
+  }
+  try {
+    return JSON.parse(stored);
+  } catch (e) {
+    return [];
+  }
+};
+
+export const addNotification = (
+  email: string,
+  title: string,
+  message: string,
+  type: 'info' | 'success' | 'alert' = 'info',
+  actionUrl?: string
+): AppNotification => {
+  const notifications = getNotifications(email);
+  const newNotif: AppNotification = {
+    id: Math.random().toString(36).substring(2, 11),
+    title,
+    message,
+    timestamp: new Date().toISOString(),
+    read: false,
+    type,
+    actionUrl
+  };
+  const updated = [newNotif, ...notifications];
+  localStorage.setItem(`bas_notifications_${email}`, JSON.stringify(updated));
+  
+  // Custom event for real-time React component listening
+  window.dispatchEvent(new CustomEvent('bas_notification_added', { detail: { email, notification: newNotif } }));
+  return newNotif;
+};
+
+export const markNotificationAsRead = (email: string, id: string) => {
+  const notifications = getNotifications(email);
+  const updated = notifications.map(n => n.id === id ? { ...n, read: true } : n);
+  localStorage.setItem(`bas_notifications_${email}`, JSON.stringify(updated));
+  window.dispatchEvent(new CustomEvent('bas_notifications_updated', { detail: { email } }));
+};
+
+export const clearAllNotifications = (email: string) => {
+  localStorage.setItem(`bas_notifications_${email}`, JSON.stringify([]));
+  window.dispatchEvent(new CustomEvent('bas_notifications_updated', { detail: { email } }));
+};
+

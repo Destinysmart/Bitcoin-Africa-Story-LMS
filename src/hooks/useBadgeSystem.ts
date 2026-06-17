@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
-import { getCurrentUser, updateUser } from '../lib/storage';
+import { getCurrentUser, updateUser, addNotification } from '../lib/storage';
 import { useToast } from '../contexts/ToastContext';
 import { triggerSuccessConfetti } from '../lib/confetti';
+
 
 export const BADGE_DEFS = [
   { id: 'first_step', name: 'First Step', xp: 100, desc: 'Complete Chapter 1' },
@@ -10,7 +11,7 @@ export const BADGE_DEFS = [
   { id: 'quiz_master', name: 'Quiz Master', xp: 300, desc: 'Pass 5 quizzes on first attempt' },
   { id: 'consistent', name: 'Consistent', xp: 200, desc: 'Achieve a 7-day streak' },
   { id: 'african_pioneer', name: 'African Pioneer', xp: 50, desc: 'Sign up from an African country' },
-  { id: 'sats_stacker', name: 'Sats Stacker', xp: 150, desc: 'Earn 1000 sats' },
+  { id: 'sats_stacker', name: 'Sats Stacker', xp: 150, desc: 'Earn 10 sats' },
   { id: 'fast_learner', name: 'Fast Learner', xp: 200, desc: 'Complete 3 chapters in one week' }
 ];
 
@@ -72,7 +73,7 @@ export function useBadgeSystem() {
       }
       
       // 6. Sats Stacker
-      if (!earnedBadges.has('sats_stacker') && user.totalSats >= 1000) {
+      if (!earnedBadges.has('sats_stacker') && user.totalSats >= 10) {
         newlyEarned.push('sats_stacker');
         newXpAdded += 150;
       }
@@ -110,6 +111,13 @@ export function useBadgeSystem() {
           const def = BADGE_DEFS.find(b => b.id === bId);
           if (def) {
              toast(`🏆 Badge Unlocked: ${def.name}! (+${def.xp} XP)`, 'success');
+             addNotification(
+               user.email,
+               'Badge Unlocked! 🏆',
+               `Congratulations! You have unlocked the "${def.name}" badge and earned +${def.xp} XP: ${def.desc}`,
+               'success',
+               '/profile'
+             );
           }
         });
 

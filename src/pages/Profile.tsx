@@ -25,7 +25,7 @@ const BADGES = [
   { id: 'quiz_master', name: 'Quiz Master', xp: 300, desc: 'Pass 5 quizzes on first attempt', icon: <Brain size={24} className="text-pink-400 drop-shadow-[0_0_8px_rgba(244,114,182,0.8)]" /> },
   { id: 'consistent', name: 'Consistent', xp: 200, desc: 'Achieve a 7-day streak', icon: <Flame size={24} className="text-red-400 drop-shadow-[0_0_8px_rgba(248,113,113,0.8)]" /> },
   { id: 'african_pioneer', name: 'African Pioneer', xp: 50, desc: 'Sign up from an African country', icon: <Globe size={24} className="text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.8)]" /> },
-  { id: 'sats_stacker', name: 'Sats Stacker', xp: 150, desc: 'Earn 1000 sats', icon: <Zap size={24} className="text-brand-gold drop-shadow-[0_0_8px_rgba(253,184,19,0.8)]" /> },
+  { id: 'sats_stacker', name: 'Sats Stacker', xp: 150, desc: 'Earn 10 sats', icon: <Zap size={24} className="text-brand-gold drop-shadow-[0_0_8px_rgba(253,184,19,0.8)]" /> },
   { id: 'fast_learner', name: 'Fast Learner', xp: 200, desc: 'Complete 3 chapters in one week', icon: <Rocket size={24} className="text-cyan-400 drop-shadow-[0_0_8px_rgba(34,211,238,0.8)]" /> },
 ];
 
@@ -426,6 +426,29 @@ export default function Profile() {
                       <option value="yes">Yes, show my name</option>
                       <option value="no">No, stay anonymous</option>
                     </select>
+                  </label>
+
+                  <label className="flex flex-col gap-1.5 pt-4 border-t border-white/5 cursor-pointer group">
+                    <span className="text-sm font-medium text-gray-300 group-hover:text-white flex items-center gap-1.5">
+                      ⚙️ Sandbox Account Role
+                    </span>
+                    <select 
+                      value={user.role || 'student'}
+                      onChange={e => {
+                        const newRole = e.target.value;
+                        updateUser(user.email, { role: newRole });
+                        toast(`Account role changed to ${newRole}! ⚡`, 'success');
+                        setTimeout(() => window.location.reload(), 500);
+                      }}
+                      className="bg-brand-dark-2 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-gold w-full transition-colors"
+                    >
+                      <option value="student">🎓 Student / Learner</option>
+                      <option value="instructor">👨‍🏫 Instructor / Tutor</option>
+                      <option value="admin">🛡️ Platform Admin</option>
+                    </select>
+                    <span className="text-[10px] text-gray-400 font-medium">
+                      Toggle roles to try out Student, Instructor, or Admin features on the fly.
+                    </span>
                   </label>
                   
                   <div className="flex items-center justify-between pt-4 border-t border-white/5">

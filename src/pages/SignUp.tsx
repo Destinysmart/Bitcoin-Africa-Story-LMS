@@ -17,6 +17,7 @@ export default function SignUp() {
     password: '',
     country: '',
     whatsapp: '',
+    role: 'student', // 'student' | 'instructor'
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -28,7 +29,11 @@ export default function SignUp() {
       try {
         registerUser(formData);
         toast('Account created successfully! ⚡', 'success');
-        navigate('/onboarding');
+        if (formData.role === 'instructor') {
+          navigate('/instructor');
+        } else {
+          navigate('/onboarding');
+        }
       } catch (err: any) {
         toast(err.message || 'Failed to sign up', 'error');
         setLoading(false);
@@ -74,6 +79,34 @@ export default function SignUp() {
               value={formData.password}
               onChange={e => setFormData({ ...formData, password: e.target.value })}
             />
+
+            <div className="flex flex-col gap-2">
+              <span className="text-sm font-medium text-gray-300">Join as:</span>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, role: 'student' })}
+                  className={`py-2.5 px-3 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                    formData.role === 'student'
+                      ? 'bg-brand-gold/15 border-brand-gold text-brand-gold shadow-[0_0_12px_rgba(253,184,19,0.15)]'
+                      : 'bg-brand-dark-2/50 border-white/5 text-gray-400 hover:text-white hover:border-white/10'
+                  }`}
+                >
+                  <span>🎓 Student</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, role: 'instructor' })}
+                  className={`py-2.5 px-3 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                    formData.role === 'instructor'
+                      ? 'bg-brand-gold/15 border-brand-gold text-brand-gold shadow-[0_0_12px_rgba(253,184,19,0.15)]'
+                      : 'bg-brand-dark-2/50 border-white/5 text-gray-400 hover:text-white hover:border-white/10'
+                  }`}
+                >
+                  <span>👨‍🏫 Instructor</span>
+                </button>
+              </div>
+            </div>
             
             <Button type="submit" className="w-full mt-2 lg:mt-4" disabled={loading}>
               {loading ? 'Creating account...' : 'Sign Up'}

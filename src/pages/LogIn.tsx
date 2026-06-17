@@ -23,6 +23,7 @@ export default function LogIn() {
         const user = loginUser(email, password);
         toast(`Welcome back! ⚡`, 'success');
         if (user.role === 'admin') navigate('/admin');
+        else if (user.role === 'instructor') navigate('/instructor');
         else if (!user.onboardingComplete) navigate('/onboarding');
         else navigate('/dashboard');
       } catch (err: any) {

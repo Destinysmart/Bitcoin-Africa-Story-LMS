@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
-import { getCurrentUser, getContent, updateUser, getUsers, getChapterWiki, addChapterWikiPost } from '../lib/storage';
+import { getCurrentUser, getContent, updateUser, getUsers, getChapterWiki, addChapterWikiPost, addNotification } from '../lib/storage';
 import { useToast } from '../contexts/ToastContext';
 import { Button } from '../components/ui/Button';
 import { GlassCard } from '../components/ui/GlassCard';
@@ -84,9 +84,9 @@ export default function Chapter() {
       const newProg = { ...user.progress };
       newProg[id].videosWatched.push(videoId);
       
-      const newSats = user.totalSats + 10; // +10 sats
+      const newSats = user.totalSats; // 0 sats for video
       updateUser(user.email, { progress: newProg, totalSats: newSats });
-      toast('+10 sats! Video completed. ⚡', 'success');
+      toast('Video completed! Pass the chapter quiz to stack 2 Sats! ⚡', 'success');
     }
   };
 
@@ -95,9 +95,9 @@ export default function Chapter() {
       const newProg = { ...user.progress };
       newProg[id].resourcesRead.push(resId);
       
-      const newSats = user.totalSats + 5; // +5 sats
+      const newSats = user.totalSats; // 0 sats for resource
       updateUser(user.email, { progress: newProg, totalSats: newSats });
-      toast('+5 sats! Resource reviewed. ⚡', 'success');
+      toast('Resource reviewed! Pass the chapter quiz to stack 2 Sats! ⚡', 'success');
     }
   };
 
@@ -132,18 +132,36 @@ export default function Chapter() {
     if (passed) {
       newProg[id].status = 'completed';
       newProg[id].completedDate = new Date().toISOString();
-      const satsToEarn = 100 + (isFirstAttempt ? 75 : 50); // chapter finish + quiz finish
+      const satsToEarn = 2; // Each chapter is worth exactly 2 sats
+      const activeSatsEarned = userProg.quizPassed ? 0 : satsToEarn;
+      
       updateUser(user.email, { 
         progress: newProg, 
-        totalSats: user.totalSats + (userProg.quizPassed ? 0 : satsToEarn),
+        totalSats: user.totalSats + activeSatsEarned,
         xp: user.xp + 100 + (isFirstAttempt ? 75 : 40)
       });
-      setQuizResult({ passed: true, score, satsEarned: userProg.quizPassed ? 0 : satsToEarn });
+      setQuizResult({ passed: true, score, satsEarned: activeSatsEarned });
+
+      // Trigger In-app Notification
+      addNotification(
+        user.email,
+        'Chapter Completed! 🎓',
+        `Mastery achieved! You scored ${score}% on the "${chapter.title}" quiz and stacked ${activeSatsEarned} Sats! Keep it up!`,
+        'success',
+        '/dashboard'
+      );
 
       // Celebrate!
       const totalChapters = Object.keys(getContent().chapters || {}).length;
       const completedChaptersCount = Object.values(newProg).filter((p: any) => p.status === 'completed').length;
       if (completedChaptersCount >= totalChapters && totalChapters > 0) {
+        addNotification(
+          user.email,
+          'Full Curriculum Completed! 🏆',
+          `Incredible work! You have mastered all ${totalChapters} chapters of the Bitcoin Diploma curriculum! Retrieve your Certificate.`,
+          'success',
+          '/certificate'
+        );
         triggerMilestoneConfetti();
       } else {
         triggerSuccessConfetti();
@@ -151,6 +169,15 @@ export default function Chapter() {
     } else {
       updateUser(user.email, { progress: newProg });
       setQuizResult({ passed: false, score, satsEarned: 0 });
+
+      // Trigger In-app Notification
+      addNotification(
+        user.email,
+        'Quiz Attempt Failed ❌',
+        `You got ${score}% on the "${chapter.title}" quiz. 70% is required to pass. Read the materials and review Satoshi companion recommendations before trying again!`,
+        'alert',
+        `/chapter/${chapter.id}`
+      );
     }
   };
 

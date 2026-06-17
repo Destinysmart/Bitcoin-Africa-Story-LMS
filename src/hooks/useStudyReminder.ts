@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { getCurrentUser, getContent } from '../lib/storage';
+import { getCurrentUser, getContent, addNotification } from '../lib/storage';
 
 export function useStudyReminder() {
   const reminderChecks = useRef<{ [timeStr: string]: boolean }>({});
@@ -10,8 +10,6 @@ export function useStudyReminder() {
       const user = getCurrentUser();
       
       if (!user || user.studyReminderEnabled !== true || !user.studyReminderTime) return;
-
-      if (Notification.permission !== 'granted') return;
 
       const now = new Date();
       const hours = now.getHours().toString().padStart(2, '0');
@@ -30,20 +28,40 @@ export function useStudyReminder() {
         const weeklyGoal = user.weeklyGoal || 3; // Default 3 chapters
         
         // Very basic simple check: if we haven't hit the goal this week...
-        // For prototype, we just measure completed chapters vs weekly goal
+        const left = weeklyGoal - completedChapters;
+        
         if (completedChapters < weeklyGoal) {
-          const notification = new Notification('Time to Study Bitcoin! ⚡', {
-            body: `You still have ${weeklyGoal - completedChapters} chapters to reach your weekly goal! Let's hit the books.`,
-            icon: '/vite.svg',
-            requireInteraction: true
-          });
-          
-          notification.onclick = function() {
-            window.focus();
-            this.close();
-          };
+          // Trigger in-app real-time notification in platform
+          addNotification(
+            user.email,
+            'Study Reminder! ⚡',
+            `You have completed ${completedChapters}/${weeklyGoal} chapters this week. You still have ${left} more to reach your goal! Let's build your Bitcoin knowledge.`,
+            'alert',
+            '/courses'
+          );
+
+          if (Notification.permission === 'granted') {
+            const notification = new Notification('Time to Study Bitcoin! ⚡', {
+              body: `You still have ${left} chapters to reach your weekly goal! Let's hit the books.`,
+              icon: '/vite.svg',
+              requireInteraction: true
+            });
+            notification.onclick = function() {
+              window.focus();
+              this.close();
+            };
+          }
         } else {
-            // Already met or exceeded goals, maybe a passive positive message instead?
+          // Trigger positive reinforcement in platform
+          addNotification(
+            user.email,
+            'Weekly Goal Met! 🏆',
+            `Fantastic! You have completed ${completedChapters} chapters against your goal of ${weeklyGoal}. You are a true Bitcoin Stacker!`,
+            'success',
+            '/dashboard'
+          );
+
+          if (Notification.permission === 'granted') {
             const notification = new Notification('Great Job! 🏆', {
                 body: `You've already met your weekly study goal. Keep the streak alive!`,
                 icon: '/vite.svg'
@@ -52,6 +70,7 @@ export function useStudyReminder() {
                 window.focus();
                 this.close();
             };
+          }
         }
       } else {
         // Reset check once time has advanced
@@ -62,3 +81,4 @@ export function useStudyReminder() {
     return () => clearInterval(interval);
   }, []);
 }
+

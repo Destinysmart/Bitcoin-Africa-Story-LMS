@@ -594,7 +594,7 @@ export default function AdminPanel() {
                           videos: [],
                           resources: [],
                           quiz: [],
-                          satsPossible: 100,
+                          satsPossible: 2,
                           estimatedMinutes: 30
                         });
                       }}>

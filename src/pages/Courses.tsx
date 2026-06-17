@@ -49,84 +49,15 @@ interface Course {
   syllabus: SyllabusItem[];
 }
 
-const ALL_COURSES: Course[] = [
-  {
-    id: 'course-lightning',
-    title: 'Lightning Node Operator',
-    description: 'Learn how to set up, secure, and manage your own Lightning node. Route payments and earn routing fees.',
-    longDescription: 'Operating a Lightning Node is the pinnacle of supporting the Bitcoin network\'s scaling layer. This specialty program teaches students the theory and practice of liquidity optimization, security, channel backup, and routing policies to maximize efficiency and earn routing fees.',
-    icon: Server,
-    color: 'text-blue-400',
-    bg: 'bg-blue-400/10',
-    tags: ['Advanced', 'Infrastructure'],
-    duration: '4 Weeks',
-    tag: 'Advanced',
-    estimatedMinutes: 240,
-    outcomes: [
-      "Assemble and configure dedicated node hardware or virtual private servers (VPS).",
-      "Manage channel liquidity (inbound, outbound, routing metrics) using advanced tools.",
-      "Set up dynamic fee schedules and routing algorithms to optimize node profitability.",
-      "Configure automated backups and static channel backups (SCB) for bulletproof recovery."
-    ],
-    syllabus: [
-      { title: "Node Setup & Hardware Choices", duration: "60 mins", desc: "Raspberry Pi setups vs virtual private servers, operating system choice, and chain synchronization." },
-      { title: "Lightning Softwares & Configurations", duration: "60 mins", desc: "Comparing node software client configurations and terminal shell setups." },
-      { title: "Liquidity Management", duration: "60 mins", desc: "Inbound and outbound liquidity, managing channel exhaustion, peer balancing, and loop mechanics." },
-      { title: "Routing Policies & Earnings", duration: "60 mins", desc: "Setting node routing fees, evaluating peer connectivity, and analyzing payment trails." },
-      { title: "Backups and Security Protocols", duration: "60 mins", desc: "Static Channel Backups (SCB), watchtower client creation, and emergency protocols." }
-    ]
-  },
-  {
-    id: 'course-markets',
-    title: 'Bitcoin in Emerging Markets',
-    description: 'Deep dive into how Bitcoin is being adopted for cross-border payments and inflation hedging across the global south.',
-    longDescription: 'Emerging economies face the highest hurdles in banking access, hyperinflation, and remittance friction. This course analyzes how grass-roots communities across Africa, Latin America, and Southeast Asia utilize Bitcoin daily to protect capital and bypass archaic banking walls.',
-    icon: Globe2,
-    color: 'text-emerald-400',
-    bg: 'bg-emerald-400/10',
-    tags: ['Economics', 'Intermediate'],
-    duration: '3 Weeks',
-    tag: 'Intermediate',
-    estimatedMinutes: 180,
-    outcomes: [
-      "Analyze fiat currency failures, capital controls, and hyperinflation history in developing countries.",
-      "Design low-friction, circular-economy Bitcoin adoption protocols for local merchants and circular communities.",
-      "Understand cross-border trade mechanics, liquidity pathways, and mobile money integration.",
-      "Identify legal and regulatory landscapes affecting community groups and P2P desks."
-    ],
-    syllabus: [
-      { title: "Hyperinflation & Currency Collapse", duration: "45 mins", desc: "Monetary failure history and how residents safeguard local purchasing power using hard digital assets." },
-      { title: "Remittance Corridors & Fees", duration: "45 mins", desc: "Bypassing high-fee remittance agency networks using automated Lightning rails." },
-      { title: "Micro-payments & Circular Economies", duration: "45 mins", desc: "Community-driven circular economies (like Bitcoin Ekasi) and local merchant onboarding." },
-      { title: "Financial Inclusion & Mobile Partnerships", duration: "45 mins", desc: "Interacting with local ecosystems and linking Bitcoin to mobile money systems (M-Pesa, Wave)." }
-    ]
-  },
-  {
-    id: 'course-script',
-    title: 'Mastering Bitcoin Script',
-    description: 'Explore the technical foundations of Bitcoin. Learn about UTXOs, sighashes, and basic smart contracts.',
-    longDescription: 'Unlock the code driving the Bitcoin protocol. This course explores the stack-based language Bitcoin Script, covering everything from simple single-key transactions to multi-signature contracts, relative time-locks, and advanced Taproot smart contracts.',
-    icon: BookOpen,
-    color: 'text-purple-400',
-    bg: 'bg-purple-400/10',
-    tags: ['Developer', 'Advanced'],
-    duration: '6 Weeks',
-    tag: 'Advanced',
-    estimatedMinutes: 300,
-    outcomes: [
-      "Read and write raw Bitcoin Script opcodes, interpreting how they execute on the virtual stack.",
-      "Construct custom multi-signature locks to enforce organizational custody rules.",
-      "Implement absolute and relative time-locks to delay and sequence outputs.",
-      "Leverage Schnorr signatures, MAST, and Taproot trees to optimize performance and privacy."
-    ],
-    syllabus: [
-      { title: "OpCodes and Stack Fundamentals", duration: "75 mins", desc: "Forth-like stack mechanics, arithmetic opcodes, and cryptography check verbs." },
-      { title: "Multi-Signature Contracts & P2SH", duration: "75 mins", desc: "Implementing multi-key authorization, redeem scripts, and the pay-to-script-hash standard." },
-      { title: "Time-Locks and Payment Channels", duration: "75 mins", desc: "Absolute time-locks, relative time-locks, and hashed timelock contracts (HTLC)." },
-      { title: "Taproot & Masters of Script", duration: "75 mins", desc: "Schnorr signatures, MAST, Pay-to-Taproot (P2TR), and contract privacy." }
-    ]
-  }
-];
+const ICON_MAP: Record<string, React.ComponentType<any>> = {
+  Server,
+  Globe2,
+  BookOpen,
+  Trophy,
+  Star,
+  Award,
+  GraduationCap
+};
 
 const DIPLOMA_COURSE_STATIC = {
   id: 'course-diploma',
@@ -154,8 +85,17 @@ export default function Courses() {
   const { toast } = useToast();
   
   const [user, setUser] = useState(() => getCurrentUser() || {});
-  const { chapters: rawChapters } = getContent();
+  const { chapters: rawChapters, courses: fetchedCourses = [] } = getContent();
   const chapters = Object.values(rawChapters || {}) as any[];
+
+  // Dynamically map dynamic database courses
+  const ALL_COURSES = useMemo(() => {
+    return fetchedCourses.map((c: any) => ({
+      ...c,
+      icon: typeof c.icon === 'string' ? (ICON_MAP[c.icon] || BookOpen) : (c.icon || BookOpen)
+    })) as Course[];
+  }, [fetchedCourses]);
+  
   
   const completedCount = chapters.filter((c: any) => user.progress?.[c.id]?.status === 'completed').length;
   const progressPercent = Math.round((completedCount / (chapters.length || 1)) * 100);
@@ -479,7 +419,7 @@ export default function Courses() {
         {filteredUpcomingCourses.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {filteredUpcomingCourses.map((course) => (
-              <GlassCard key={course.id} className="bg-black/40 border border-white/5 flex flex-col group relative overflow-hidden">
+              <GlassCard key={course.id} className="bg-brand-dark-2 border border-white/5 flex flex-col group relative overflow-hidden">
                  <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                  <div className="flex-1 relative z-10 pb-4">
                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-6 ${course.bg} ${course.color}`}>
@@ -726,7 +666,7 @@ export default function Courses() {
 
                 {/* Right Info pane / Enrollment Action */}
                 <div className="space-y-6">
-                  <GlassCard className="p-6 bg-white/[0.01] border-white/5 sticky top-6">
+                  <GlassCard className="p-6 bg-brand-dark-2 border-white/5 sticky top-6">
                     <h3 className="font-bold text-white text-base mb-4">Course Details</h3>
                     
                     <div className="space-y-4 text-sm mb-6">

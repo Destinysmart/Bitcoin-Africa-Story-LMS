@@ -19,34 +19,30 @@ GlassCard.displayName = 'GlassCard';
 
 export const Logo = ({ className }: { className?: string }) => (
   <div className={cn("flex items-center gap-3 select-none", className)}>
-    {/* SVG of Bitcoin Africa Story Icon (Tilted yellow rounded card with white B) */}
+    {/* SVG of Bitcoin Africa Story Icon (Upright yellow rounded card with white B) */}
     <div className="relative shrink-0 flex items-center justify-center">
-      <svg viewBox="0 0 100 130" className="w-[34px] h-[44.2px] drop-shadow-[0_0_12px_rgba(253,184,19,0.25)] transition-transform duration-300 hover:scale-110">
-        <g transform="rotate(14 50 65)">
-          {/* Yellow rounded rectangle representing logo background (tilted) */}
-          <rect x="20" y="10" width="60" height="110" rx="14" fill="#FDB813" />
-          
-          {/* Left vertical stem of the B */}
-          <rect x="32" y="30" width="8" height="70" fill="#ffffff" />
-          
-          {/* Top-left and bottom-left serifs */}
-          <rect x="25" y="30" width="8" height="8" fill="#ffffff" />
-          <rect x="25" y="92" width="8" height="8" fill="#ffffff" />
-          
-          {/* Double vertical stripes going from y=10 to y=120 */}
-          <rect x="40" y="10" width="6" height="110" fill="#ffffff" />
-          <rect x="50" y="10" width="6" height="110" fill="#ffffff" />
-          
-          {/* Outer upper loop */}
-          <path d="M50 30 h12 c7 0 13 7 13 17 s-6 17 -13 17 h-12 z" fill="#ffffff" />
-          {/* Inner upper loop cutout (colored yellow) */}
-          <path d="M50 38 h9 c3 0 5.5 3 5.5 9 s-2.5 9 -5.5 9 h-9 z" fill="#FDB813" />
-          
-          {/* Outer lower loop */}
-          <path d="M50 64 h14 c8 0 15 8 15 18 s-7 18 -15 18 h-14 z" fill="#ffffff" />
-          {/* Inner lower loop cutout (colored yellow) */}
-          <path d="M50 72 h10 c4 0 7.5 4 7.5 10 s-3.5 10 -7.5 10 h-10 z" fill="#FDB813" />
-        </g>
+      <svg viewBox="0 0 100 130" className="w-[34px] h-[44.2px] drop-shadow-[0_0_12px_rgba(253,184,19,0.35)] transition-transform duration-300 hover:scale-110">
+        {/* Yellow rounded rectangle representing logo background (perfectly vertical) */}
+        <rect x="18" y="10" width="64" height="110" rx="14" fill="#FDB813" />
+        
+        {/* Left vertical shape (Stripe 1) - runs from y=10 to y=120 */}
+        <rect x="31" y="10" width="7.5" height="110" fill="#ffffff" />
+        
+        {/* Right vertical prongs (Stripe 2) - only visible at top and bottom to make the hollow loops yellow */}
+        <rect x="44.5" y="10" width="7.5" height="20" fill="#ffffff" />
+        <rect x="44.5" y="100" width="7.5" height="20" fill="#ffffff" />
+        
+        {/* Letter 'B' Outer Loops */}
+        <path d="M 38.5,30 H 60 C 69,30 73,37 73,47.5 C 73,58 69,65 60,65 H 38.5 Z" fill="#ffffff" />
+        <path d="M 38.5,65 H 63 C 73,65 78,72 78,82.5 C 78,93 73,100 63,100 H 38.5 Z" fill="#ffffff" />
+        
+        {/* Left Serifs */}
+        <rect x="23" y="30" width="8" height="8" fill="#ffffff" />
+        <rect x="23" y="92" width="8" height="8" fill="#ffffff" />
+        
+        {/* Yellow Inner Cutouts of the 'B' Loops (to create the hollow effect) */}
+        <path d="M 38.5,38.5 H 52 C 57,38.5 59.5,41.5 59.5,47.5 C 59.5,53.5 57,56.5 52,56.5 H 38.5 Z" fill="#FDB813" />
+        <path d="M 38.5,73.5 H 54 C 59,73.5 62,76.5 62,82.5 C 62,88.5 59,91.5 54,91.5 H 38.5 Z" fill="#FDB813" />
       </svg>
     </div>
     

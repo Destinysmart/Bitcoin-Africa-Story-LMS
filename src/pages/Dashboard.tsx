@@ -75,15 +75,73 @@ export default function Dashboard() {
         
         {/* Main Welcome */}
         <GlassCard className="lg:col-span-2 relative overflow-hidden bg-gradient-to-br from-brand-dark-2 to-brand-dark-1/80 border-t-brand-gold/30">
-          <div className="absolute -right-10 -bottom-10 opacity-10">
-            <h1 className="text-9xl font-black text-brand-gold tracking-tighter">₿</h1>
+          
+          {/* Stunning Background Vector Map */}
+          <div className="absolute right-40 top-0 bottom-0 w-[240px] opacity-35 md:opacity-[0.45] pointer-events-none select-none hidden sm:flex items-center justify-center mix-blend-screen z-0">
+            <svg viewBox="0 0 120 130" className="w-full h-full text-brand-gold" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="africaGradient" x1="50" y1="15" x2="55" y2="110" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stopColor="#FDB813" stopOpacity="0.03" />
+                  <stop offset="100%" stopColor="#FDB813" stopOpacity="0.22" />
+                </linearGradient>
+                <radialGradient id="glow" cx="60" cy="65" r="45" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stopColor="#FDB813" stopOpacity="0.45" />
+                  <stop offset="100%" stopColor="#FDB813" stopOpacity="0" />
+                </radialGradient>
+              </defs>
+
+              {/* Ambient Radial Glow */}
+              <circle cx="60" cy="65" r="45" fill="url(#glow)" className="animate-pulse" style={{ animationDuration: '4s' }} />
+
+              {/* Polygonal Africa Contour */}
+              <path 
+                d="M 50,15 L 75,20 L 73,30 L 80,42 L 91,52 L 78,65 L 68,85 L 55,110 L 48,110 L 45,95 L 42,72 L 35,68 L 38,65 L 25,58 L 15,42 L 25,28 L 36,25 Z" 
+                fill="url(#africaGradient)"
+                stroke="#FDB813" 
+                strokeWidth="1.5" 
+                strokeOpacity="0.5"
+                strokeDasharray="4 2"
+              />
+
+              {/* Lightning Network Channels (Connection Lines) */}
+              <g stroke="#FDB813" strokeWidth="0.75" strokeOpacity="0.6">
+                <line x1="16" y1="42" x2="32" y2="64" />
+                <line x1="32" y1="64" x2="38" y2="65" />
+                <line x1="70" y1="22" x2="75" y2="63" />
+                <line x1="38" y1="65" x2="70" y2="22" />
+                <line x1="38" y1="65" x2="75" y2="63" />
+                <line x1="38" y1="65" x2="58" y2="98" />
+                <line x1="75" y1="63" x2="62" y2="88" />
+                <line x1="62" y1="88" x2="58" y2="98" />
+                <line x1="75" y1="63" x2="58" y2="98" />
+              </g>
+
+              {/* Glowing Nodes / Hubs */}
+              <g fill="#FDB813">
+                <circle cx="70" cy="22" r="1.5" />
+                <circle cx="16" cy="42" r="1.5" />
+                <circle cx="32" cy="64" r="1.5" />
+                <circle cx="38" cy="65" r="2" fill="#ffffff" />
+                <circle cx="75" cy="63" r="2" fill="#ffffff" />
+                <circle cx="62" cy="88" r="1.5" />
+                <circle cx="58" cy="98" r="2" />
+              </g>
+
+              {/* Golden Bitcoin Sun in upper-right corner radiating energy */}
+              <g transform="translate(92, 28) scale(0.9)">
+                <circle cx="0" cy="0" r="14" fill="#1c1e29" stroke="#FDB813" strokeWidth="1.5" />
+                <circle cx="0" cy="0" r="10" fill="#FDB813" />
+                <text x="-5" y="4.5" fill="#1c1e29" fontSize="13" fontWeight="bold" fontFamily="system-ui">₿</text>
+              </g>
+            </svg>
           </div>
+
           <div className="relative z-10 flex flex-col md:flex-row gap-8 items-center md:items-start justify-between">
             <div className="flex-1 text-center md:text-left">
-              <h1 className="text-3xl md:text-4xl font-bold mb-2">
+              <h1 className="text-xl md:text-2xl font-bold tracking-tight mb-2 text-white">
                 Welcome back, {user.name.split(' ')[0]} <span className="text-brand-gold">₿</span>
               </h1>
-              <p className="text-gray-400 mb-6 max-w-md">Continue your Bitcoin journey. You're doing great, keep stacking those sats!</p>
+              <p className="text-gray-400 mb-6 text-sm max-w-md">Continue your Bitcoin journey. You're doing great, keep stacking those sats!</p>
               
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-2">
                 <div className="flex items-center gap-2 bg-brand-dark-2 px-4 py-2 rounded-lg border border-white/5">
@@ -106,6 +164,31 @@ export default function Dashboard() {
             </div>
           </div>
         </GlassCard>
+
+        {/* Certificate Alert Banner */}
+        {completedChapters >= chapters.length && chapters.length > 0 && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="md:col-span-2 lg:col-span-3 bg-gradient-to-r from-brand-gold/15 via-brand-gold/5 to-brand-gold/15 border border-brand-gold/30 rounded-2xl p-5 gold-glow flex flex-col md:flex-row items-center justify-between gap-4"
+          >
+            <div className="flex items-center gap-3.5 text-center md:text-left flex-col md:flex-row">
+              <div className="w-12 h-12 bg-brand-gold text-brand-black rounded-full flex items-center justify-center shrink-0 shadow-[0_0_12px_rgba(253,184,19,0.3)]">
+                <Trophy size={24} className="animate-bounce" />
+              </div>
+              <div>
+                <h3 className="font-extrabold text-white text-base tracking-tight">You've Completed the Bitcoin Diploma Program!</h3>
+                <p className="text-xs text-gray-400 mt-0.5 leading-relaxed">Claim your official verified certificate, share your success on social media, and withdraw your {user.totalSats || 0} SATS reward!</p>
+              </div>
+            </div>
+            <Button 
+              onClick={() => navigate('/certificate')}
+              className="bg-brand-gold text-brand-black hover:bg-brand-gold/90 font-bold shrink-0 shadow-lg px-6 py-2 h-10 text-xs"
+            >
+              Claim Certificate & Sats →
+            </Button>
+          </motion.div>
+        )}
 
         {/* Stats Grid Widget */}
         <GlassCard className="bg-gradient-to-br from-brand-dark-2/40 to-brand-dark-1/80 border border-white/5 p-6 flex flex-col justify-between h-full relative overflow-hidden group">
@@ -314,9 +397,10 @@ export default function Dashboard() {
                 className={`
                   p-6 rounded-2xl border relative overflow-hidden transition-all duration-300 flex flex-col shadow-lg
                   ${isClickable ? 'cursor-pointer hover:shadow-[0_8px_32px_rgba(253,184,19,0.06)] hover:border-brand-gold/30' : 'opacity-60 cursor-not-allowed'}
-                  ${status === 'completed' ? 'bg-status-success/[0.02] border-status-success/15' : 
-                    status === 'in_progress' ? 'bg-brand-gold/[0.03] border-brand-gold/25 gold-glow' : 
-                    'bg-white/[0.01] border-white/[0.04]'}
+                  bg-brand-dark-2
+                  ${status === 'completed' ? 'border-status-success/30' : 
+                    status === 'in_progress' ? 'border-brand-gold/40 gold-glow' : 
+                    'border-white/5'}
                 `}
               >
                 {/* Header Row */}
@@ -339,7 +423,7 @@ export default function Dashboard() {
                   </div>
                   <div className="flex items-center gap-1 text-brand-gold bg-brand-gold/10 px-2.5 py-1 rounded-full border border-brand-gold/20">
                     <Zap size={10} className="fill-brand-gold" />
-                    <span>{chapter.satsPossible || 165}</span>
+                    <span>{chapter.satsPossible || 2}</span>
                   </div>
                 </div>
               </motion.div>
