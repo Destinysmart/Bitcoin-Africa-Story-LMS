@@ -4,6 +4,7 @@ import { GlassCard } from '../components/ui/GlassCard';
 import { getUsers, getCurrentUser } from '../lib/storage';
 import { Trophy, Zap, CheckCircle2 } from 'lucide-react';
 import leaderboardBanner from '../assets/images/leaderboard_banner_1781653328086.jpg';
+import SEO from '../components/ui/SEO';
 
 export default function Leaderboard() {
   const [activeTab, setActiveTab] = useState<'xp' | 'sats' | 'completion'>('xp');
@@ -55,6 +56,11 @@ export default function Leaderboard() {
 
   return (
     <div className="p-4 md:p-8 max-w-4xl mx-auto pb-24 md:pb-8 flex flex-col gap-6">
+      <SEO 
+        title="Leaderboard & Hall of Fame"
+        description="Review student rankings on our Bitcoin Education Platform. Earn experience points (XP) and Satoshis as you complete the interactive hands-on Bitcoin Diploma chapters."
+        keywords="Bitcoin Leaderboard, Student Rankings, Bitcoin Diploma Hall of Fame, Africa Bitcoin Cohort, Satoshi Rewards Leaderboard"
+      />
       
       {/* Hero */}
       <GlassCard className="relative overflow-hidden bg-brand-dark-2 p-6 md:p-8">

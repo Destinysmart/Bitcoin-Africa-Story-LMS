@@ -6,6 +6,7 @@ import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { getCurrentUser, updateUser, getContent } from '../lib/storage';
 import { useToast } from '../contexts/ToastContext';
+import SEO from '../components/ui/SEO';
 import { Camera, Edit2, Zap, Flame, Trophy, CheckCircle2, Circle, User, BookOpen, GraduationCap, Brain, Globe, Rocket, Sprout } from 'lucide-react';
 
 const PRESET_AVATARS = [
@@ -100,6 +101,11 @@ export default function Profile() {
 
   return (
     <div className="p-4 md:p-8 max-w-5xl mx-auto pb-24 md:pb-8 flex flex-col gap-6">
+      <SEO 
+        title={activeTab === 'settings' ? "Account Settings" : "My Student Profile"}
+        description="Check your interactive chapters progress, check earned knowledge badges, set up lightning payment nodes, and personalize your digital profile on the Bitcoin Education Platform."
+        keywords="Bitcoin Education Profile, Lesson Badges, Lightning Network Settings, Personalize Profile, Student Mastery Tracker"
+      />
       
       {/* Hidden File Input */}
       <input 

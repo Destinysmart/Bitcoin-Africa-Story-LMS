@@ -1,0 +1,15 @@
+# Host
+Host: https://bitcoin-education.platform
+
+# Robot Rules for Bitcoin Education Platform
+User-agent: *
+Allow: /
+Allow: /courses
+Allow: /leaderboard
+Disallow: /admin
+Disallow: /instructor
+Disallow: /forgot-password
+Disallow: /onboarding
+
+# Sitemap Reference
+Sitemap: https://bitcoin-education.platform/sitemap.xml

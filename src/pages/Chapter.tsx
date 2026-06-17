@@ -10,6 +10,7 @@ import { VideoEmbedder } from '../components/ui/VideoEmbedder';
 import { CourseCompanion } from '../components/ui/CourseCompanion';
 import { CheckCircle2, PlayCircle, Lock, Zap, ArrowLeft, ExternalLink, FileText, FileDown, Headphones, Trophy, Twitter, Linkedin, Share2, MessageSquare, Send } from 'lucide-react';
 import { triggerSuccessConfetti, triggerMilestoneConfetti } from '../lib/confetti';
+import SEO from '../components/ui/SEO';
 
 export default function Chapter() {
   const { id } = useParams<{ id: string }>();
@@ -266,6 +267,11 @@ export default function Chapter() {
     
     return (
       <div className="fixed inset-0 z-50 bg-brand-black flex flex-col p-4 md:p-8">
+        <SEO 
+          title={`Quiz: ${chapter.title}`}
+          description={`Take the interactive knowledge assessment on ${chapter.title} to demonstrate learning mastery and unlock real satoshi rewards!`}
+          keywords={`Bitcoin Quiz, Bitcoin Chapter ${id} Quiz, Bitcoin Diploma Questions, proof of work test`}
+        />
         <header className="flex justify-between items-center mb-8">
           <span className="text-gray-400 font-medium">Question {currentQuestion + 1} of {questions.length}</span>
           <button className="text-gray-500 hover:text-white" onClick={() => setQuizMode(false)}>Exit Quiz</button>
@@ -319,6 +325,11 @@ export default function Chapter() {
 
   return (
     <div className="flex-1 flex flex-col bg-brand-black min-h-full">
+      <SEO 
+        title={chapter.title}
+        description={chapter.description || "Master decentralized proof-of-work consensus mechanism, digital signatures, and decentralized custody procedures in this specialized Bitcoin Diploma program study chapter."}
+        keywords={`Bitcoin ${chapter.title}, Bitcoin Chapter ${id}, Learn Cryptography, Satoshi Nakamoto Philosophy, Educational Bitcoin Diploma`}
+      />
       {/* Hero */}
       <div className="bg-brand-dark-2 border-b border-white/5 pt-8 pb-12 px-6 lg:px-12 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-gold/5 blur-[120px] pointer-events-none rounded-full" />

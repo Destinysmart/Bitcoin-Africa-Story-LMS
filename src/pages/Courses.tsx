@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
 import { GlassCard } from '../components/ui/GlassCard';
 import { Button } from '../components/ui/Button';
+import SEO from '../components/ui/SEO';
 import { 
   BookOpen, 
   PlayCircle, 
@@ -303,6 +304,11 @@ export default function Courses() {
 
   return (
     <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8 pb-24 md:pb-8">
+      <SEO 
+        title="My Courses & Learning Dashboard"
+        description="Explore the complete Bitcoin Diploma curriculum, master sound money, digital scarcity, standard proof-of-work mining systems, and self-custory procedures."
+        keywords="Bitcoin Courses, Learning Bitcoin, Sound Money Curriculum, Bitcoin Diploma Chapters, Blockchain Mechanics, Multisig Custody"
+      />
       <div>
         <h1 className="text-3xl font-bold mb-2">My Courses</h1>
         <p className="text-gray-400">Manage your learning journey, preview advanced materials, and explore specialty pathways.</p>

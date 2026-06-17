@@ -4,6 +4,7 @@ import { motion } from 'motion/react';
 import { Button } from '../components/ui/Button';
 import { Logo } from '../components/ui/GlassCard';
 import { getCurrentUser } from '../lib/storage';
+import SEO from '../components/ui/SEO';
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -21,6 +22,12 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden">
+      <SEO 
+        title="Master Bitcoin & Sound Money"
+        description="An interactive self-paced educational platform based on the Bitcoin Diploma curriculum. Learn cryptography, decentralized proof-of-work protocols, and master self-custody while tracking your course progress."
+        keywords="Bitcoin Diploma, Sound Money, Cryptography, Self-Custody, Financial Literacy, African Bitcoin Story, Learn Blockchain, Sats Rewards"
+      />
+      
       {/* Background aesthetic */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-brand-gold/10 opacity-30 blur-[100px] pointer-events-none" />
       
