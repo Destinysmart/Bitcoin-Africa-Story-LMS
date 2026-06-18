@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { getCurrentUser, setCurrentUser, getNotifications, markNotificationAsRead, clearAllNotifications, AppNotification } from '../../lib/storage';
+import { getCurrentUser, setCurrentUser, getNotifications, markNotificationAsRead, clearAllNotifications, AppNotification, getContent } from '../../lib/storage';
 import { Logo } from '../ui/GlassCard';
-import { Home, BookOpen, User, Trophy, Settings, ShieldCheck, LogOut, Search, Bell, Moon, Sun, Menu, X, Check, Trash2, ShieldAlert, BadgeInfo, Users } from 'lucide-react';
+import { Home, BookOpen, User, Trophy, Settings, ShieldCheck, LogOut, Search, Bell, Moon, Sun, Menu, X, Check, Trash2, ShieldAlert, BadgeInfo, Users, Mic, MicOff, Volume2 } from 'lucide-react';
 
 import { useToast } from '../../contexts/ToastContext';
 import { useTheme } from '../../contexts/ThemeContext';
@@ -18,6 +18,274 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const [isOpenNotifications, setIsOpenNotifications] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showMobileSearch, setShowMobileSearch] = useState(false);
+
+  // Voice Interaction States
+  const [isVoiceListening, setIsVoiceListening] = useState(false);
+  const [voiceTranscript, setVoiceTranscript] = useState('');
+  const [voiceFeedback, setVoiceFeedback] = useState('Say "Go to Dashboard" or "Go to Chapter 3"...');
+  const [showVoiceAssist, setShowVoiceAssist] = useState(false);
+  const [recognitionInstance, setRecognitionInstance] = useState<any>(null);
+
+  // Text-To-Speech audio feedback trigger
+  const speakConf = (text: string) => {
+    if ('speechSynthesis' in window) {
+      try {
+        window.speechSynthesis.cancel(); // Stop any legacy speech
+        const utterance = new SpeechSynthesisUtterance(text);
+        const voices = window.speechSynthesis.getVoices();
+        const enVoice = voices.find(v => v.lang.startsWith('en'));
+        if (enVoice) utterance.voice = enVoice;
+        utterance.rate = 1.05;
+        utterance.pitch = 1.0;
+        window.speechSynthesis.speak(utterance);
+      } catch (err) {
+        console.warn("Speech synthesis rejected:", err);
+      }
+    }
+  };
+
+  const handleSpeechCommand = (rawText: string) => {
+    const text = rawText.toLowerCase().trim();
+    setVoiceFeedback(`Checking: "${rawText}"`);
+
+    const wordToNumber = (str: string): number | null => {
+      if (str.includes('1') || str.includes('one')) return 1;
+      if (str.includes('2') || str.includes('two')) return 2;
+      if (str.includes('3') || str.includes('three')) return 3;
+      if (str.includes('4') || str.includes('four')) return 4;
+      if (str.includes('5') || str.includes('five')) return 5;
+      if (str.includes('6') || str.includes('six')) return 6;
+      if (str.includes('7') || str.includes('seven')) return 7;
+      if (str.includes('8') || str.includes('eight')) return 8;
+      if (str.includes('9') || str.includes('nine')) return 9;
+      if (str.includes('10') || str.includes('ten')) return 10;
+      return null;
+    };
+
+    if (text.includes('dashboard') || text.includes('home') || text.includes('main screen')) {
+      const msg = 'Navigating to Dashboard';
+      setVoiceFeedback('🎯 ' + msg);
+      speakConf(msg);
+      setTimeout(() => {
+        navigate('/');
+        setShowVoiceAssist(false);
+      }, 1000);
+      return;
+    }
+
+    if (text.includes('leaderboard') || text.includes('ranking') || text.includes('rankings') || text.includes('trophy') || text.includes('top student')) {
+      const msg = 'Navigating to Leaderboard';
+      setVoiceFeedback('🏆 ' + msg);
+      speakConf(msg);
+      setTimeout(() => {
+        navigate('/leaderboard');
+        setShowVoiceAssist(false);
+      }, 1000);
+      return;
+    }
+
+    if (text.includes('course') || text.includes('elective') || text.includes('electives') || text.includes('classes')) {
+      const msg = 'Navigating to Specialty Courses';
+      setVoiceFeedback('📚 ' + msg);
+      speakConf(msg);
+      setTimeout(() => {
+        navigate('/courses');
+        setShowVoiceAssist(false);
+      }, 1000);
+      return;
+    }
+
+    if (text.includes('profile') || text.includes('settings') || text.includes('my stats')) {
+      const msg = 'Navigating to Profile';
+      setVoiceFeedback('👤 ' + msg);
+      speakConf(msg);
+      setTimeout(() => {
+        navigate('/profile');
+        setShowVoiceAssist(false);
+      }, 1000);
+      return;
+    }
+
+    if (text.includes('admin') || text.includes('system admin') || text.includes('admin panel')) {
+      const msg = 'Navigating to Admin Panel';
+      setVoiceFeedback('⚙️ ' + msg);
+      speakConf(msg);
+      setTimeout(() => {
+        navigate('/admin');
+        setShowVoiceAssist(false);
+      }, 1000);
+      return;
+    }
+
+    if (text.includes('instructor') || text.includes('teacher') || text.includes('instructor dashboard')) {
+      const msg = 'Navigating to Instructor Dashboard';
+      setVoiceFeedback('👨‍🏫 ' + msg);
+      speakConf(msg);
+      setTimeout(() => {
+        navigate('/instructor');
+        setShowVoiceAssist(false);
+      }, 1000);
+      return;
+    }
+
+    if (text.includes('chapter') || text.includes('module') || text.includes('lesson')) {
+      const chapNum = wordToNumber(text);
+      if (chapNum) {
+        const msg = `Navigating to Chapter ${chapNum}`;
+        setVoiceFeedback(`📖 ${msg}`);
+        speakConf(msg);
+        setTimeout(() => {
+          navigate(`/chapter/${chapNum}`);
+          setShowVoiceAssist(false);
+        }, 1000);
+        return;
+      }
+    }
+
+    if (text.startsWith('search') || text.startsWith('find') || text.startsWith('lookup')) {
+      const queryMatch = rawText.match(/(?:search|find|lookup)\s+(.+)/i);
+      if (queryMatch && queryMatch[1]) {
+        const queryTerm = queryMatch[1].trim();
+        const msg = `Searching for ${queryTerm}`;
+        setVoiceFeedback(`🔍 ${msg}`);
+        speakConf(msg);
+        setSearchQuery(queryTerm);
+        setShowMobileSearch(true);
+        setTimeout(() => {
+          setShowVoiceAssist(false);
+        }, 1500);
+        return;
+      }
+    }
+
+    setVoiceFeedback(`Unrecognized command. Doing fuzzy match: "${rawText}"`);
+    setSearchQuery(rawText);
+    setShowMobileSearch(true);
+    speakConf(`Fuzzy searching indices for ${rawText}`);
+    setTimeout(() => {
+      setShowVoiceAssist(false);
+    }, 2000);
+  };
+
+  const toggleVoiceControl = () => {
+    const SpeechRecognitionClass = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognitionClass) {
+      toast("Voice control not supported on this browser. Try Chrome/Edge.", "error");
+      return;
+    }
+
+    if (isVoiceListening) {
+      if (recognitionInstance) {
+        try {
+          recognitionInstance.stop();
+        } catch (e) {}
+      }
+      setIsVoiceListening(false);
+      setShowVoiceAssist(false);
+      return;
+    }
+
+    setVoiceTranscript('');
+    setVoiceFeedback('Awaiting command...');
+    setShowVoiceAssist(true);
+    setIsVoiceListening(true);
+
+    const rec = new SpeechRecognitionClass();
+    rec.continuous = false;
+    rec.interimResults = false;
+    rec.lang = 'en-US';
+
+    rec.onstart = () => {
+      setIsVoiceListening(true);
+      setVoiceFeedback('Listening... Say "Go to Chapter 3" or "Search wallet"');
+    };
+
+    rec.onresult = (event: any) => {
+      const resultText = event.results[0][0].transcript;
+      setVoiceTranscript(resultText);
+      handleSpeechCommand(resultText);
+    };
+
+    rec.onerror = (event: any) => {
+      console.error('Speech recognition error', event);
+      if (event.error === 'not-allowed') {
+        setVoiceFeedback('Microphone permission blocked. Please allow access.');
+      } else {
+        setVoiceFeedback(`Recognition error: ${event.error}`);
+      }
+      setIsVoiceListening(false);
+      setTimeout(() => setShowVoiceAssist(false), 3000);
+    };
+
+    rec.onend = () => {
+      setIsVoiceListening(false);
+    };
+
+    try {
+      rec.start();
+    } catch (e) {
+      console.warn("Starting recognition failed:", e);
+    }
+    setRecognitionInstance(rec);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (recognitionInstance) {
+        try {
+          recognitionInstance.stop();
+        } catch(e) {}
+      }
+    };
+  }, [recognitionInstance]);
+
+  // Dynamic contents for search lookup
+  const searchResultsList = useMemo(() => {
+    if (!searchQuery.trim()) return [];
+    const query = searchQuery.toLowerCase();
+    const content = getContent();
+    const allChapters = Object.values(content.chapters || {}) as any[];
+    const allCourses = content.courses || [];
+    const matches: any[] = [];
+
+    // Search Course Chapters
+    allChapters.forEach((ch) => {
+      if (
+        ch.title?.toLowerCase().includes(query) ||
+        ch.description?.toLowerCase().includes(query)
+      ) {
+        matches.push({
+          id: ch.id,
+          title: ch.title,
+          description: ch.description,
+          type: 'chapter',
+          category: 'Diploma Chapter',
+          path: `/chapter/${ch.id}`
+        });
+      }
+    });
+
+    // Search Specialty Courses
+    allCourses.forEach((c: any) => {
+      if (
+        c.title?.toLowerCase().includes(query) ||
+        c.description?.toLowerCase().includes(query)
+      ) {
+        matches.push({
+          id: c.id,
+          title: c.title,
+          description: c.description,
+          type: 'course',
+          category: 'Elective Course',
+          path: `/courses`
+        });
+      }
+    });
+
+    return matches;
+  }, [searchQuery]);
 
   const refreshNotifications = useCallback(() => {
     if (user?.email) {
@@ -339,10 +607,23 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <Logo className="scale-90 origin-left" />
         </div>
         <div className="flex items-center gap-3">
-          <button onClick={toggleTheme} className="text-gray-400 hover:text-white p-1.5 rounded-lg">
-            {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+          <button 
+            onClick={() => setShowMobileSearch(!showMobileSearch)} 
+            className={`p-1.5 rounded-lg transition-colors ${showMobileSearch ? 'text-brand-gold bg-white/5' : 'text-gray-400 hover:text-white'}`}
+            title="Search"
+          >
+            <Search size={20} />
+          </button>
+
+          <button 
+            onClick={toggleVoiceControl} 
+            className={`p-1.5 rounded-lg transition-colors flex items-center justify-center ${isVoiceListening ? 'text-red-500 bg-red-500/10 animate-pulse' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+            title="Voice Commands Navigation"
+          >
+            <Mic size={20} className={isVoiceListening ? 'text-red-500 animate-bounce' : ''} />
           </button>
           
+
           <div className="relative">
             <button 
               onClick={() => setIsOpenNotifications(!isOpenNotifications)}
@@ -368,14 +649,139 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
+      {/* Mobile/Tablet expandable inline search bar */}
+      <AnimatePresence>
+        {showMobileSearch && (
+          <motion.div 
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="lg:hidden bg-brand-dark-2 border-b border-white/5 px-4 py-2 relative z-15"
+          >
+            <div className="flex items-center gap-3 text-gray-400 bg-brand-black px-3.5 py-1.5 rounded-xl border border-white/5 w-full focus-within:border-brand-gold/50 focus-within:text-white transition-colors relative">
+              <Search size={15} />
+              <input 
+                type="text" 
+                placeholder="Search course or chapter..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="bg-transparent border-none outline-none w-full text-xs" 
+              />
+              {searchQuery && (
+                <button onClick={() => setSearchQuery('')} className="text-gray-500 hover:text-white">
+                  <X size={13} />
+                </button>
+              )}
+            </div>
+
+            {/* Mobile results render dropdown */}
+            {searchQuery && (
+              <div 
+                className="mt-2 bg-brand-dark-1 border border-white/10 rounded-xl shadow-xl overflow-hidden max-h-64 overflow-y-auto divide-y divide-white/5 text-left mb-2"
+              >
+                {searchResultsList.length === 0 ? (
+                  <div className="p-3 text-center text-xs text-gray-500 font-medium">
+                    No matching chapters or courses found.
+                  </div>
+                ) : (
+                  searchResultsList.map((res) => (
+                    <button
+                      key={'mob-' + res.type + '-' + res.id}
+                      onClick={() => {
+                        navigate(res.path);
+                        setSearchQuery('');
+                        setShowMobileSearch(false);
+                      }}
+                      className="w-full p-3 text-left text-xs transition-colors hover:bg-white/[0.02] block"
+                    >
+                      <div className="flex items-center justify-between gap-2 mb-0.5">
+                        <span className={`text-[8px] px-1.5 py-0.5 rounded font-extrabold uppercase ${
+                          res.type === 'chapter' ? 'bg-brand-gold/10 text-brand-gold' : 'bg-status-success/15 text-status-success'
+                        }`}>
+                          {res.category}
+                        </span>
+                      </div>
+                      <h4 className="font-bold text-white text-[11px] mb-0.5 leading-snug">{res.title}</h4>
+                      <p className="text-gray-400 text-[10px] line-clamp-1 leading-normal">{res.description}</p>
+                    </button>
+                  ))
+                )}
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <main className="flex-1 flex flex-col min-h-0 z-10 w-full overflow-y-auto">
         {/* Desktop Header Top Bar (Displayed on screens >= 1024px) */}
         <header className="hidden lg:flex items-center justify-between px-8 py-4 border-b border-white/5 bg-transparent">
-          <div className="flex items-center gap-4 text-gray-400 bg-brand-dark-2 px-4 py-2 rounded-full border border-white/5 w-64 focus-within:border-brand-gold/50 focus-within:text-white transition-colors">
-            <Search size={16} />
-            <input type="text" placeholder="Search course..." className="bg-transparent border-none outline-none w-full text-sm" />
+          <div className="relative">
+            <div className="flex items-center gap-4 text-gray-400 bg-brand-dark-2 px-4 py-2 rounded-full border border-white/5 w-64 focus-within:border-brand-gold/50 focus-within:text-white transition-colors">
+              <Search size={16} />
+              <input 
+                type="text" 
+                placeholder="Search chapters & electives..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="bg-transparent border-none outline-none w-full text-sm" 
+              />
+              {searchQuery && (
+                <button onClick={() => setSearchQuery('')} className="text-gray-500 hover:text-white" title="Clear">
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
+            {/* Absolute Dropdown holding interactive results */}
+            <AnimatePresence>
+              {searchQuery && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  className="absolute left-0 top-full mt-2 w-80 bg-brand-dark-1 border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 text-white max-h-80 overflow-y-auto divide-y divide-white/5 gold-glow text-left"
+                >
+                  {searchResultsList.length === 0 ? (
+                    <div className="p-4 text-center text-xs text-gray-500 font-medium">
+                      No matching chapters or courses found.
+                    </div>
+                  ) : (
+                    searchResultsList.map((res) => (
+                      <button
+                        key={res.type + '-' + res.id}
+                        onClick={() => {
+                          navigate(res.path);
+                          setSearchQuery('');
+                        }}
+                        className="w-full p-3.5 text-left text-xs transition-colors hover:bg-white/[0.03] block group"
+                      >
+                        <div className="flex items-center justify-between gap-2 mb-1">
+                          <span className={`text-[9px] px-1.5 py-0.5 rounded font-extrabold uppercase ${
+                            res.type === 'chapter' ? 'bg-brand-gold/10 text-brand-gold' : 'bg-status-success/15 text-status-success'
+                          }`}>
+                            {res.category}
+                          </span>
+                          <span className="text-[10px] text-gray-500 group-hover:text-brand-gold transition-colors font-semibold">Jump to →</span>
+                        </div>
+                        <h4 className="font-bold text-white mb-0.5 leading-snug">{res.title}</h4>
+                        <p className="text-gray-400 text-[10px] line-clamp-2 leading-relaxed">{res.description}</p>
+                      </button>
+                    ))
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
           <div className="flex items-center gap-6">
+            <button 
+              onClick={toggleVoiceControl} 
+              className={`p-1.5 rounded-xl transition-colors flex items-center justify-center ${
+                isVoiceListening ? 'text-red-500 bg-red-500/10 animate-pulse border border-red-500/25' : 'text-gray-400 hover:text-white hover:bg-white/5 animate-none'
+              }`}
+              title="Voice Navigation (Say 'Go to Chapter 3' or 'Search UTXO')"
+            >
+              <Mic size={20} className={isVoiceListening ? 'text-red-500 animate-bounce' : ''} />
+            </button>
             <div className="relative">
               <button 
                 onClick={() => setIsOpenNotifications(!isOpenNotifications)}
@@ -442,6 +848,68 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           </NavLink>
         ))}
       </nav>
+
+      {/* Dynamic Floating Voice Control Companion */}
+      <AnimatePresence>
+        {showVoiceAssist && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95, y: 30 }}
+            className="fixed bottom-24 md:bottom-8 left-1/2 -translate-x-1/2 z-[9999] bg-brand-dark-2/95 border border-white/15 p-4 rounded-2xl shadow-2xl backdrop-blur-xl w-[320px] md:w-[420px] flex flex-col gap-3 text-white gold-glow text-left"
+          >
+            <div className="flex items-center justify-between border-b border-white/5 pb-2">
+              <div className="flex items-center gap-2">
+                <div className={`p-1.5 rounded-full ${isVoiceListening ? 'bg-red-500/20 text-red-500 animate-pulse' : 'bg-gray-500/20 text-gray-400'}`}>
+                  <Mic size={15} />
+                </div>
+                <span className="text-xs font-bold uppercase tracking-widest text-brand-gold">Voice Navigation Companion</span>
+              </div>
+              <button 
+                onClick={() => {
+                  if (recognitionInstance) {
+                    try {
+                      recognitionInstance.stop();
+                    } catch(e) {}
+                  }
+                  setIsVoiceListening(false);
+                  setShowVoiceAssist(false);
+                }} 
+                className="text-gray-400 hover:text-white p-1 rounded-full hover:bg-white/5 transition-colors"
+              >
+                <X size={14} />
+              </button>
+            </div>
+
+            <div className="flex flex-col gap-1 text-center py-1">
+              <p className="text-[10px] text-gray-400 font-mono tracking-wide mb-1 transition-all">{voiceFeedback}</p>
+              {voiceTranscript && (
+                <p className="text-sm font-semibold text-brand-gold italic mt-1 bg-black/40 p-2.5 rounded-xl border border-white/5 shadow-inner">
+                  "{voiceTranscript}"
+                </p>
+              )}
+            </div>
+
+            <div className="border-t border-white/5 pt-2 flex flex-col gap-1.5">
+              <span className="text-[9px] font-bold uppercase text-gray-500 tracking-wider">Useful commands to try:</span>
+              <div className="grid grid-cols-2 gap-1.5 text-[10px] text-gray-400">
+                <div className="flex items-center gap-1 bg-white/[0.01] p-1.5 rounded-lg border border-white/5">
+                  <span className="text-brand-gold font-bold">🎯</span> "Go to Dashboard"
+                </div>
+                <div className="flex items-center gap-1 bg-white/[0.01] p-1.5 rounded-lg border border-white/5">
+                  <span className="text-brand-gold font-bold">📖</span> "Go to Chapter 3"
+                </div>
+                <div className="flex items-center gap-1 bg-white/[0.01] p-1.5 rounded-lg border border-white/5">
+                  <span className="text-brand-gold font-bold">🏆</span> "Go to Leaderboard"
+                </div>
+                <div className="flex items-center gap-1 bg-white/[0.01] p-1.5 rounded-lg border border-white/5">
+                  <span className="text-brand-gold font-bold">🔍</span> "Search Lightning"
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

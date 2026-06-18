@@ -18,6 +18,24 @@ export function CourseCompanion({ chapterTitle, chapterDescription }: CourseComp
   // but as per current app setup, admins input it, or it sits in localstorage as demo.
   const apiKey = localStorage.getItem('anthropic_api_key') || '';
 
+  const getOfflineCompanionResponse = (q: string): string => {
+    const query = q.toLowerCase();
+    
+    let baseResponse = `Hello there! I am your dynamic Course Companion studying "${chapterTitle}" alongside you. Since we are running in Offline Mode, I am glad to assist directly from local storage context!\n\n`;
+
+    if (query.includes('explain') || query.includes('understand') || query.includes('what') || query.includes('how') || query.includes('why') || query.includes('concept')) {
+      baseResponse += `Regarding **${chapterTitle}**, the core focus is:
+*   *Core Concept:* ${chapterDescription || 'Building deep visual and functional literacy about Bitcoin and sound money.'}
+*   *Key Takeaway:* Practicing self-sovereignty, understanding gold vs devaluing fiat currencies, and utilizing scaling options like the instant peer-to-peer Lightning Network.`;
+    } else {
+      baseResponse += `You are studying **${chapterTitle}**. This module specifically educates on:
+*   *Curriculum Level:* ${chapterDescription || 'Understanding cryptographic proof, ledger mechanics, wallet security, and decentralized networks.'}
+*   *Action:* Complete your readings and make sure to test your comprehension by passing the module's interactive Quiz to earn Sats and progress on your Bitcoin Diploma!`;
+    }
+
+    return baseResponse;
+  };
+
   const sendMessage = async (e?: React.FormEvent) => {
     e?.preventDefault();
     if (!inputMessage.trim()) return;
@@ -26,6 +44,15 @@ export function CourseCompanion({ chapterTitle, chapterDescription }: CourseComp
     setMessages(newMsgs);
     setInputMessage('');
     setIsLoading(true);
+
+    if (!navigator.onLine) {
+      setTimeout(() => {
+        const localAnswer = getOfflineCompanionResponse(newMsgs[newMsgs.length - 1].content);
+        setMessages([...newMsgs, { role: 'assistant', content: localAnswer }]);
+        setIsLoading(false);
+      }, 500);
+      return;
+    }
 
     try {
       const response = await fetch('/api/course-companion', {
@@ -47,8 +74,9 @@ export function CourseCompanion({ chapterTitle, chapterDescription }: CourseComp
       const data = await response.json();
       setMessages([...newMsgs, { role: 'assistant', content: data.answer }]);
     } catch (err: any) {
-      console.error(err);
-      setMessages([...newMsgs, { role: 'assistant', content: `Error: ${err.message}` }]);
+      console.warn("Course Companion fetch failed, serving offline companion reply instead:", err);
+      const localAnswer = getOfflineCompanionResponse(newMsgs[newMsgs.length - 1].content);
+      setMessages([...newMsgs, { role: 'assistant', content: localAnswer }]);
     } finally {
       setIsLoading(false);
     }

@@ -308,7 +308,7 @@ export const initStorage = () => {
       onboardingComplete: true,
       role: "admin",
       progress: {},
-      totalSats: 2500,
+      totalSats: 0,
       satsLog: [],
       xp: 1200,
       xpLog: [],
@@ -539,11 +539,9 @@ export const initStorage = () => {
   // Dynamically normalize active users totalSats values to fit the 2 sats per chapter rule
   Object.keys(users).forEach((email) => {
     const u = users[email];
-    if (u && u.progress && u.role === 'student') {
+    if (u && u.progress) {
       const completedCount = Object.values(u.progress).filter((p: any) => p.status === 'completed' || p.quizPassed).length;
-      if (u.totalSats > completedCount * 2) {
-        u.totalSats = completedCount * 2;
-      }
+      u.totalSats = completedCount * 2;
     }
   });
 
@@ -746,7 +744,18 @@ export const getAnnouncements = () => {
   return content.announcements || [];
 };
 
-export const getUsers = () => JSON.parse(localStorage.getItem('bas_users') || "{}");
+export const getUsers = () => {
+  const users = JSON.parse(localStorage.getItem('bas_users') || "{}");
+  // Calculate totalSats dynamically for all roles based on completed chapters to prevent hardcoded issues
+  Object.keys(users).forEach((email) => {
+    const u = users[email];
+    if (u && u.progress) {
+      const completedCount = Object.values(u.progress).filter((p: any) => p.status === 'completed' || p.quizPassed).length;
+      u.totalSats = completedCount * 2;
+    }
+  });
+  return users;
+};
 export const saveUsers = (users: any) => localStorage.setItem('bas_users', JSON.stringify(users));
 
 export const getCurrentUser = () => {

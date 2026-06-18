@@ -278,6 +278,96 @@ export function AIInstructorBot() {
     localStorage.setItem(chatKey, JSON.stringify(newMsgs));
   };
 
+  const getOfflineSatoshiResponse = (q: string): string => {
+    const query = q.toLowerCase();
+    
+    if (query.includes('cantillon') || query.includes('unequal') || query.includes('print') || query.includes('fiat') || query.includes('inflation') || query.includes('power') || query.includes('depreciate') || query.includes('central bank') || query.includes('debt')) {
+      return `Hey there! Since we are studying offline, let me explain **Fiat Money and Inflation** directly:
+
+*   **What is Fiat Money?** It is money declared by a government decree, backed only by trust. Because central banks can print unlimited amounts of fiat, the supply expands constantly.
+*   **Monetary Inflation:** This unlimited printing dilutes the value of existing currency, causing your purchasing power to drop.
+*   **The Cantillon Effect:** When new fiat is printed, those closest to the printer (banks, governments, ultra-wealthy) get to spend it first before prices rise. By the time it trickles down to ordinary citizens, prices have already soared. This creates extreme systemic inequality.
+
+Bitcoin solves this by having a hard-coded maximum supply limit of strictly **21 Million** coins.`;
+    }
+    
+    if (query.includes('lightning') || query.includes('layer 2') || query.includes('layer2') || query.includes('micro-payment') || query.includes('channel') || query.includes('fast') || query.includes('speed') || query.includes('fee')) {
+      return `Great question! Here is how the **Lightning Network** acts as Bitcoin's Layer 2 solution:
+
+*   **The Scaling Challenge:** Bitcoin's main blockchain averages 10-minute block times for security. This cannot directly handle millions of global daily coffee purchases.
+*   **The Solution:** The Lightning Network operates "off-chain." It allows users to open secure, bidirectional payment channels.
+*   **The Result:** You can send payments instantly with virtually zero transaction fees. It's like keeping an ongoing tab at a bar—only settles on the main blockchain when the tab is closed. This empowers real-world circular economies, just like in El Salvador's El Zonte!`;
+    }
+    
+    if (query.includes('wallet') || query.includes('key') || query.includes('seed') || query.includes('custody') || query.includes('private') || query.includes('phrase') || query.includes('cold') || query.includes('hot')) {
+      return `Satoshi here! Let's talk about **Self-Custody and Wallets**:
+
+*   **Private Key:** It is a giant random number (represented as a 12 or 24-word seed phrase) that proves ownership of your coins. Anyone with access to your seed phrase has full control over your funds.
+*   **Public Key / Address:** Think of this as your email address. It's safe to share so people can send you Bitcoin.
+*   **The Golden Rule:** **"Not your keys, not your coins."**
+    *   *Custodial:* A third-party exchange holds the private key. If they block you or go bankrupt, your funds are gone.
+    *   *Self-Custodial:* You hold the private keys. No middleman can censor or touch your wealth.
+    *   *Cold Storage:* Hardware wallets kept offline. These are the safest, most secure vault option.`;
+    }
+    
+    if (query.includes('mining') || query.includes('proof of work') || query.includes('pow') || query.includes('hash') || query.includes('halving') || query.includes('halve') || query.includes('reward') || query.includes('sha-256') || query.includes('sha256') || query.includes('difficulty')) {
+      return `Welcome to the core of Bitcoin security! Let's examine **Bitcoin Mining & Proof-of-Work (PoW)**:
+
+*   **How Mining Works:** Miners compete using specialized computing power to solve a highly complex mathematical puzzle based on the **SHA-256** hash function. This process requires real-world physics and energy.
+*   **Proof-of-Work:** Once solved, a block of valid transactions is immutable. Re-writing history would require recalculating all subsequent blocks, which is mathematically impossible, securing the ledger.
+*   **The Halving:** Every 210,000 blocks (about every 4 years), the block reward issued to miners is cut in half. This makes Bitcoin increasingly scarce over time.
+*   **Difficulty Adjustment:** Every 2,016 blocks (~2 weeks), Bitcoin automatically adjusts how hard the puzzle is to ensure blocks always average exactly 10 minutes. It's Bitcoin's ultimate self-regulating thermostat.`;
+    }
+    
+    if (query.includes('node') || query.includes('nodes') || query.includes('validate') || query.includes('verify') || query.includes('rule') || query.includes('consensus')) {
+      return `This is a very important distinction: **Nodes vs. Miners**:
+
+*   **Miners:** They compete to bundle new transactions into blocks, providing security via Proof-of-Work energy expenditure.
+*   **Nodes:** They are the individual gatekeepers of the network. Ordinary people run nodes on simple home computers.
+*   **Consensus Rules:** Nodes validate every transaction and block to ensure miners aren't cheating (such as printing extra coins, or double-spending).
+*   **Your Sovereignty:** By running your own node, you don't have to trust anyone else to tell you the state of the ledger. You enforce the rules of the system yourself!`;
+    }
+    
+    if (query.includes('cypherpunks') || query.includes('hal finney') || query.includes('finney') || query.includes('genesis') || query.includes('nakamoto') || query.includes('satoshi') || query.includes('whitepaper') || query.includes('2008') || query.includes('2009')) {
+      return `Peace, scholar! Let's travel back to the **Origins of Bitcoin**:
+
+*   **The Cypherpunks:** A group of passionate scientists, developers, and activists who advocated for privacy and free speech using cryptography. Legendary names include Eric Hughes, Timothy May, and Hal Finney.
+*   **The Whitepaper:** On October 31, 2008, Satoshi Nakamoto released the Bitcoin Whitepaper titled *"Bitcoin: A Peer-to-Peer Electronic Cash System"*.
+*   **The Genesis Block:** On January 3, 2009, Satoshi mined the first block (Genesis Block) containing the immortalized Times headline: *"The Times 03/Jan/2009 Chancellor on brink of second bailout for banks"*, signaling Bitcoin's purpose as a peaceful alternative to failing central banking.
+*   **Hal Finney:** A brilliant cryptographer who received the very first Bitcoin transaction from Satoshi. He is one of Bitcoin's most important early pioneers.`;
+    }
+    
+    if (query.includes('cbdc') || query.includes('cbdcs') || query.includes('digital currency') || query.includes('stablecoin') || query.includes('altcoin') || query.includes('crypto')) {
+      return `Let's clarify the fundamental difference between **Bitcoin vs. CBDCs & Crypto**:
+
+*   **CBDCs (Central Bank Digital Currencies):** They are simply digital government fiat with upgraded surveillance capabilities, full programmability, and zero privacy. The issuer can alter interest rates, track your spending, or freeze your funds at the click of a button.
+*   **Crypto / Altcoins:** These projects are overwhelmingly centralized, controlled by founders or foundations, heavily pre-mined, and can alter consensus rules at whim.
+*   **Bitcoin:** It has **no CEO, no founders, and no central pre-mine**. It is completely decentralized, globally neutral, open-source, and has a strictly immutable supply of 21 Million. It is sound peer-to-peer money.`;
+    }
+    
+    if (query.includes('money') || query.includes('store of value') || query.includes('medium of exchange') || query.includes('unit of account') || query.includes('scarcity') || query.includes('barter') || query.includes('gold')) {
+      return `Let's break down the **Core Fundamentals of Money**:
+
+*   **Three Functions of Money:**
+    1.  *Medium of Exchange:* Used to trade goods without the struggle of barter (the *Double Coincidence of Wants*).
+    2.  *Store of Value:* Preserves your purchasing power and hard work across future time.
+    3.  *Unit of Account:* A standard numeric measure to price goods and services.
+*   **Key Properties:** For something to serve as good money, it must be **Scarce, Divisible, Portable, Durable, and Acceptable**.
+*   **Gold Standard:** Societies gold-backed paper slips until governments printed more paper than gold existed, leading to the collapse of the gold standard and the birth of infinite fiat debt.`;
+    }
+    
+    return `Greetings, student! Satoshi here. We are currently operating in our highly advanced **Offline Learning Mode** which guarantees 100% stable performance with zero internet dependencies!
+
+As your Bitcoin Diploma lead instructor, I am here to discuss the entire 10-chapter curriculum:
+*   **Modules 1-3:** What is Money, History of Money, and the Fiat Debt System.
+*   **Modules 4-5:** The Cypherpunk movement and Satoshi's Whitepaper.
+*   **Modules 6-7:** Setting up self-custody wallets and utilizing the instant Lightning Network.
+*   **Modules 8-9:** SHA-256 cryptography, the UTXO model, Nodes, and Proof-of-Work Mining.
+*   **Module 10:** Hyperbitcoinization and building local circular economies.
+
+What key concept or module would you like me to make simple for you today?`;
+  };
+
   const handleSend = async (textToSend: string) => {
     if (!textToSend.trim() || loading) return;
     
@@ -292,6 +382,21 @@ export function AIInstructorBot() {
     persistMessages(updatedHistory);
     setInput('');
     setLoading(true);
+
+    // If completely offline (navigator.onLine is false), immediately run local generation with zero delay
+    if (!navigator.onLine) {
+      setTimeout(() => {
+        const localAnswer = getOfflineSatoshiResponse(userMsg.content);
+        const assistantMsg: Message = {
+          role: 'assistant',
+          content: localAnswer,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        };
+        persistMessages([...updatedHistory, assistantMsg]);
+        setLoading(false);
+      }, 600);
+      return;
+    }
 
     try {
       const apiHistory = updatedHistory.slice(0, -1).map(m => ({
@@ -322,8 +427,15 @@ export function AIInstructorBot() {
 
       persistMessages([...updatedHistory, assistantMsg]);
     } catch (e: any) {
-      console.error(e);
-      setErrorMsg(e.message || 'Connecting failure. check connection.');
+      console.warn("Instructor bot connection failed, rolling back seamlessly to offline model logic:", e);
+      // Seamlessly fall back if request fails (e.g. server down or intermittent packet drop)
+      const localAnswer = getOfflineSatoshiResponse(userMsg.content);
+      const assistantMsg: Message = {
+        role: 'assistant',
+        content: localAnswer + "\n\n*(Note: Reconnect to internet for live cloud answers)*",
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+      persistMessages([...updatedHistory, assistantMsg]);
     } finally {
       setLoading(false);
     }
@@ -343,39 +455,39 @@ export function AIInstructorBot() {
   };
 
   return (
-    <GlassCard className="bg-brand-dark-2 border border-white/5 flex flex-col h-[720px] shadow-[0_20px_50px_rgba(0,0,0,0.5)] rounded-2xl overflow-hidden relative">
+    <GlassCard className="bg-brand-dark-2 border border-white/5 flex flex-col h-[480px] md:h-[650px] lg:h-[700px] shadow-[0_20px_50px_rgba(0,0,0,0.5)] rounded-xl md:rounded-2xl overflow-hidden relative">
       
       {/* Premium Header Bar */}
-      <div className="px-5 py-4 border-b border-white/5 bg-black/20 backdrop-blur-md flex items-center justify-between relative z-10">
-        <div className="flex items-center gap-3">
+      <div className="px-3.5 py-3 md:px-5 md:py-4 border-b border-white/5 bg-black/20 backdrop-blur-md flex items-center justify-between relative z-10">
+        <div className="flex items-center gap-2.5 md:gap-3">
           {/* Animated Avatar Box */}
           <div className="relative">
-            <div className={`w-10 h-10 rounded-xl bg-gradient-to-br from-brand-gold/20 to-brand-gold/5 flex items-center justify-center text-brand-gold font-black border border-brand-gold/30 shadow-[0_0_15px_rgba(253,184,19,0.1)] relative overflow-hidden transition-all duration-300 ${loading ? 'scale-105' : ''}`}>
-              <span className="text-xl select-none font-sans">₿</span>
+            <div className={`w-8.5 h-8.5 md:w-10 md:h-10 rounded-lg md:rounded-xl bg-gradient-to-br from-brand-gold/20 to-brand-gold/5 flex items-center justify-center text-brand-gold font-black border border-brand-gold/30 shadow-[0_0_15px_rgba(253,184,19,0.1)] relative overflow-hidden transition-all duration-300 ${loading ? 'scale-105' : ''}`}>
+              <span className="text-base md:text-xl select-none font-sans">₿</span>
               {loading && (
                 <motion.div
-                  className="absolute inset-0 border-2 border-brand-gold/50 rounded-xl pointer-events-none"
+                  className="absolute inset-0 border-2 border-brand-gold/50 rounded-lg md:rounded-xl pointer-events-none"
                   animate={{ rotate: 360 }}
                   transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
                 />
               )}
             </div>
             {/* Pulsing Status Dot */}
-            <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-status-success rounded-full border-2 border-brand-dark-2 flex items-center justify-center">
-              <span className="w-1.5 h-1.5 bg-status-success rounded-full animate-ping" />
+            <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 md:-bottom-1 md:-right-1 md:w-3.5 md:h-3.5 bg-status-success rounded-full border-2 border-brand-dark-2 flex items-center justify-center">
+              <span className="w-1 md:w-1.5 h-1 md:h-1.5 bg-status-success rounded-full animate-ping" />
             </span>
           </div>
 
           <div>
-            <div className="flex items-center gap-1.5">
-              <span className="font-extrabold text-sm text-white tracking-wide">Satoshi Assistant</span>
-              <Sparkles size={11} className="text-brand-gold animate-pulse fill-brand-gold shrink-0" />
+            <div className="flex items-center gap-1">
+              <span className="font-extrabold text-xs md:text-sm text-white tracking-wide">Satoshi Assistant</span>
+              <Sparkles size={10} className="text-brand-gold animate-pulse fill-brand-gold shrink-0" />
             </div>
             {/* Live Core Feed details */}
-            <div className="flex items-center gap-1.5 text-[10px] text-gray-400 mt-0.5">
+            <div className="flex items-center gap-1 text-[9px] md:text-[10px] text-gray-400 mt-0.5">
               <span className="flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-status-success inline-block shrink-0" />
-                Core Active
+                <span className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-status-success inline-block shrink-0" />
+                Active
               </span>
               <span className="text-gray-600 font-bold">•</span>
               <span className="text-brand-gold/80 font-medium">Syllabus Master</span>
@@ -393,39 +505,39 @@ export function AIInstructorBot() {
           
           <button 
             onClick={clearChat}
-            className="text-gray-400 hover:text-status-error p-2 rounded-xl hover:bg-white/5 border border-transparent hover:border-white/5 transition-all outline-none cursor-pointer"
+            className="text-gray-400 hover:text-status-error p-1.5 md:p-2 rounded-lg md:rounded-xl hover:bg-white/5 border border-transparent hover:border-white/5 transition-all outline-none cursor-pointer"
             title="Reset conversation"
           >
-            <Trash2 size={16} />
+            <Trash2 size={14} className="md:w-4 md:h-4" />
           </button>
         </div>
       </div>
 
       {/* Main Interactive Chat List */}
-      <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4 custom-scrollbar relative z-10 bg-black/5">
+      <div className="flex-1 overflow-y-auto px-3.5 py-3 md:px-5 md:py-4 space-y-3.5 md:space-y-4 custom-scrollbar relative z-10 bg-black/5">
         <AnimatePresence initial={false}>
           {messages.map((msg, index) => {
             const isUser = msg.role === 'user';
             return (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 15 }}
+                initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ type: "spring", damping: 25, stiffness: 240 }}
-                className={`flex gap-3 max-w-[90%] md:max-w-[82%] relative group ${isUser ? 'ml-auto flex-row-reverse' : 'mr-auto'}`}
+                className={`flex gap-2 md:gap-3 max-w-[95%] md:max-w-[82%] relative group ${isUser ? 'ml-auto flex-row-reverse' : 'mr-auto'}`}
               >
                 {/* Micro Avatar icons */}
-                <div className={`w-8.5 h-8.5 rounded-xl shrink-0 flex items-center justify-center text-xs font-bold border transition-all duration-300 ${
+                <div className={`w-7 h-7 md:w-8.5 md:h-8.5 rounded-lg md:rounded-xl shrink-0 flex items-center justify-center text-[10px] md:text-xs font-bold border transition-all duration-300 ${
                   isUser 
                     ? 'bg-white/15 border-white/20 text-white shadow-md' 
                     : 'bg-brand-gold/15 border-brand-gold/25 text-brand-gold shadow-[0_2px_8px_rgba(253,184,19,0.05)]'
                 }`}>
-                  {isUser ? <User size={14} /> : '₿'}
+                  {isUser ? <User size={12} className="md:w-3.5 md:h-3.5" /> : '₿'}
                 </div>
 
                 {/* Message Speech Body */}
-                <div className="flex flex-col space-y-1 items-start min-w-[120px]">
-                  <div className={`p-3.5 rounded-2xl shadow-[0_4px_16px_rgba(0,0,0,0.15)] text-left border relative transition-all duration-200 ${
+                <div className="flex flex-col space-y-1 items-start min-w-[100px]">
+                  <div className={`p-2.5 md:p-3.5 rounded-xl md:rounded-2xl shadow-[0_4px_16px_rgba(0,0,0,0.15)] text-left border relative transition-all duration-200 ${
                     isUser
                       ? 'bg-[#fbaf17]/10 border-[#fbaf17]/20 text-white rounded-tr-md font-medium'
                       : 'bg-white/[0.02] border-white/5 text-gray-200 rounded-tl-md font-sans'
@@ -434,20 +546,20 @@ export function AIInstructorBot() {
                     
                     {/* Floating micro-action clipboard buttons only visible on assistant message */}
                     {!isUser && (
-                      <div className="absolute right-2 -bottom-3 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity flex gap-1">
+                      <div className="absolute right-2 -bottom-2.5 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity flex gap-1">
                         <button
                           onClick={() => copyToClipboard(msg.content, index)}
-                          className="bg-brand-dark-2 hover:bg-brand-dark-1 border border-white/10 p-1.5 rounded-lg text-gray-400 hover:text-brand-gold shadow-md transition-all flex items-center justify-center cursor-pointer"
+                          className="bg-brand-dark-2 hover:bg-brand-dark-1 border border-white/10 p-1 rounded-md text-gray-400 hover:text-brand-gold shadow-md transition-all flex items-center justify-center cursor-pointer"
                           title="Copy response content"
                         >
-                          {copiedId === index ? <Check size={11} className="text-status-success animate-bounce" /> : <Copy size={11} />}
+                          {copiedId === index ? <Check size={10} className="text-status-success animate-bounce" /> : <Copy size={10} />}
                         </button>
                       </div>
                     )}
                   </div>
                   
                   {/* Timestamp alignment based on role */}
-                  <span className={`text-[9px] text-gray-500 font-mono tracking-wider ${isUser ? 'align-self-end text-right self-end mr-1' : 'ml-1 self-start'}`}>
+                  <span className={`text-[8px] text-gray-500 font-mono tracking-wider ${isUser ? 'align-self-end text-right self-end mr-1' : 'ml-1 self-start'}`}>
                     {msg.timestamp}
                   </span>
                 </div>
@@ -489,21 +601,21 @@ export function AIInstructorBot() {
 
       {/* Dynamic interactive Suggested Prompts Section - styled on a clean beautiful swiping carousel */}
       {messages.length <= 1 && (
-        <div className="px-5 py-3 border-t border-b border-white/5 bg-black/30 backdrop-blur-sm relative z-10">
-          <p className="text-[10px] text-brand-gold/80 font-bold mb-2 uppercase tracking-widest flex items-center gap-1 select-none">
-            <Sparkles size={10} className="fill-brand-gold text-brand-gold shrink-0" />
+        <div className="px-3.5 py-2.5 md:px-5 md:py-3 border-t border-b border-white/5 bg-black/30 backdrop-blur-sm relative z-10">
+          <p className="text-[9px] md:text-[10px] text-brand-gold/80 font-bold mb-1.5 md:mb-2 uppercase tracking-widest flex items-center gap-1 select-none">
+            <Sparkles size={9} className="fill-brand-gold text-brand-gold shrink-0" />
             Instant Syllabus Queries:
           </p>
           
           {/* Horizontal scroll container with hidden scrollbar but swipeable */}
-          <div className="flex gap-2 items-center overflow-x-auto pb-1 scrolls-none max-w-full custom-scrollbar-horizontal">
+          <div className="flex gap-1.5 items-center overflow-x-auto pb-0.5 scrolls-none max-w-full custom-scrollbar-horizontal">
             {PRESET_PROMPTS.map((prompt) => (
               <button
                 key={prompt.text}
                 onClick={() => handleSend(prompt.text)}
-                className="text-[11px] font-medium bg-white/[0.03] border border-white/5 hover:border-brand-gold/30 hover:bg-brand-gold/5 transition-all text-gray-300 hover:text-white px-3 py-1.5 rounded-full flex items-center gap-1.5 shrink-0 select-none cursor-pointer"
+                className="text-[10px] md:text-[11px] font-medium bg-white/[0.03] border border-white/5 hover:border-brand-gold/30 hover:bg-brand-gold/5 transition-all text-gray-300 hover:text-white px-2.5 py-1 md:px-3 md:py-1.5 rounded-full flex items-center gap-1 md:gap-1.5 shrink-0 select-none cursor-pointer"
               >
-                <prompt.icon size={11} className="text-brand-gold shrink-0" />
+                <prompt.icon size={10} className="text-brand-gold shrink-0 md:w-[11px] md:h-[11px]" />
                 {prompt.text}
               </button>
             ))}
@@ -515,22 +627,22 @@ export function AIInstructorBot() {
       <AnimatePresence>
         {isListening && (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            className="px-5 py-2 bg-rose-500/10 border-t border-rose-500/25 flex items-center justify-between text-[11px] text-rose-400 font-mono relative z-10"
+            exit={{ opacity: 0, y: 8 }}
+            className="px-3.5 py-1.5 md:px-5 md:py-2 bg-rose-500/10 border-t border-rose-500/25 flex items-center justify-between text-[10px] md:text-[11px] text-rose-400 font-mono relative z-10"
           >
-            <div className="flex items-center gap-2">
-              <span className="relative flex h-2 w-2">
+            <div className="flex items-center gap-1.5 md:gap-2">
+              <span className="relative flex h-1.5 w-1.5 md:h-2 md:w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 md:h-2 md:w-2 bg-rose-500"></span>
               </span>
               <span>{speechNotes || 'Listening...'}</span>
             </div>
             
             <button 
               onClick={stopListening}
-              className="text-[9px] uppercase tracking-wider font-extrabold text-white bg-rose-600/55 hover:bg-rose-600 px-2.5 py-0.5 rounded-full transition-colors cursor-pointer"
+              className="text-[8px] md:text-[9px] uppercase tracking-wider font-extrabold text-white bg-rose-600/55 hover:bg-rose-600 px-2 md:px-2.5 py-0.5 rounded-full transition-colors cursor-pointer"
             >
               Cancel
             </button>
@@ -539,7 +651,7 @@ export function AIInstructorBot() {
       </AnimatePresence>
 
       {/* Input panel with dynamic focus outlines */}
-      <div className="p-4 bg-brand-dark-3/90 border-t border-white/5 flex gap-2 items-center relative z-10">
+      <div className="p-2.5 md:p-4 bg-brand-dark-3/90 border-t border-white/5 flex gap-1.5 md:gap-2 items-center relative z-10">
         <input
           type="text"
           value={input}
@@ -548,8 +660,8 @@ export function AIInstructorBot() {
             if (e.key === 'Enter') handleSend(input);
           }}
           disabled={loading}
-          placeholder={isListening ? "Say your question aloud now..." : "Ask Satoshi a question about the study module..."}
-          className="flex-1 bg-black/60 border border-white/5 hover:border-white/15 focus:border-brand-gold/40 rounded-xl px-4 py-3 text-xs md:text-sm text-white placeholder-gray-500 outline-none transition-all focus:ring-1 focus:ring-brand-gold/25"
+          placeholder={isListening ? "Say your question aloud..." : "Ask Satoshi a question..."}
+          className="flex-1 bg-black/60 border border-white/5 hover:border-white/15 focus:border-brand-gold/40 rounded-lg md:rounded-xl px-3 py-2 md:px-4 md:py-3 text-xs md:text-sm text-white placeholder-gray-500 outline-none transition-all focus:ring-1 focus:ring-brand-gold/25"
         />
         
         {/* Modern Voice Microphone Button */}
@@ -558,8 +670,8 @@ export function AIInstructorBot() {
           type="button"
           onClick={toggleListening}
           disabled={loading}
-          title={!speechSupported ? "Voice typing not supported or forbidden in this browser" : isListening ? "Stop listening" : "Ask questions with your voice"}
-          className={`p-3 rounded-xl flex items-center justify-center transition-all cursor-pointer relative shrink-0 border ${
+          title={!speechSupported ? "Voice typing not supported" : isListening ? "Stop listening" : "Ask questions with voice"}
+          className={`p-2 md:p-3 rounded-lg md:rounded-xl flex items-center justify-center transition-all cursor-pointer relative shrink-0 border ${
             !speechSupported
               ? 'opacity-30 cursor-not-allowed text-gray-500 border-white/5 bg-white/[0.02]'
               : isListening
@@ -569,29 +681,29 @@ export function AIInstructorBot() {
         >
           {isListening ? (
             <>
-              <Mic size={15} className="animate-bounce" />
+              <Mic size={13} className="animate-bounce md:w-[15px] md:h-[15px]" />
               {/* Dynamic Soundwave Rings */}
-              <span className="absolute inset-0 rounded-xl border border-rose-400 animate-ping opacity-25 pointer-events-none" />
+              <span className="absolute inset-0 rounded-lg md:rounded-xl border border-rose-400 animate-ping opacity-25 pointer-events-none" />
             </>
           ) : (
-            <Mic size={15} />
+            <Mic size={13} className="md:w-[15px] md:h-[15px]" />
           )}
         </button>
 
         <button
           onClick={() => handleSend(input)}
           disabled={!input.trim() || loading}
-          className="bg-brand-gold text-black hover:bg-brand-gold/90 hover:scale-[1.03] active:scale-[0.98] transform transition-all p-3 rounded-xl disabled:opacity-30 disabled:hover:scale-100 disabled:pointer-events-none flex items-center justify-center cursor-pointer shadow-[0_4px_12px_rgba(253,184,19,0.25)] shrink-0"
+          className="bg-brand-gold text-black hover:bg-brand-gold/90 hover:scale-[1.03] active:scale-[0.98] transform transition-all p-2 md:p-3 rounded-lg md:rounded-xl disabled:opacity-30 disabled:hover:scale-100 disabled:pointer-events-none flex items-center justify-center cursor-pointer shadow-[0_4px_12px_rgba(253,184,19,0.25)] shrink-0"
         >
-          <Send size={15} className="fill-black text-black shrink-0" />
+          <Send size={13} className="fill-black text-black shrink-0 md:w-[15px] md:h-[15px]" />
         </button>
       </div>
       
       {/* Dynamic certification standard note strictly literal and informative */}
-      <div className="bg-black/60 border-t border-white/5 px-5 py-2 text-[9px] text-gray-500 font-mono flex items-center justify-between relative z-10">
+      <div className="bg-black/60 border-t border-white/5 px-3.5 md:px-5 py-1.5 md:py-2 text-[8px] md:text-[9px] text-gray-500 font-mono flex items-center justify-between relative z-10">
         <span className="flex items-center gap-1 font-sans">
-          <BookOpen size={10} className="text-brand-gold inline-block" />
-          Offline-first Bitcoin Diploma syllabus helper
+          <BookOpen size={9} className="text-brand-gold inline-block md:w-2.5 md:h-2.5" />
+          Syllabus helper
         </span>
         <span className="text-brand-gold font-bold uppercase tracking-wider font-mono">Sound Money Only</span>
       </div>

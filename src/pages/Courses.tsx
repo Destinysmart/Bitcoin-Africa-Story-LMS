@@ -261,66 +261,70 @@ export default function Courses() {
         </h2>
         
         {/* Primary Curriculum - The Bitcoin Diploma Program */}
-        <GlassCard className="bg-brand-dark-2 relative overflow-hidden border-brand-gold/30 gold-glow">
-          <div className="absolute top-0 right-0 p-6 opacity-10">
-            <Trophy size={120} />
+        <GlassCard className="bg-brand-dark-2 relative overflow-hidden border-brand-gold/30 gold-glow p-4 md:p-6">
+          <div className="absolute top-0 right-0 p-6 opacity-10 pointer-events-none">
+            <Trophy size={100} className="md:w-[120px] md:h-[120px]" />
           </div>
           <div className="relative z-10 flex flex-col md:flex-row gap-6">
             <div className="flex-1">
-              <div className="flex items-center gap-3 mb-4">
-                <span className="bg-brand-gold/20 text-brand-gold px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+              <div className="flex items-center gap-3 mb-3 md:mb-4">
+                <span className="bg-brand-gold/20 text-brand-gold px-2.5 py-0.5 md:px-3 md:py-1 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-wider">
                   Primary Curriculum
                 </span>
                 <span className="flex items-center gap-1 text-xs text-gray-400">
-                  <Star size={14} className="text-brand-gold" /> 4.9/5
+                  <Star size={13} className="text-brand-gold fill-brand-gold/20" /> 4.9/5
                 </span>
               </div>
-              <h3 className="text-2xl font-bold mb-2">The Bitcoin Diploma Program</h3>
-              <p className="text-gray-400 mb-6 max-w-xl text-sm">
+              <h3 className="text-xl md:text-2xl font-black mb-1.5 leading-snug">The Bitcoin Diploma Program</h3>
+              <p className="text-gray-400 mb-4 md:mb-6 max-w-xl text-xs md:text-sm">
                 A comprehensive 10-chapter journey designed to take you from a complete beginner to a confident Bitcoin advocate and self-custody master.
               </p>
               
-              <div className="space-y-2 mb-6 max-w-md">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-300">Overall Progress</span>
-                  <span className="font-bold text-brand-gold">{progressPercent}%</span>
+              <div className="space-y-1.5 mb-5 md:mb-6 max-w-md">
+                <div className="flex justify-between text-xs md:text-sm">
+                  <span className="text-gray-300 font-medium">Overall Progress</span>
+                  <span className="font-extrabold text-brand-gold">{progressPercent}%</span>
                 </div>
-                <div className="h-2 w-full bg-black/40 rounded-full overflow-hidden border border-white/10">
+                <div className="h-1.5 md:h-2 w-full bg-black/40 rounded-full overflow-hidden border border-white/5">
                   <div 
                     className="h-full bg-brand-gold transition-all duration-500"
                     style={{ width: `${progressPercent}%` }}
                   />
                 </div>
-                <p className="text-xs text-gray-500">{completedCount} of {chapters.length} chapters completed</p>
+                <p className="text-[10px] md:text-xs text-gray-500">{completedCount} of {chapters.length} chapters completed</p>
               </div>
               
-              <div className="flex flex-wrap gap-3">
-                <Button onClick={() => navigate('/dashboard')}>
+              <div className="flex flex-wrap gap-2.5">
+                <Button size="sm" className="h-9 md:h-10 text-xs md:text-sm px-4" onClick={() => navigate('/dashboard')}>
                   Continue Learning →
                 </Button>
                 <Button 
                   variant="outline" 
+                  size="sm"
                   onClick={() => setPreviewCourse(diplomaCourse)}
-                  className="border-white/10 text-gray-300 hover:text-white"
+                  className="h-9 md:h-10 text-xs md:text-sm border-white/10 text-gray-300 hover:text-white"
                 >
-                  View Syllabus Overview
+                  Syllabus Overview
                 </Button>
               </div>
             </div>
             
-            <div className="w-full md:w-64 flex flex-col gap-3">
-               <div className="bg-black/20 p-4 rounded-xl border border-white/5 flex flex-col gap-1">
-                 <span className="text-gray-400 text-xs">Total Modules</span>
-                 <span className="font-bold text-lg">{chapters.length} chapters</span>
+            {/* Custom High Density Metrics Panel - compact grid on mobile, row list on desktop */}
+            <div className="w-full md:w-64 grid grid-cols-3 md:flex md:flex-col gap-2 md:gap-3 border-t md:border-t-0 border-white/5 pt-4 md:pt-0">
+               <div className="bg-black/25 p-2.5 md:p-4 rounded-xl border border-white/5 flex flex-col gap-0.5 text-center md:text-left">
+                 <span className="text-gray-400 text-[9px] md:text-xs font-bold uppercase tracking-wider">Modules</span>
+                 <span className="font-extrabold text-xs md:text-lg text-white">{chapters.length} chapters</span>
                </div>
-               <div className="bg-black/20 p-4 rounded-xl border border-white/5 flex flex-col gap-1">
-                 <span className="text-gray-400 text-xs">Total Duration</span>
-                 <span className="font-bold text-lg flex items-center gap-2"><Clock size={16} /> ~10 Hours</span>
+               <div className="bg-black/25 p-2.5 md:p-4 rounded-xl border border-white/5 flex flex-col gap-0.5 text-center md:text-left">
+                 <span className="text-gray-400 text-[9px] md:text-xs font-bold uppercase tracking-wider">Duration</span>
+                 <span className="font-extrabold text-xs md:text-lg text-white flex items-center justify-center md:justify-start gap-1">
+                   <Clock size={11} className="shrink-0 md:w-4 md:h-4 text-brand-gold" /> ~10 Hours
+                 </span>
                </div>
-               <div className="bg-black/20 p-4 rounded-xl border border-white/5 flex flex-col gap-1">
-                 <span className="text-gray-400 text-xs">Diploma Verification</span>
-                 <span className="font-bold text-lg text-brand-gold flex items-center gap-1.5">
-                   <Award size={18} /> Verified NFT
+               <div className="bg-black/25 p-2.5 md:p-4 rounded-xl border border-white/5 flex flex-col gap-0.5 text-center md:text-left">
+                 <span className="text-gray-400 text-[9px] md:text-xs font-bold uppercase tracking-wider">Diploma</span>
+                 <span className="font-extrabold text-xs md:text-lg text-brand-gold flex items-center justify-center md:justify-start gap-1 truncate">
+                   <Award size={11} className="shrink-0 md:w-4 md:h-4" /> NFT Cert
                  </span>
                </div>
             </div>
@@ -400,12 +404,12 @@ export default function Courses() {
           </h2>
         </div>
         
-        <div className="flex flex-wrap gap-2 pb-2">
+        <div className="flex gap-1.5 overflow-x-auto pb-1.5 max-w-full custom-scrollbar-horizontal scrollbar-thin whitespace-nowrap select-none no-scrollbar">
           {allTags.map(tag => (
             <button
               key={tag}
               onClick={() => setSelectedTag(tag)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              className={`px-3.5 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-medium transition-colors shrink-0 ${
                 selectedTag === tag 
                   ? 'bg-brand-gold text-brand-black font-semibold shadow-md' 
                   : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
@@ -523,9 +527,10 @@ export default function Courses() {
                 </div>
               </div>
 
-              {/* Course Detail Body */}
-              <div className="p-6 md:p-8 grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div className="md:col-span-2 space-y-6">
+              {/* Course Detail Body - with responsive ordering using CSS grid orders */}
+              <div className="p-4 md:p-8 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                {/* About & Syllabus (Pane details - order-2 so it is placed below the quick CTA card on mobile) */}
+                <div className="order-2 md:order-1 md:col-span-2 space-y-6">
                   {/* Detailed Description */}
                   <div>
                     <h3 className="text-base font-bold text-white mb-2 flex items-center gap-1.5">
@@ -664,8 +669,8 @@ export default function Courses() {
                   </div>
                 </div>
 
-                {/* Right Info pane / Enrollment Action */}
-                <div className="space-y-6">
+                {/* Right Info pane / Enrollment Action (Pane summary - order-1 so it is displayed at the top on mobile) */}
+                <div className="order-1 md:order-2 space-y-6">
                   <GlassCard className="p-6 bg-brand-dark-2 border-white/5 sticky top-6">
                     <h3 className="font-bold text-white text-base mb-4">Course Details</h3>
                     

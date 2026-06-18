@@ -88,7 +88,7 @@ export default function InstructorDashboard() {
     setDiplomaChapters(allChapters);
     
     // Default assigned chapters for Overview stats page
-    setChapters(allChapters.slice(0, 6));
+    setChapters(allChapters);
     setCourses(cont.courses || []);
   };
 
@@ -272,54 +272,54 @@ export default function InstructorDashboard() {
   };
 
   return (
-    <div className="p-4 md:p-8 max-w-7xl mx-auto space-y-8 text-white">
+    <div className="p-3 sm:p-6 md:p-8 max-w-7xl mx-auto space-y-6 sm:space-y-8 text-white">
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="text-xs bg-brand-gold/15 text-brand-gold px-2.5 py-0.5 rounded-full font-bold select-none uppercase tracking-wider border border-brand-gold/20">
               {user?.role === 'admin' ? '🛡️ Administrator Suite' : '👨‍🏫 Instructor Faculty'}
             </span>
           </div>
-          <h1 className="text-3xl font-black tracking-tight text-white flex items-center gap-2">
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white flex items-center gap-2">
             Control Room <Sparkles size={20} className="text-brand-gold" />
           </h1>
-          <p className="text-sm text-gray-400 mt-1">
+          <p className="text-xs sm:text-sm text-gray-400 mt-1 max-w-2xl leading-relaxed">
             Welcome, <span className="font-bold text-white">{user?.name || 'Academic Leader'}</span>. Author curriculum pathways, monitor engagement metrics, and secure academic courses.
           </p>
         </div>
 
         {/* Tab Controls */}
-        <div className="flex bg-brand-dark-2 p-1.5 rounded-2xl border border-white/5 shrink-0 shadow-lg">
+        <div className="flex bg-brand-dark-2 p-1 rounded-xl border border-white/5 shadow-lg overflow-x-auto max-w-full hide-scrollbar snap-x shrink-0">
           <button 
             onClick={() => { setActiveTab('analytics'); setEditingCourseId(null); setEditingChapterId(null); }}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+            className={`px-3 sm:px-4 py-2 rounded-lg text-[11px] sm:text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap snap-center shrink-0 ${
               activeTab === 'analytics' 
                 ? 'bg-brand-gold text-brand-black shadow-[0_4px_12px_rgba(253,184,19,0.25)]' 
                 : 'text-gray-400 hover:text-white'
             }`}
           >
-            <LayoutGrid size={14} /> Overview & Analytics
+            <LayoutGrid size={13} /> Overview & Analytics
           </button>
           <button 
             onClick={() => { setActiveTab('curriculum'); }}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+            className={`px-3 sm:px-4 py-2 rounded-lg text-[11px] sm:text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap snap-center shrink-0 ${
               activeTab === 'curriculum' 
                 ? 'bg-brand-gold text-brand-black shadow-[0_4px_12px_rgba(253,184,19,0.25)]' 
                 : 'text-gray-400 hover:text-white'
             }`}
           >
-            <BookOpen size={14} /> Curriculum Builder
+            <BookOpen size={13} /> Curriculum Builder
           </button>
           <button 
             onClick={() => { setActiveTab('credentials'); }}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+            className={`px-3 sm:px-4 py-2 rounded-lg text-[11px] sm:text-xs font-bold transition-all flex items-center gap-1.5 whitespace-nowrap snap-center shrink-0 ${
               activeTab === 'credentials' 
                 ? 'bg-brand-gold text-brand-black shadow-[0_4px_12px_rgba(253,184,19,0.25)]' 
                 : 'text-gray-400 hover:text-white'
             }`}
           >
-            <Award size={14} /> Certificates & Payouts
+            <Award size={13} /> Certificates & Payouts
           </button>
         </div>
       </div>
@@ -335,56 +335,56 @@ export default function InstructorDashboard() {
             className="space-y-8"
           >
             {/* Quick Stats Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              <GlassCard className="p-6 flex items-center gap-4 border border-white/5 relative overflow-hidden group">
-                <div className="absolute right-0 bottom-0 translate-x-4 translate-y-4 opacity-5 text-brand-gold font-mono font-bold text-7xl select-none group-hover:scale-110 transition-transform">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+              <GlassCard className="p-4 sm:p-5 md:p-6 flex items-center gap-3 sm:gap-4 border border-white/5 relative overflow-hidden group">
+                <div className="absolute right-0 bottom-0 translate-x-4 translate-y-4 opacity-5 text-brand-gold font-mono font-bold text-6xl sm:text-7xl select-none group-hover:scale-110 transition-transform">
                   10
                 </div>
-                <div className="bg-brand-gold/15 p-4 rounded-xl text-brand-gold">
-                  <GraduationCap size={24} />
+                <div className="bg-brand-gold/15 p-3.5 rounded-xl text-brand-gold shrink-0">
+                  <GraduationCap size={22} />
                 </div>
                 <div>
-                  <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Dynamic Programs</div>
-                  <div className="text-2xl font-black mt-0.5">{courses.length + 1} Tracks</div>
+                  <div className="text-[9px] sm:text-[10px] text-gray-400 font-bold uppercase tracking-wider">Dynamic Programs</div>
+                  <div className="text-lg sm:text-xl md:text-2xl font-black mt-0.5">{courses.length + 1} Tracks</div>
                 </div>
               </GlassCard>
 
-              <GlassCard className="p-6 flex items-center gap-4 border border-white/5 relative overflow-hidden group">
-                <div className="absolute right-0 bottom-0 translate-x-4 translate-y-4 opacity-5 text-blue-400 font-mono font-bold text-7xl select-none group-hover:scale-110 transition-transform">
+              <GlassCard className="p-4 sm:p-5 md:p-6 flex items-center gap-3 sm:gap-4 border border-white/5 relative overflow-hidden group">
+                <div className="absolute right-0 bottom-0 translate-x-4 translate-y-4 opacity-5 text-blue-400 font-mono font-bold text-6xl sm:text-7xl select-none group-hover:scale-110 transition-transform">
                   CH
                 </div>
-                <div className="bg-blue-500/15 p-4 rounded-xl text-blue-400">
-                  <BookOpen size={24} />
+                <div className="bg-blue-500/15 p-3.5 rounded-xl text-blue-400 shrink-0">
+                  <BookOpen size={22} />
                 </div>
                 <div>
-                  <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Diploma Chapters</div>
-                  <div className="text-2xl font-black mt-0.5">{diplomaChapters.length} Syllabus Modules</div>
+                  <div className="text-[9px] sm:text-[10px] text-gray-400 font-bold uppercase tracking-wider">Diploma Chapters</div>
+                  <div className="text-lg sm:text-xl md:text-2xl font-black mt-0.5">{diplomaChapters.length} Modules</div>
                 </div>
               </GlassCard>
               
-              <GlassCard className="p-6 flex items-center gap-4 border border-white/5 relative overflow-hidden group">
-                <div className="absolute right-0 bottom-0 translate-x-4 translate-y-4 opacity-5 text-emerald-400 font-mono font-bold text-7xl select-none group-hover:scale-110 transition-transform">
+              <GlassCard className="p-4 sm:p-5 md:p-6 flex items-center gap-3 sm:gap-4 border border-white/5 relative overflow-hidden group">
+                <div className="absolute right-0 bottom-0 translate-x-4 translate-y-4 opacity-5 text-emerald-400 font-mono font-bold text-6xl sm:text-7xl select-none group-hover:scale-110 transition-transform">
                   ST
                 </div>
-                <div className="bg-emerald-500/15 p-4 rounded-xl text-emerald-400">
-                  <Users size={24} />
+                <div className="bg-emerald-500/15 p-3.5 rounded-xl text-emerald-400 shrink-0">
+                  <Users size={22} />
                 </div>
                 <div>
-                  <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Africa Scholars</div>
-                  <div className="text-2xl font-black mt-0.5">{users.length} Active</div>
+                  <div className="text-[9px] sm:text-[10px] text-gray-400 font-bold uppercase tracking-wider">Africa Scholars</div>
+                  <div className="text-lg sm:text-xl md:text-2xl font-black mt-0.5">{users.length} Active</div>
                 </div>
               </GlassCard>
 
-              <GlassCard className="p-6 flex items-center gap-4 border border-white/5 relative overflow-hidden group">
-                <div className="absolute right-0 bottom-0 translate-x-4 translate-y-4 opacity-5 text-status-success font-mono font-bold text-7xl select-none group-hover:scale-110 transition-transform">
+              <GlassCard className="p-4 sm:p-5 md:p-6 flex items-center gap-3 sm:gap-4 border border-white/5 relative overflow-hidden group">
+                <div className="absolute right-0 bottom-0 translate-x-4 translate-y-4 opacity-5 text-status-success font-mono font-bold text-6xl sm:text-7xl select-none group-hover:scale-110 transition-transform">
                   %
                 </div>
-                <div className="bg-green-500/15 p-4 rounded-xl text-green-400">
-                  <CheckCircle size={24} />
+                <div className="bg-green-500/15 p-3.5 rounded-xl text-green-400 shrink-0">
+                  <CheckCircle size={22} />
                 </div>
                 <div>
-                  <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Syllabus Pass Rate</div>
-                  <div className="text-2xl font-black mt-0.5">
+                  <div className="text-[9px] sm:text-[10px] text-gray-400 font-bold uppercase tracking-wider">Syllabus Pass Rate</div>
+                  <div className="text-lg sm:text-xl md:text-2xl font-black mt-0.5">
                     {chapterStats.length > 0 ? Math.round(chapterStats.reduce((sum, c) => sum + c.completionRate, 0) / chapterStats.length) : 0}% Avg
                   </div>
                 </div>
@@ -402,14 +402,14 @@ export default function InstructorDashboard() {
                 </div>
                 <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
                   {chapterStats.map((c) => (
-                    <GlassCard key={c.id} className="p-5 space-y-3.5 hover:border-white/10 transition-colors">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h3 className="font-bold text-sm text-gray-100">{c.title}</h3>
+                    <GlassCard key={c.id} className="p-4 sm:p-5 space-y-3.5 hover:border-white/10 transition-colors">
+                      <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-2.5">
+                        <div className="space-y-0.5">
+                          <h3 className="font-bold text-xs sm:text-sm text-gray-100">{c.title}</h3>
                           <p className="text-[10px] text-gray-400 font-mono">Module #{c.id} • {c.estimatedMinutes} Mins Estimate</p>
                         </div>
-                        <div className="text-right">
-                          <span className="text-xs font-bold text-brand-gold bg-brand-gold/10 border border-brand-gold/15 px-2.5 py-1 rounded-lg">
+                        <div className="text-left sm:text-right shrink-0">
+                          <span className="text-[10px] sm:text-xs font-bold text-brand-gold bg-brand-gold/10 border border-brand-gold/15 px-2.5 py-1 rounded-lg">
                             {c.completionRate}% Pass
                           </span>
                         </div>
@@ -654,28 +654,28 @@ export default function InstructorDashboard() {
 
                   <div className="space-y-4 max-h-[620px] overflow-y-auto pr-2 custom-scrollbar border border-white/5 rounded-2xl p-3 bg-brand-dark-2">
                     {diplomaChapters.map((ch) => (
-                      <div key={ch.id} className="p-4 flex justify-between items-center bg-white/[0.015] hover:bg-white/[0.035] transition-colors rounded-xl border border-white/5">
-                        <div>
+                      <div key={ch.id} className="p-4 flex flex-col sm:flex-row justify-between sm:items-center gap-4 bg-white/[0.015] hover:bg-white/[0.035] transition-colors rounded-xl border border-white/5">
+                        <div className="space-y-1">
                           <div className="text-[10px] text-brand-gold font-bold font-mono">CHAPTER MODULE #{ch.id}</div>
-                          <h3 className="font-bold text-xs text-gray-100 mt-0.5">{ch.title}</h3>
-                          <p className="text-[10px] text-gray-400 mt-1">
+                          <h3 className="font-bold text-xs sm:text-sm text-gray-100">{ch.title}</h3>
+                          <p className="text-[10px] text-gray-400">
                             ⏱️ {ch.estimatedMinutes} Mins • {ch.quiz?.length || 0} Quiz Qs • {ch.videos?.length || 0} Lectures
                           </p>
                         </div>
-                        <div className="flex gap-1.5">
+                        <div className="flex gap-1.5 shrink-0 self-start sm:self-auto">
                           <Button 
                             onClick={() => { setEditingChapterId(ch.id); setEditingChapter(JSON.parse(JSON.stringify(ch))); }}
-                            className="bg-white/5 hover:bg-white/10 text-white p-1.5 rounded-lg text-xs"
+                            className="bg-white/5 hover:bg-white/10 text-white p-2 sm:p-1.5 rounded-lg text-xs flex items-center justify-center font-bold"
                             title="Edit dynamic chapter contents"
                           >
-                            <Edit2 size={12} />
+                            <Edit2 size={12} /> <span className="sm:hidden ml-1 text-[11px]">Edit</span>
                           </Button>
                           <Button 
                             onClick={() => handleDeleteDiplomaChapter(ch.id)}
-                            className="bg-status-error/15 hover:bg-status-error/20 text-status-error p-1.5 rounded-lg text-xs"
+                            className="bg-status-error/15 hover:bg-status-error/20 text-status-error p-2 sm:p-1.5 rounded-lg text-xs flex items-center justify-center font-bold"
                             title="Remove completely"
                           >
-                            <Trash2 size={12} />
+                            <Trash2 size={12} /> <span className="sm:hidden ml-1 text-[11px]">Delete</span>
                           </Button>
                         </div>
                       </div>

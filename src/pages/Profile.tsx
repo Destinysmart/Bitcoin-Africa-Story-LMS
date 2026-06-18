@@ -117,10 +117,10 @@ export default function Profile() {
       />
 
       {/* Header Profile Card */}
-      <GlassCard className="relative overflow-hidden bg-brand-dark-2">
+      <GlassCard className="relative overflow-hidden bg-brand-dark-2 p-4 md:p-6">
         <div className="absolute top-0 right-0 w-64 h-64 bg-brand-gold/10 blur-[80px] pointer-events-none rounded-full" />
         
-        <div className="relative z-10 flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-left">
+        <div className="relative z-10 flex flex-row items-center sm:items-start gap-4 md:gap-6 text-left">
           
           {/* Avatar */}
           <div 
@@ -128,7 +128,7 @@ export default function Profile() {
             onClick={() => fileInputRef.current?.click()}
             title="Click to upload custom profile picture"
           >
-            <div className="w-24 h-24 rounded-full bg-brand-gold text-[#000000] flex items-center justify-center overflow-hidden text-4xl font-bold shadow-[0_0_20px_rgba(253,184,19,0.3)]">
+            <div className="w-16 h-16 md:w-24 md:h-24 rounded-full bg-brand-gold text-[#000000] flex items-center justify-center overflow-hidden text-2xl md:text-4xl font-bold shadow-[0_0_20px_rgba(253,184,19,0.3)]">
               {user.avatar ? (
                 <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
               ) : (
@@ -136,52 +136,59 @@ export default function Profile() {
               )}
             </div>
             <div className="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <Camera size={24} className="text-white animate-pulse" />
+              <Camera size={18} className="text-white animate-pulse" />
             </div>
           </div>
           
           {/* Info */}
-          <div className="flex-1 mt-2">
-            <div className="flex flex-col md:flex-row md:items-center gap-2 mb-2">
-              <h1 className="text-3xl font-bold">{user.name}</h1>
-              <span className="bg-white/10 px-3 py-1 text-xs font-semibold rounded-full border border-white/5 whitespace-nowrap flex items-center gap-1">
+          <div className="flex-1 min-w-0 mt-1 sm:mt-2">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 md:gap-2 mb-1.5">
+              <h1 className="text-xl md:text-3xl font-extrabold text-white truncate leading-tight">{user.name}</h1>
+              <span className="bg-white/10 px-2 py-0.5 text-[10px] md:text-xs font-semibold rounded-full border border-white/5 whitespace-nowrap flex items-center gap-1 w-fit text-gray-300">
                 <span className="text-green-400 drop-shadow-[0_0_4px_rgba(74,222,128,0.8)]">⚲</span> {user.level || 'Seedling'} • {user.xp || 0} XP
               </span>
             </div>
-            <p className="text-gray-400 mb-1">{user.country} • Joined {new Date(user.joinedDate).toLocaleDateString()}</p>
-            {user.bio && <p className="text-gray-300 text-sm max-w-xl">{user.bio}</p>}
+            <p className="text-gray-400 text-xs md:text-sm mb-1">{user.country} • Joined {new Date(user.joinedDate).toLocaleDateString()}</p>
+            {user.bio && <p className="text-gray-300 text-xs md:text-sm max-w-xl line-clamp-2 md:line-clamp-none leading-relaxed mt-1">{user.bio}</p>}
+            
+            {/* Inline edit button for small mobile screen */}
+            <div className="mt-2.5 flex sm:hidden">
+              <Button variant="outline" size="sm" className="h-7 py-0.5 px-3 text-[10px] font-bold border-white/10 text-gray-300 hover:text-white" onClick={() => setActiveTab('settings')}>
+                Edit Profile
+              </Button>
+            </div>
           </div>
 
-          {/* Quick Action */}
-          <Button variant="outline" className="shrink-0" onClick={() => setActiveTab('settings')}>
+          {/* Desktop-only action */}
+          <Button variant="outline" className="hidden sm:flex shrink-0 border-white/10 hover:bg-white/5 text-gray-300 hover:text-white" onClick={() => setActiveTab('settings')}>
             Edit Profile
           </Button>
         </div>
       </GlassCard>
 
       {/* Stats Row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-brand-dark-2 p-4 rounded-xl border border-white/5 select-none hover:border-brand-gold/30 transition-colors">
-          <p className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1">Chapters</p>
-          <p className="text-2xl font-bold">{completedChapters}/10</p>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 md:gap-4">
+        <div className="bg-brand-dark-2 p-3 md:p-4 rounded-xl border border-white/5 select-none hover:border-brand-gold/30 transition-colors">
+          <p className="text-gray-400 text-[10px] md:text-xs font-bold uppercase tracking-wider mb-1">Chapters</p>
+          <p className="text-xl md:text-2xl font-extrabold text-white">{completedChapters}/10</p>
         </div>
-        <div className="bg-brand-dark-2 p-4 rounded-xl border border-white/5 select-none hover:border-brand-gold/30 transition-colors">
-          <p className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-1">Quizzes Passed</p>
-          <p className="text-2xl font-bold">{quizzesPassed}</p>
+        <div className="bg-brand-dark-2 p-3 md:p-4 rounded-xl border border-white/5 select-none hover:border-brand-gold/30 transition-colors">
+          <p className="text-gray-400 text-[10px] md:text-xs font-bold uppercase tracking-wider mb-1">Quizzes Progress</p>
+          <p className="text-xl md:text-2xl font-extrabold text-white">{quizzesPassed}</p>
         </div>
-        <div className="bg-brand-gold/10 p-4 rounded-xl border border-brand-gold/20 select-none gold-glow">
+        <div className="bg-brand-gold/10 p-3 md:p-4 rounded-xl border border-brand-gold/20 select-none gold-glow">
           <div className="flex items-center gap-1 text-brand-gold mb-1">
-            <Zap size={14} className="fill-brand-gold" />
-            <p className="text-xs font-bold uppercase tracking-wider">Total Sats Earned</p>
+            <Zap size={12} className="fill-brand-gold md:w-[14px] md:h-[14px]" />
+            <p className="text-[10px] md:text-xs font-bold uppercase tracking-wider">Sats Earned</p>
           </div>
-          <p className="text-2xl font-bold text-brand-gold">{user.totalSats || 0}</p>
+          <p className="text-xl md:text-2xl font-extrabold text-brand-gold">{user.totalSats || 0}</p>
         </div>
-        <div className="bg-brand-dark-2 p-4 rounded-xl border border-white/5 select-none hover:border-brand-gold/30 transition-colors">
+        <div className="bg-brand-dark-2 p-3 md:p-4 rounded-xl border border-white/5 select-none hover:border-brand-gold/30 transition-colors">
           <div className="flex items-center gap-1 text-status-warning mb-1">
-            <Flame size={14} className="fill-status-warning" />
-            <p className="text-xs font-bold uppercase tracking-wider">Study Streak</p>
+            <Flame size={12} className="fill-status-warning md:w-[14px] md:h-[14px]" />
+            <p className="text-[10px] md:text-xs font-bold uppercase tracking-wider">Study Streak</p>
           </div>
-          <p className="text-2xl font-bold">{user.streak || 0} Days</p>
+          <p className="text-xl md:text-2xl font-extrabold text-white">{user.streak || 0} Days</p>
         </div>
       </div>
 
@@ -205,70 +212,115 @@ export default function Profile() {
         
         {/* OVERVIEW */}
         {activeTab === 'overview' && (
-          <motion.div key="overview" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-6">
-            <GlassCard className="p-0 overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse min-w-[600px]">
-                  <thead>
-                    <tr className="border-b border-white/10 bg-black/20 text-xs uppercase tracking-wider text-gray-400">
-                      <th className="p-4 font-medium">Chapter</th>
-                      <th className="p-4 font-medium text-center">Status</th>
-                      <th className="p-4 font-medium text-center">Quiz Score</th>
-                      <th className="p-4 font-medium text-right">Sats Earned</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {chapters.map((chap) => {
-                      const prog = user.progress?.[chap.id];
-                      const isComplete = prog?.status === 'completed';
-                      const bestScore = prog?.quizAttempts?.reduce((max: number, a: any) => Math.max(max, a.score), 0) || 0;
-                      
-                      return (
-                        <tr key={chap.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                          <td className="p-4">
-                            <span className="font-semibold">{chap.title}</span>
-                          </td>
-                          <td className="p-4">
-                            <div className="flex justify-center">
-                              {isComplete 
-                                ? <span className="bg-status-success/10 text-status-success text-xs font-bold px-2 py-1 rounded">COMPLETED</span>
-                                : prog?.status === 'in_progress' 
-                                  ? <span className="bg-brand-gold/10 text-brand-gold text-xs font-bold px-2 py-1 rounded">IN PROGRESS</span>
-                                  : <span className="bg-white/5 text-gray-500 text-xs font-bold px-2 py-1 rounded">LOCKED</span>
-                              }
-                            </div>
-                          </td>
-                          <td className="p-4 text-center">
-                            {prog?.quizPassed ? (
-                              <span className="text-status-success font-medium">{bestScore}%</span>
-                            ) : (
-                              <span className="text-gray-500">—</span>
-                            )}
-                          </td>
-                          <td className="p-4 text-right">
-                            {prog?.satsEarned > 0 ? (
-                              <span className="text-brand-gold font-medium flex items-center justify-end gap-1">
-                                <Zap size={14} className="fill-brand-gold" /> {prog.satsEarned}
-                              </span>
-                            ) : <span className="text-gray-500">0</span>}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </GlassCard>
+          <motion.div key="overview" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-4 md:space-y-6">
             
-            <GlassCard>
-              <h3 className="font-bold text-lg mb-4">Activity Heatmap</h3>
-              {/* Fake heatmap for prototype styling */}
-              <div className="flex flex-wrap gap-1 md:gap-1.5 opacity-60">
-                {Array.from({ length: 90 }).map((_, i) => (
+            {/* Mobile-optimized Card List view */}
+            <div className="block md:hidden space-y-2.5 animate-fadeIn">
+              {chapters.map((chap) => {
+                const prog = user.progress?.[chap.id];
+                const isComplete = prog?.status === 'completed';
+                const bestScore = prog?.quizAttempts?.reduce((max: number, a: any) => Math.max(max, a.score), 0) || 0;
+                
+                return (
+                  <div key={chap.id} className="bg-brand-dark-2 border border-white/5 p-3 rounded-xl flex items-center justify-between gap-3 shadow-sm hover:border-brand-gold/20 transition-all">
+                    <div className="min-w-0">
+                      <p className="font-bold text-xs text-white truncate leading-tight mb-1">{chap.title}</p>
+                      <div className="flex items-center gap-2">
+                        {prog?.quizPassed ? (
+                          <span className="text-[10px] text-status-success font-semibold shrink-0">Quiz: {bestScore}%</span>
+                        ) : (
+                          <span className="text-[10px] text-gray-500 shrink-0">No quiz score</span>
+                        )}
+                        {prog?.satsEarned > 0 && (
+                          <>
+                            <span className="text-[10px] text-gray-600 font-bold">•</span>
+                            <span className="text-[10px] text-brand-gold font-bold tracking-tight inline-flex items-center gap-0.5 shrink-0">
+                              <Zap size={10} className="fill-brand-gold text-brand-gold" /> {prog.satsEarned}
+                            </span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div className="shrink-0">
+                      {isComplete 
+                        ? <span className="bg-status-success/15 border border-status-success/20 text-status-success text-[9px] font-mono font-bold px-2 py-0.5 rounded uppercase tracking-wider">Done</span>
+                        : prog?.status === 'in_progress' 
+                          ? <span className="bg-brand-gold/15 border border-brand-gold/20 text-brand-gold text-[9px] font-mono font-bold px-2 py-0.5 rounded uppercase tracking-wider">Active</span>
+                          : <span className="bg-white/5 border border-white/5 text-gray-500 text-[9px] font-mono font-bold px-2 py-0.5 rounded uppercase tracking-wider">Locked</span>
+                      }
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Desktop original Table layout */}
+            <div className="hidden md:block">
+              <GlassCard className="p-0 overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="border-b border-white/10 bg-black/20 text-xs uppercase tracking-wider text-gray-400">
+                        <th className="p-4 font-medium">Chapter</th>
+                        <th className="p-4 font-medium text-center">Status</th>
+                        <th className="p-4 font-medium text-center">Quiz Score</th>
+                        <th className="p-4 font-medium text-right">Sats Earned</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {chapters.map((chap) => {
+                        const prog = user.progress?.[chap.id];
+                        const isComplete = prog?.status === 'completed';
+                        const bestScore = prog?.quizAttempts?.reduce((max: number, a: any) => Math.max(max, a.score), 0) || 0;
+                        
+                        return (
+                          <tr key={chap.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                            <td className="p-4">
+                              <span className="font-semibold text-gray-200">{chap.title}</span>
+                            </td>
+                            <td className="p-4">
+                              <div className="flex justify-center">
+                                {isComplete 
+                                  ? <span className="bg-status-success/10 text-status-success text-xs font-bold px-2 py-1 rounded">COMPLETED</span>
+                                  : prog?.status === 'in_progress' 
+                                    ? <span className="bg-brand-gold/10 text-brand-gold text-xs font-bold px-2 py-1 rounded">IN PROGRESS</span>
+                                    : <span className="bg-white/5 text-gray-500 text-xs font-bold px-2 py-1 rounded">LOCKED</span>
+                                }
+                              </div>
+                            </td>
+                            <td className="p-4 text-center">
+                              {prog?.quizPassed ? (
+                                <span className="text-status-success font-medium">{bestScore}%</span>
+                              ) : (
+                                <span className="text-gray-500">—</span>
+                              )}
+                            </td>
+                            <td className="p-4 text-right">
+                              {prog?.satsEarned > 0 ? (
+                                <span className="text-brand-gold font-medium flex items-center justify-end gap-1">
+                                  <Zap size={14} className="fill-brand-gold" /> {prog.satsEarned}
+                                </span>
+                              ) : <span className="text-gray-500">0</span>}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </GlassCard>
+            </div>
+            
+            <GlassCard className="p-4 md:p-6">
+              <h3 className="font-bold text-sm md:text-lg mb-3">Activity Journal</h3>
+              {/* Fake heatmap for prototype styling - scaled nicely and compact */}
+              <div className="flex flex-wrap gap-1 opacity-65">
+                {Array.from({ length: 63 }).map((_, i) => (
                   <div 
                     key={i} 
-                    className={`w-3 h-3 md:w-4 md:h-4 rounded-sm ${Math.random() > 0.7 ? 'bg-brand-gold' : 'bg-white/10'}`}
-                    style={{ opacity: Math.random() > 0.7 ? Math.random() * 0.8 + 0.2 : 1 }}
+                    className={`w-2 h-2 md:w-3.5 md:h-3.5 rounded-sm ${Math.random() > 0.7 ? 'bg-brand-gold' : 'bg-white/10'}`}
+                    style={{ opacity: Math.random() > 0.7 ? Math.random() * 0.7 + 0.3 : 1 }}
                   />
                 ))}
               </div>

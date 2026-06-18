@@ -6,6 +6,7 @@ import { CircularProgress } from '../components/dashboard/ProgressRing';
 import { GlassCard } from '../components/ui/GlassCard';
 import { Button } from '../components/ui/Button';
 import { AIInstructorBot } from '../components/dashboard/AIInstructorBot';
+import { ChapterVector } from '../components/dashboard/ChapterVectors';
 import { Flame, Zap, BookOpen, Trophy, PlayCircle, Lock, CheckCircle2, TrendingUp, Target, Sparkles } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -31,6 +32,13 @@ export default function Dashboard() {
 
   const [weeklyGoal, setWeeklyGoal] = useState(user.weeklyGoal || 3);
   const [isEditingGoal, setIsEditingGoal] = useState(false);
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 18) return 'Good afternoon';
+    return 'Good evening';
+  };
   
   const handleSaveGoal = () => {
     updateUser(user.email, { weeklyGoal });
@@ -136,27 +144,85 @@ export default function Dashboard() {
             </svg>
           </div>
 
-          <div className="relative z-10 flex flex-col md:flex-row gap-8 items-center md:items-start justify-between">
-            <div className="flex-1 text-center md:text-left">
+          <div className="relative z-10 flex flex-col md:flex-row gap-6 md:gap-8 items-stretch md:items-start justify-between">
+            {/* PHONE-ONLY BEAUTIFIED & HIGHLY COMPACT HERO SECTION */}
+            <div className="block md:hidden space-y-4 text-left">
+              <div className="flex justify-between items-start gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5 mb-1.5">
+                    <span className="text-[9px] font-mono font-bold tracking-[0.1em] uppercase bg-brand-gold/15 text-brand-gold px-2 py-0.5 rounded border border-brand-gold/20 flex items-center gap-1">
+                      <span className="w-1 h-1 rounded-full bg-brand-gold animate-pulse"></span>
+                      Scholar
+                    </span>
+                  </div>
+                  <h1 className="text-xl font-bold tracking-tight text-white leading-tight">
+                    {getGreeting()},<br />
+                    <span className="text-brand-gold font-extrabold">{user.name.split(' ')[0]} ⚡</span>
+                  </h1>
+                </div>
+
+                {/* Sleek inline progress ring */}
+                <div className="shrink-0 flex flex-col items-center justify-center bg-brand-dark-2/60 border border-white/5 rounded-xl p-2.5 backdrop-blur-md">
+                  <CircularProgress progress={overallProgress} size={54} strokeWidth={5} />
+                  <span className="text-[8px] font-mono font-bold text-gray-400 mt-1 uppercase tracking-wider">{overallProgress}% Done</span>
+                </div>
+              </div>
+
+              <p className="text-gray-300 text-xs leading-relaxed font-sans font-medium">
+                Your journey to economic sovereignty is active. Complete your customized paths and stack real-world academic incentives.
+              </p>
+
+              {/* High-quality 2-column stats grid */}
+              <div className="grid grid-cols-2 gap-2.5">
+                <div className="flex items-center gap-2.5 bg-brand-dark-2/95 px-3 py-2 rounded-xl border border-white/5 shadow-md">
+                  <Flame className="text-status-warning fill-status-warning/10 animate-pulse shrink-0" size={16} />
+                  <div className="flex flex-col">
+                    <span className="text-[9px] text-gray-500 font-mono font-bold uppercase leading-none">Streak</span>
+                    <span className="font-extrabold text-white text-xs mt-0.5">{user.streak || 0} Days</span>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-2.5 bg-brand-gold/10 px-3 py-2 rounded-xl border border-brand-gold/20 gold-glow shadow-md">
+                  <Zap className="text-brand-gold fill-brand-gold/10 shrink-0" size={16} />
+                  <div className="flex flex-col">
+                    <span className="text-[9px] text-brand-gold/60 font-mono font-bold uppercase leading-none">Earned</span>
+                    <span className="font-extrabold text-brand-gold text-xs mt-0.5">{user.totalSats || 0} Sats</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Directly visible full-width Call To Action item */}
+              <Button 
+                onClick={() => navigate(`/chapter/${resumeChapter?.id}`)} 
+                className="w-full h-10 bg-brand-gold text-brand-black hover:bg-brand-gold/90 font-bold shadow-lg text-xs rounded-xl flex items-center justify-center gap-1.5 mt-2 transition-transform active:scale-[0.98]"
+              >
+                Resume Chapter {resumeChapter?.id} <PlayCircle size={14} className="shrink-0" />
+              </Button>
+            </div>
+
+            {/* TABLET & DESKTOP ORIGINAL DESIGN */}
+            <div className="hidden md:block flex-1 text-left">
               <h1 className="text-xl md:text-2xl font-bold tracking-tight mb-2 text-white">
                 Welcome back, {user.name.split(' ')[0]} <span className="text-brand-gold">₿</span>
               </h1>
-              <p className="text-gray-400 mb-6 text-sm max-w-md">Continue your Bitcoin journey. You're doing great, keep stacking those sats!</p>
+              <p className="text-gray-400 mb-6 text-sm max-w-md">
+                Continue your Bitcoin journey. You're doing great, keep stacking those sats!
+              </p>
               
-              <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mb-2">
-                <div className="flex items-center gap-2 bg-brand-dark-2 px-4 py-2 rounded-lg border border-white/5">
-                  <Flame className="text-status-warning" size={18} />
-                  <span className="font-semibold text-white">{user.streak || 0} Day Streak</span>
+              <div className="flex flex-wrap items-center justify-start gap-4 mb-2">
+                <div className="flex items-center gap-2 bg-brand-dark-2 px-4 py-2 rounded-lg border border-white/5 shadow-inner">
+                  <Flame className="text-status-warning fill-status-warning/10 animate-pulse" size={18} />
+                  <span className="font-semibold text-white text-sm">{user.streak || 0} Day Streak</span>
                 </div>
                 <div className="flex items-center gap-2 bg-brand-gold/10 px-4 py-2 rounded-lg border border-brand-gold/20 gold-glow">
-                  <Zap className="text-brand-gold" size={18} />
-                  <span className="font-semibold text-brand-gold">{user.totalSats || 0} Sats Earned</span>
+                  <Zap className="text-brand-gold fill-brand-gold/10" size={18} />
+                  <span className="font-semibold text-brand-gold text-sm">{user.totalSats || 0} Sats Earned</span>
                 </div>
               </div>
             </div>
             
-            {/* Circular Progress & Resume CTA */}
-            <div className="flex flex-col items-center gap-4 bg-black/40 p-5 rounded-2xl border border-white/5 backdrop-blur-md">
+            {/* Tablet & Desktop Progress Panel */}
+            <div className="hidden md:flex flex-col items-center gap-4 bg-black/40 p-5 rounded-2xl border border-white/5 backdrop-blur-md">
               <CircularProgress progress={overallProgress} size={100} strokeWidth={8} />
               <Button size="sm" onClick={() => navigate(`/chapter/${resumeChapter?.id}`)} className="w-full">
                 Resume Ch. {resumeChapter?.id} <PlayCircle size={16} className="ml-2" />
@@ -347,25 +413,25 @@ export default function Dashboard() {
 
       {/* Dedicated AI Study Assistant Section */}
       <motion.div
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.25 }}
-        className="space-y-6 pt-4"
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="space-y-3.5 md:space-y-6 pt-2 md:pt-4"
       >
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 md:gap-4">
           <div>
-            <h2 className="text-2xl font-bold bg-gradient-to-r from-white via-slate-200 to-brand-gold bg-clip-text text-transparent flex items-center gap-2.5">
-              <Sparkles className="text-brand-gold fill-brand-gold/70 shrink-0 animate-pulse" size={24} />
+            <h2 className="text-lg md:text-2xl font-bold bg-gradient-to-r from-white via-slate-200 to-brand-gold bg-clip-text text-transparent flex items-center gap-2">
+              <Sparkles className="text-brand-gold fill-brand-gold/70 shrink-0 animate-pulse w-4 h-4 md:w-6 md:h-6" />
               AI Study Assistant
             </h2>
-            <p className="text-sm text-[#94a3b8] mt-1 pr-6">
+            <p className="text-xs md:text-sm text-[#94a3b8] mt-1 pr-0 md:pr-6">
               Ask Satoshi clarifying questions, clear study doubts instantly, or deep-dive on core concepts within the Bitcoin Diploma.
             </p>
           </div>
           
           <div className="flex items-center gap-2 shrink-0">
-            <span className="text-[11px] font-mono font-medium text-[#94a3b8] bg-white/[0.03] px-3.5 py-1.5 rounded-full border border-white/5 flex items-center gap-2 self-start sm:self-center">
-              <span className="w-1.5 h-1.5 bg-status-success rounded-full animate-pulse" />
+            <span className="text-[10px] md:text-[11px] font-mono font-medium text-[#94a3b8] bg-white/[0.03] px-3 py-1 md:px-3.5 md:py-1.5 rounded-full border border-white/5 flex items-center gap-1.5 self-start sm:self-center">
+              <span className="w-1 h-1 md:w-1.5 md:h-1.5 bg-status-success rounded-full animate-pulse" />
               Satoshi Engine Online
             </span>
           </div>
@@ -395,7 +461,7 @@ export default function Dashboard() {
                 whileHover={isClickable ? { y: -6, scale: 1.02 } : {}}
                 onClick={() => isClickable && navigate(`/chapter/${chapter.id}`)}
                 className={`
-                  p-6 rounded-2xl border relative overflow-hidden transition-all duration-300 flex flex-col shadow-lg
+                  p-6 rounded-2xl border relative overflow-hidden transition-all duration-300 flex flex-col shadow-lg group
                   ${isClickable ? 'cursor-pointer hover:shadow-[0_8px_32px_rgba(253,184,19,0.06)] hover:border-brand-gold/30' : 'opacity-60 cursor-not-allowed'}
                   bg-brand-dark-2
                   ${status === 'completed' ? 'border-status-success/30' : 
@@ -404,8 +470,8 @@ export default function Dashboard() {
                 `}
               >
                 {/* Header Row */}
-                <div className="flex justify-between items-start mb-3">
-                  <span className="text-xs font-bold uppercase tracking-wider text-gray-500 bg-white/5 px-2 py-1 rounded">
+                <div className="flex justify-between items-center mb-3">
+                  <span className="text-xs font-mono font-bold uppercase tracking-wider text-gray-500 bg-white/5 px-2 py-1 rounded">
                     Chapter {chapter.id < 10 ? `0${chapter.id}` : chapter.id}
                   </span>
                   
@@ -414,16 +480,27 @@ export default function Dashboard() {
                   {(status === 'in_progress' || (status === 'locked' && isClickable)) && <PlayCircle size={18} className="text-brand-gold" />}
                 </div>
 
-                <h3 className="font-bold text-lg mb-4 flex-1 line-clamp-2 pr-2">{chapter.title}</h3>
+                {/* Thematic Interactive Vector Graphic */}
+                <div className="mb-4">
+                  <ChapterVector chapterId={chapter.id} />
+                </div>
+
+                <h3 className="font-bold text-lg mb-2 line-clamp-2 pr-2 text-white group-hover:text-brand-gold transition-colors duration-200">
+                  {chapter.title}
+                </h3>
+
+                <p className="text-xs text-gray-400 mb-5 line-clamp-2 leading-relaxed">
+                  {chapter.description || "Master decentralized proof-of-work consensus mechanisms, private keys, and peer-to-peer cash systems."}
+                </p>
                 
                 {/* Meta Footer */}
                 <div className="flex items-center justify-between text-xs font-medium mt-auto pt-4 border-t border-white/5">
                   <div className="flex items-center gap-1.5 text-gray-400">
                     ⏱ <span>{chapter.estimatedMinutes}m</span>
                   </div>
-                  <div className="flex items-center gap-1 text-brand-gold bg-brand-gold/10 px-2.5 py-1 rounded-full border border-brand-gold/20">
+                  <div className="flex items-center gap-1 text-brand-gold bg-brand-gold/10 px-2.5 py-1 rounded-full border border-brand-gold/20 font-mono">
                     <Zap size={10} className="fill-brand-gold" />
-                    <span>{chapter.satsPossible || 2}</span>
+                    <span>{chapter.satsPossible || 2} sats</span>
                   </div>
                 </div>
               </motion.div>
