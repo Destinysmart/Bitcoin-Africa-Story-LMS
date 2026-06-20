@@ -16,7 +16,6 @@ export default function SignUp() {
     email: '',
     password: '',
     country: '',
-    whatsapp: '',
     role: 'student', // 'student' | 'instructor'
   });
 

@@ -485,14 +485,14 @@ What key concept or module would you like me to make simple for you today?`;
   return (
     <div className={`flex flex-col h-[520px] md:h-[650px] lg:h-[720px] rounded-2xl overflow-hidden relative font-sans transition-all duration-300 ${
       theme === 'light'
-        ? 'bg-white border border-gray-200/80 shadow-[0_16px_48px_rgba(0,0,0,0.06)] text-gray-800'
+        ? 'bg-[#ffffff] border border-gray-200/80 shadow-[0_16px_48px_rgba(0,0,0,0.06)] text-gray-800'
         : 'bg-[#0b0b0b] border border-white/5 shadow-[0_24px_60px_rgba(0,0,0,0.8)] text-gray-200'
     }`}>
       
       {/* ChatGPT-style Sleek Header Bar */}
       <div className={`px-4 py-3 md:px-6 md:py-4 border-b flex items-center justify-between relative z-10 shrink-0 transition-colors ${
         theme === 'light'
-          ? 'border-gray-100 bg-gray-50/90'
+          ? 'border-gray-100 bg-[#f8f9fa]/95'
           : 'border-white/5 bg-[#0d0d0d]/90 backdrop-blur-md'
       }`}>
         <div className="flex items-center gap-2">
@@ -537,7 +537,7 @@ What key concept or module would you like me to make simple for you today?`;
       </div>
 
       {/* Main Interactive Container Area */}
-      <div className={`flex-1 overflow-hidden flex flex-col relative transition-colors ${theme === 'light' ? 'bg-gray-50/50' : 'bg-[#0d0d0d]'}`}>
+      <div className={`flex-1 overflow-hidden flex flex-col relative transition-colors ${theme === 'light' ? 'bg-[#fcfdfd]' : 'bg-[#0d0d0d]'}`}>
         
         {messages.length <= 1 ? (
           /* ==========================================================
@@ -580,7 +580,7 @@ What key concept or module would you like me to make simple for you today?`;
             >
               <div className={`px-3 py-2 md:px-4 md:py-3.5 rounded-2xl flex items-center gap-2 transition-all border ${
                 theme === 'light'
-                  ? 'bg-white border-gray-200 focus-within:border-gray-300 shadow-[0_8px_24px_rgba(0,0,0,0.05)]'
+                  ? 'bg-[#ffffff] border-gray-200 focus-within:border-gray-300 shadow-[0_8px_24px_rgba(0,0,0,0.05)]'
                   : 'bg-[#1e1e1e] border-white/5 focus-within:border-white/15 shadow-[0_8px_32px_rgba(0,0,0,0.4)]'
               }`}>
                 {/* Visual plus button */}
@@ -671,7 +671,7 @@ What key concept or module would you like me to make simple for you today?`;
                     onClick={() => handleSend(prompt.text)}
                     className={`text-xs text-left p-3 rounded-xl transition-all flex items-start gap-2.5 cursor-pointer select-none border ${
                       theme === 'light'
-                        ? 'text-gray-700 bg-white border-gray-200/80 hover:border-gray-300 hover:bg-gray-50 shadow-[0_1px_3px_rgba(0,0,0,0.02)]'
+                        ? 'text-gray-700 bg-[#ffffff] border-gray-200/80 hover:border-gray-300 hover:bg-[#f3f4f6] shadow-[0_1px_3px_rgba(0,0,0,0.02)]'
                         : 'text-gray-400 hover:text-white bg-white/[0.02] border-white/5 hover:border-white/10 hover:bg-[#1e1e1e]'
                     }`}
                   >
@@ -696,45 +696,45 @@ What key concept or module would you like me to make simple for you today?`;
                   const isUser = msg.role === 'user';
                   return (
                     <motion.div
-                      key={index}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className={`max-w-3xl mx-auto flex gap-4 ${isUser ? 'justify-end' : 'justify-start'}`}
-                    >
-                      {/* Avatar representation */}
-                      {!isUser && (
-                        <div className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center text-brand-gold text-sm font-bold select-none border ${
-                          theme === 'light'
-                            ? 'bg-brand-gold/10 border-brand-gold/12'
-                            : 'bg-white/[0.02] border border-white/10'
-                        }`}>
-                          ₿
-                        </div>
-                      )}
+                       key={index}
+                       initial={{ opacity: 0, y: 10 }}
+                       animate={{ opacity: 1, y: 0 }}
+                       className={`max-w-3xl mx-auto flex gap-4 ${isUser ? 'justify-end' : 'justify-start'}`}
+                     >
+                       {/* Avatar representation */}
+                       {!isUser && (
+                         <div className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center text-brand-gold text-sm font-bold select-none border ${
+                           theme === 'light'
+                             ? 'bg-brand-gold/10 border-brand-gold/12'
+                             : 'bg-white/[0.02] border border-white/10'
+                         }`}>
+                           ₿
+                         </div>
+                       )}
 
-                      <div className={`flex flex-col space-y-1.5 ${isUser ? 'items-end' : 'items-start'} max-w-[85%] sm:max-w-[78%]`}>
-                        {/* ChatGPT message bubbles: user uses sleek capsule, bot has plain flat text markdown */}
-                        <div className={`p-3 md:p-4 rounded-2xl relative group transition-all ${
-                          isUser 
-                            ? theme === 'light'
-                              ? 'bg-white text-gray-900 border border-gray-200 shadow-sm rounded-tr-sm'
-                              : 'bg-[#1e1e1e] text-white border border-white/5 rounded-tr-sm' 
-                            : 'bg-transparent border-none pl-0'
-                        }`}>
-                          
-                          <BitcoinFormattedText text={msg.content} />
+                       <div className={`flex flex-col space-y-1.5 ${isUser ? 'items-end' : 'items-start'} max-w-[85%] sm:max-w-[78%]`}>
+                         {/* ChatGPT message bubbles: user uses sleek capsule, bot has plain flat text markdown */}
+                         <div className={`p-3 md:p-4 rounded-2xl relative group transition-all ${
+                           isUser 
+                             ? theme === 'light'
+                               ? 'bg-[#ffffff] text-gray-900 border border-gray-200 shadow-sm rounded-tr-sm'
+                               : 'bg-[#1e1e1e] text-white border border-white/5 rounded-tr-sm' 
+                             : 'bg-transparent border-none pl-0'
+                         }`}>
+                           
+                           <BitcoinFormattedText text={msg.content} />
 
-                          {/* Float clipboard on assistant responses */}
-                          {!isUser && (
-                            <div className="mt-2.5 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <button
-                                onClick={() => copyToClipboard(msg.content, index)}
-                                className={`px-2.5 py-1 rounded-lg text-[10px] transition-all flex items-center gap-1.5 cursor-pointer border ${
-                                  theme === 'light'
-                                    ? 'bg-white hover:bg-gray-100 border-gray-200 text-gray-500 hover:text-gray-800'
-                                    : 'bg-white/[0.02] hover:bg-white/[0.06] border border-white/5 text-gray-400 hover:text-white'
-                                }`}
-                              >
+                           {/* Float clipboard on assistant responses */}
+                           {!isUser && (
+                             <div className="mt-2.5 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                               <button
+                                 onClick={() => copyToClipboard(msg.content, index)}
+                                 className={`px-2.5 py-1 rounded-lg text-[10px] transition-all flex items-center gap-1.5 cursor-pointer border ${
+                                   theme === 'light'
+                                     ? 'bg-[#ffffff] hover:bg-[#f3f4f6] border-gray-200 text-gray-500 hover:text-gray-800'
+                                     : 'bg-white/[0.02] hover:bg-white/[0.06] border border-white/5 text-gray-400 hover:text-white'
+                                 }`}
+                               >
                                 {copiedId === index ? (
                                   <>
                                     <Check size={10} className="text-status-success animate-bounce" />
@@ -800,12 +800,12 @@ What key concept or module would you like me to make simple for you today?`;
 
             {/* Chat footer dynamic dock */}
             <div className={`px-4 py-4 md:px-8 border-t shrink-0 transition-colors ${
-              theme === 'light' ? 'bg-white border-gray-100' : 'bg-[#0a0a0a] border-white/5'
+              theme === 'light' ? 'bg-[#ffffff] border-gray-100' : 'bg-[#0a0a0a] border-white/5'
             }`}>
               <div className="max-w-2xl mx-auto w-full relative">
                 <div className={`p-1.5 pr-2 pl-3 rounded-2xl flex items-center gap-2 border transition-all ${
                   theme === 'light'
-                    ? 'bg-gray-50 border-gray-200 focus-within:border-gray-300'
+                    ? 'bg-[#f8f9fa] border-gray-200 focus-within:border-gray-300'
                     : 'bg-[#1e1e1e] border-white/5 focus-within:border-white/12'
                 }`}>
                   <input

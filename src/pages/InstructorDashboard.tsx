@@ -181,6 +181,7 @@ export default function InstructorDashboard() {
       duration: '4 Weeks',
       tag: 'Intermediate',
       estimatedMinutes: 180,
+      imageUrl: '/src/assets/images/emerging_markets_poster_1781855059422.jpg',
       outcomes: [
         "Explain fundamental concepts within this specialized domain of the Bitcoin network.",
         "Demonstrate practical integration knowledge of sovereign nodes or applications.",
@@ -511,7 +512,7 @@ export default function InstructorDashboard() {
                       <tr className="bg-brand-dark-2/80 text-gray-400 font-bold border-b border-white/5">
                         <th className="py-3 px-4">Student</th>
                         <th className="py-3 px-4">Location</th>
-                        <th className="py-3 px-4">WhatsApp Contact</th>
+                        <th className="py-3 px-4">Contact Email</th>
                         <th className="py-3 px-4 text-center">Unlocked Badges</th>
                         <th className="py-3 px-4 text-right">Lightning Balanced Balance</th>
                       </tr>
@@ -539,7 +540,7 @@ export default function InstructorDashboard() {
                               {s.country || 'Not specified'}
                             </td>
                             <td className="py-3.5 px-4 text-gray-300 font-sans">
-                              {s.whatsapp || 'No Telegram/WhatsApp'}
+                              {s.email}
                             </td>
                             <td className="py-3.5 px-4 text-center">
                               <span className="inline-block bg-brand-gold/15 text-brand-gold font-bold px-2 py-0.5 rounded-full text-[9px] border border-brand-gold/10">
@@ -723,6 +724,21 @@ export default function InstructorDashboard() {
                       value={editingCourse.duration} 
                       onChange={e => setEditingCourse({...editingCourse, duration: e.target.value})}
                     />
+                  </div>
+
+                  <div className="space-y-1">
+                    <Input 
+                      label="Course Poster Image URL" 
+                      value={editingCourse.imageUrl || ''} 
+                      onChange={e => setEditingCourse({...editingCourse, imageUrl: e.target.value})}
+                      placeholder="e.g. /src/assets/images/my_poster.jpg or an external https link"
+                    />
+                    <div className="flex gap-3 flex-wrap text-[10px] text-gray-400 font-mono mt-1">
+                      <span className="text-gray-500 font-bold">Quick image presets:</span>
+                      <button type="button" onClick={() => setEditingCourse({...editingCourse, imageUrl: '/src/assets/images/lightning_node_poster_1781855024195.jpg'})} className="text-brand-gold hover:underline cursor-pointer">⚡ Lightning Node</button>
+                      <button type="button" onClick={() => setEditingCourse({...editingCourse, imageUrl: '/src/assets/images/emerging_markets_poster_1781855059422.jpg'})} className="text-brand-gold hover:underline cursor-pointer">🌍 Emerging Markets</button>
+                      <button type="button" onClick={() => setEditingCourse({...editingCourse, imageUrl: '/src/assets/images/bitcoin_script_poster_1781855074950.jpg'})} className="text-brand-gold hover:underline cursor-pointer">💻 Script Dev</button>
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -1357,7 +1373,7 @@ export default function InstructorDashboard() {
 
                             {/* Contact, Dates & Country */}
                             <td className="py-4 px-4 text-gray-200">
-                              <div className="font-sans font-semibold">{student.whatsapp || student.phone || 'No WhatsApp'}</div>
+                              <div className="font-sans font-semibold">{student.email}</div>
                               <div className="text-[10px] text-gray-400 mt-0.5 font-sans">{student.country || 'Africa Region'} • Applied: {student.certificateAppliedDate ? new Date(student.certificateAppliedDate).toLocaleDateString() : 'Pending'}</div>
                             </td>
 

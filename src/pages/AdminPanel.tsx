@@ -16,8 +16,10 @@ export default function AdminPanel() {
   const { toast } = useToast();
   const user = getCurrentUser();
   const navigate = useNavigate();
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
     if (!user || user.role !== 'admin') {
       toast('Access denied. Admin only.', 'error');
       navigate('/dashboard');
@@ -441,24 +443,26 @@ export default function AdminPanel() {
                     <h3 className="font-bold text-sm sm:text-base md:text-lg">Student Engagement & Pass Rates</h3>
                     <p className="text-gray-400 text-xs sm:text-sm">Comparing users who started vs completed chapters.</p>
                   </div>
-                  <div className="flex-1 min-h-[220px] sm:min-h-[300px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <ComposedChart data={chapterStats} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                        <XAxis dataKey="name" stroke="#888" tick={{ fill: '#888', fontSize: 12 }} axisLine={false} tickLine={false} dy={10} />
-                        <YAxis yAxisId="left" stroke="#888" tick={{ fill: '#888', fontSize: 12 }} axisLine={false} tickLine={false} />
-                        <YAxis yAxisId="right" orientation="right" stroke="#888" tick={{ fill: '#888', fontSize: 12 }} axisLine={false} tickLine={false} domain={[0, 100]} />
-                        <RechartsTooltip 
-                          contentStyle={{ backgroundColor: '#1A1A1A', borderColor: 'rgba(255,255,255,0.1)', borderRadius: '8px' }}
-                          itemStyle={{ color: '#E5E5E5' }}
-                          cursor={{ fill: 'rgba(255,255,255,0.05)' }}
-                        />
-                        <Legend wrapperStyle={{ paddingTop: '20px' }} iconType="circle" />
-                        <Bar yAxisId="left" dataKey="Started" fill="rgba(255,255,255,0.1)" radius={[4, 4, 0, 0]} barSize={20} />
-                        <Bar yAxisId="left" dataKey="Completed" fill="#F7931A" radius={[4, 4, 0, 0]} barSize={20} />
-                        <Line yAxisId="right" type="monotone" dataKey="PassRate" stroke="#4ade80" strokeWidth={3} dot={{ r: 4, fill: '#1A1A1A', stroke: '#4ade80', strokeWidth: 2 }} activeDot={{ r: 6 }} name="Pass Rate %" />
-                      </ComposedChart>
-                    </ResponsiveContainer>
+                  <div className="flex-1 min-h-[220px] sm:min-h-[300px] w-full relative min-w-0">
+                    {isMounted && (
+                      <ResponsiveContainer width="100%" height={260}>
+                        <ComposedChart data={chapterStats} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                          <XAxis dataKey="name" stroke="#888" tick={{ fill: '#888', fontSize: 12 }} axisLine={false} tickLine={false} dy={10} />
+                          <YAxis yAxisId="left" stroke="#888" tick={{ fill: '#888', fontSize: 12 }} axisLine={false} tickLine={false} />
+                          <YAxis yAxisId="right" orientation="right" stroke="#888" tick={{ fill: '#888', fontSize: 12 }} axisLine={false} tickLine={false} domain={[0, 100]} />
+                          <RechartsTooltip 
+                            contentStyle={{ backgroundColor: '#1A1A1A', borderColor: 'rgba(255,255,255,0.1)', borderRadius: '8px' }}
+                            itemStyle={{ color: '#E5E5E5' }}
+                            cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                          />
+                          <Legend wrapperStyle={{ paddingTop: '20px' }} iconType="circle" />
+                          <Bar yAxisId="left" dataKey="Started" fill="rgba(255,255,255,0.1)" radius={[4, 4, 0, 0]} barSize={20} />
+                          <Bar yAxisId="left" dataKey="Completed" fill="#F7931A" radius={[4, 4, 0, 0]} barSize={20} />
+                          <Line yAxisId="right" type="monotone" dataKey="PassRate" stroke="#4ade80" strokeWidth={3} dot={{ r: 4, fill: '#1A1A1A', stroke: '#4ade80', strokeWidth: 2 }} activeDot={{ r: 6 }} name="Pass Rate %" />
+                        </ComposedChart>
+                      </ResponsiveContainer>
+                    )}
                   </div>
                 </GlassCard>
 
@@ -467,21 +471,23 @@ export default function AdminPanel() {
                     <h3 className="font-bold text-sm sm:text-base md:text-lg">Common Struggle Points</h3>
                     <p className="text-gray-400 text-xs sm:text-sm">Average number of quiz attempts per user.</p>
                   </div>
-                  <div className="flex-1 min-h-[220px] sm:min-h-[300px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <RechartsBarChart data={chapterStats} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                        <XAxis dataKey="name" stroke="#888" tick={{ fill: '#888', fontSize: 12 }} axisLine={false} tickLine={false} dy={10} />
-                        <YAxis stroke="#888" tick={{ fill: '#888', fontSize: 12 }} axisLine={false} tickLine={false} />
-                        <RechartsTooltip 
-                          contentStyle={{ backgroundColor: '#1A1A1A', borderColor: 'rgba(255,255,255,0.1)', borderRadius: '8px' }}
-                          itemStyle={{ color: '#E5E5E5' }}
-                          cursor={{ fill: 'rgba(255,255,255,0.05)' }}
-                        />
-                        <Legend wrapperStyle={{ paddingTop: '20px' }} iconType="circle" />
-                        <Bar dataKey="AvgAttempts" fill="#ef4444" radius={[4, 4, 0, 0]} name="Avg Quiz Attempts" barSize={32} />
-                      </RechartsBarChart>
-                    </ResponsiveContainer>
+                  <div className="flex-1 min-h-[220px] sm:min-h-[300px] w-full relative min-w-0">
+                    {isMounted && (
+                      <ResponsiveContainer width="100%" height={260}>
+                        <RechartsBarChart data={chapterStats} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                          <XAxis dataKey="name" stroke="#888" tick={{ fill: '#888', fontSize: 12 }} axisLine={false} tickLine={false} dy={10} />
+                          <YAxis stroke="#888" tick={{ fill: '#888', fontSize: 12 }} axisLine={false} tickLine={false} />
+                          <RechartsTooltip 
+                            contentStyle={{ backgroundColor: '#1A1A1A', borderColor: 'rgba(255,255,255,0.1)', borderRadius: '8px' }}
+                            itemStyle={{ color: '#E5E5E5' }}
+                            cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                          />
+                          <Legend wrapperStyle={{ paddingTop: '20px' }} iconType="circle" />
+                          <Bar dataKey="AvgAttempts" fill="#ef4444" radius={[4, 4, 0, 0]} name="Avg Quiz Attempts" barSize={32} />
+                        </RechartsBarChart>
+                      </ResponsiveContainer>
+                    )}
                   </div>
                 </GlassCard>
               </div>

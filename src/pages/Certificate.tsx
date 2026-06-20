@@ -35,7 +35,6 @@ export default function Certificate() {
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || '',
-    whatsapp: user?.whatsapp || '',
     country: user?.country || '',
     btcAddress: user?.btcAddress || '',
   });
@@ -70,7 +69,7 @@ export default function Certificate() {
           payoutStatus: 'pending',
           payoutRequestDate: new Date().toISOString(),
           btcAddress: formData.btcAddress,
-          whatsapp: formData.whatsapp,
+          email: formData.email,
           name: formData.name
         });
       }
@@ -153,8 +152,7 @@ export default function Certificate() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Input label="Full Legal Name (For Certificate)" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} required />
-                  <Input label="Email Address" value={formData.email} readOnly disabled className="opacity-50" />
-                  <Input label="WhatsApp Number" value={formData.whatsapp} onChange={e => setFormData({ ...formData, whatsapp: e.target.value })} required />
+                  <Input label="Email Address" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} required />
                   <Input label="Country" value={formData.country} readOnly disabled className="opacity-50" />
                 </div>
                 

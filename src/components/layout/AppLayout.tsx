@@ -480,50 +480,50 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               initial={{ x: '-100%' }}
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 220 }}
-              className="fixed top-0 left-0 h-screen w-72 bg-brand-dark-1 border-r border-white/5 z-50 lg:hidden flex flex-col p-6 shadow-2xl overflow-y-auto"
+              transition={{ type: 'spring', damping: 25, stiffness: 240 }}
+              className="fixed top-0 left-0 h-screen w-[270px] max-w-[80vw] bg-brand-dark-1 border-r border-white/5 z-50 lg:hidden flex flex-col p-5 shadow-2xl overflow-y-auto font-sans"
             >
-              <div className="flex items-center justify-between mb-8">
-                <Logo />
+              <div className="flex items-center justify-between mb-6">
+                <Logo className="scale-90 origin-left" />
                 <button 
                   onClick={() => setIsDrawerOpen(false)}
-                  className="p-1.5 rounded-xl text-gray-400 hover:text-white hover:bg-white/5 transition-colors border border-transparent hover:border-white/10"
+                  className="p-1 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors border border-transparent hover:border-white/10"
                 >
-                  <X size={20} />
+                  <X size={18} />
                 </button>
               </div>
               
-              <nav className="flex-1 flex flex-col gap-2">
+              <nav className="flex-1 flex flex-col gap-1.5">
                 {navItems.map(item => (
                   <NavLink
                     key={item.path}
                     to={item.path}
                     onClick={() => setIsDrawerOpen(false)}
                     className={({ isActive }) => `
-                      flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-medium
+                      flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition-all font-medium text-sm
                       ${isActive 
-                        ? 'bg-brand-gold/10 text-brand-gold border border-brand-gold/20 shadow-[0_0_15px_rgba(253,184,19,0.15)]' 
+                        ? 'bg-brand-gold/10 text-brand-gold border border-brand-gold/20 shadow-[0_0_12px_rgba(253,184,19,0.12)] font-semibold' 
                         : 'text-gray-400 hover:text-white hover:bg-white/5'}
                     `}
                   >
-                    <item.icon size={20} />
+                    <item.icon size={18} />
                     {item.label}
                   </NavLink>
                 ))}
               </nav>
 
-              <div className="mt-auto pt-6 border-t border-white/5 space-y-4">
-                <div className="flex items-center justify-between px-4 py-2 border border-white/5 bg-brand-dark-2/40 rounded-xl">
-                  <span className="text-sm font-medium text-gray-400">Appearance</span>
+              <div className="mt-auto pt-4 border-t border-white/5 space-y-3">
+                <div className="flex items-center justify-between px-3 py-2 border border-white/5 bg-brand-dark-2/40 rounded-lg">
+                  <span className="text-xs font-medium text-gray-400">Appearance</span>
                   <button
                     onClick={() => toggleTheme()}
-                    className="relative flex items-center justify-between gap-1 p-1 bg-brand-black border border-white/5 rounded-lg text-gray-400 transition-all cursor-pointer"
+                    className="relative flex items-center justify-between gap-0.5 p-0.5 bg-brand-black border border-white/5 rounded-md text-gray-400 transition-all cursor-pointer"
                   >
-                    <div className={`p-1 rounded-md transition-all ${theme === 'light' ? 'bg-brand-gold text-brand-black' : 'hover:text-white'}`}>
-                      <Sun size={16} />
+                    <div className={`p-1 rounded transition-all ${theme === 'light' ? 'bg-brand-gold text-brand-black' : 'hover:text-white'}`}>
+                      <Sun size={14} />
                     </div>
-                    <div className={`p-1 rounded-md transition-all ${theme === 'dark' ? 'bg-brand-gold text-brand-black' : 'hover:text-white'}`}>
-                      <Moon size={16} />
+                    <div className={`p-1 rounded transition-all ${theme === 'dark' ? 'bg-brand-gold text-brand-black' : 'hover:text-white'}`}>
+                      <Moon size={14} />
                     </div>
                   </button>
                 </div>
@@ -533,9 +533,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                     handleLogout();
                     setIsDrawerOpen(false);
                   }}
-                  className="flex items-center gap-3 px-4 py-3 w-full rounded-xl transition-all font-medium text-gray-400 hover:text-status-error hover:bg-status-error/10"
+                  className="flex items-center gap-2.5 px-3 py-2.5 w-full rounded-lg transition-all font-medium text-sm text-gray-400 hover:text-status-error hover:bg-status-error/10"
                 >
-                  <LogOut size={20} />
+                  <LogOut size={18} />
                   Sign Out
                 </button>
               </div>
@@ -823,7 +823,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </header>
 
         {/* Child Routes inject here */}
-        <div className="flex-1 overflow-x-hidden">
+        <div className="flex-1 overflow-x-hidden pb-20 md:pb-0">
           {children}
         </div>
       </main>

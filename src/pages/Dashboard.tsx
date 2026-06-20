@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { useNavigate } from 'react-router-dom';
 import { getCurrentUser, getContent, getAnnouncements, updateUser } from '../lib/storage';
@@ -9,12 +9,19 @@ import { AIInstructorBot } from '../components/dashboard/AIInstructorBot';
 import { ChapterVector } from '../components/dashboard/ChapterVectors';
 import { Flame, Zap, BookOpen, Trophy, PlayCircle, Lock, CheckCircle2, TrendingUp, Target, Sparkles } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useToast } from '../contexts/ToastContext';
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const user = getCurrentUser();
   const content = getContent();
   const announcements = getAnnouncements();
+  const { toast } = useToast();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   if (!user) return null;
 
@@ -315,43 +322,45 @@ export default function Dashboard() {
               <TrendingUp className="text-brand-gold" size={24} />
               <h2 className="text-xl font-bold">Learning Progress (XP over Chapters)</h2>
             </div>
-            <div className="h-[250px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="colorXp" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#FDB813" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#FDB813" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
-                  <XAxis dataKey="name" stroke="#9ca3af" fontSize={12} tickLine={false} axisLine={false} />
-                  <YAxis stroke="#9ca3af" fontSize={12} tickLine={false} axisLine={false} />
-                  <Tooltip 
-                    content={({ active, payload }) => {
-                      if (active && payload && payload.length) {
-                        const data = payload[0].payload;
-                        return (
-                          <div className="bg-[#111] border border-white/20 p-3 rounded-lg shadow-xl outline-none">
-                            <p className="text-gray-400 text-xs mb-1 font-medium">{data.title || data.name}</p>
-                            <p className="text-brand-gold font-bold">{data.xp} XP</p>
-                            <p className="text-white text-sm">{data.percentage}% Completed</p>
-                          </div>
-                        );
-                      }
-                      return null;
-                    }}
-                  />
-                  <Area 
-                    type="monotone" 
-                    dataKey="xp" 
-                    stroke="#FDB813" 
-                    strokeWidth={3}
-                    fillOpacity={1} 
-                    fill="url(#colorXp)" 
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
+            <div className="h-[250px] w-full relative min-h-0 min-w-0">
+              {isMounted && (
+                <ResponsiveContainer width="100%" height={250}>
+                  <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <defs>
+                      <linearGradient id="colorXp" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#FDB813" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#FDB813" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
+                    <XAxis dataKey="name" stroke="#9ca3af" fontSize={12} tickLine={false} axisLine={false} />
+                    <YAxis stroke="#9ca3af" fontSize={12} tickLine={false} axisLine={false} />
+                    <Tooltip 
+                      content={({ active, payload }) => {
+                        if (active && payload && payload.length) {
+                          const data = payload[0].payload;
+                          return (
+                            <div className="bg-[#111] border border-white/20 p-3 rounded-lg shadow-xl outline-none">
+                              <p className="text-gray-400 text-xs mb-1 font-medium">{data.title || data.name}</p>
+                              <p className="text-brand-gold font-bold">{data.xp} XP</p>
+                              <p className="text-white text-sm">{data.percentage}% Completed</p>
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                    />
+                    <Area 
+                      type="monotone" 
+                      dataKey="xp" 
+                      stroke="#FDB813" 
+                      strokeWidth={3}
+                      fillOpacity={1} 
+                      fill="url(#colorXp)" 
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              )}
             </div>
           </GlassCard>
         </motion.div>
@@ -452,17 +461,24 @@ export default function Dashboard() {
             const chapProg = user.progress?.[chapter.id];
             const status = chapProg?.status || 'locked';
             
-            // For learning flexibility, all chapters are clickable in the curriculum grid.
-            const isClickable = true;
+            const numId = Number(chapter.id);
+            const isLockedPrereq = numId > 1 && (!user.progress?.[String(numId - 1)] || user.progress?.[String(numId - 1)].status !== 'completed');
             
             return (
               <motion.div
                 key={chapter.id}
-                whileHover={isClickable ? { y: -6, scale: 1.02 } : {}}
-                onClick={() => isClickable && navigate(`/chapter/${chapter.id}`)}
+                whileHover={!isLockedPrereq ? { y: -6, scale: 1.02 } : {}}
+                onClick={() => {
+                  if (isLockedPrereq) {
+                    const prevChapterName = chapters.find(c => Number(c.id) === numId - 1)?.title || `Chapter ${numId - 1}`;
+                    toast(`Unit Locked! Complete "${prevChapterName}" first and score 100% on its quiz to unlock this chapter. ⚡`, "info");
+                    return;
+                  }
+                  navigate(`/chapter/${chapter.id}`);
+                }}
                 className={`
                   p-6 rounded-2xl border relative overflow-hidden transition-all duration-300 flex flex-col shadow-lg group
-                  ${isClickable ? 'cursor-pointer hover:shadow-[0_8px_32px_rgba(253,184,19,0.06)] hover:border-brand-gold/30' : 'opacity-60 cursor-not-allowed'}
+                  ${!isLockedPrereq ? 'cursor-pointer hover:shadow-[0_8px_32px_rgba(253,184,19,0.06)] hover:border-brand-gold/30' : 'opacity-60 cursor-not-allowed border-white/5'}
                   bg-brand-dark-2
                   ${status === 'completed' ? 'border-status-success/30' : 
                     status === 'in_progress' ? 'border-brand-gold/40 gold-glow' : 
@@ -475,9 +491,13 @@ export default function Dashboard() {
                     Chapter {chapter.id < 10 ? `0${chapter.id}` : chapter.id}
                   </span>
                   
-                  {status === 'completed' && <CheckCircle2 size={18} className="text-status-success" />}
-                  {(status === 'locked' && !isClickable) && <Lock size={16} className="text-gray-500" />}
-                  {(status === 'in_progress' || (status === 'locked' && isClickable)) && <PlayCircle size={18} className="text-brand-gold" />}
+                  {status === 'completed' ? (
+                    <CheckCircle2 size={18} className="text-status-success" />
+                  ) : isLockedPrereq ? (
+                    <Lock size={16} className="text-gray-500" />
+                  ) : (
+                    <PlayCircle size={18} className="text-brand-gold" />
+                  )}
                 </div>
 
                 {/* Thematic Interactive Vector Graphic */}

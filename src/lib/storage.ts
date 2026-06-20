@@ -558,86 +558,406 @@ export const initStorage = () => {
 
 export const getContent = () => {
   const content = JSON.parse(localStorage.getItem('bas_content') || '{"chapters":{},"announcements":[]}');
+  
+  const defaultCourses = [
+    {
+      id: 'course-lightning',
+      title: 'Lightning Node Operator',
+      description: 'Learn how to set up, secure, and manage your own Lightning node. Route payments and earn routing fees.',
+      longDescription: 'Operating a Lightning Node is the pinnacle of supporting the Bitcoin network\'s scaling layer. This specialty program teaches students the theory and practice of liquidity optimization, security, channel backup, and routing policies to maximize efficiency and earn routing fees.',
+      icon: 'Server',
+      color: 'text-blue-400',
+      bg: 'bg-blue-400/10',
+      tags: ['Advanced', 'Infrastructure'],
+      duration: '4 Weeks',
+      tag: 'Advanced',
+      estimatedMinutes: 240,
+      imageUrl: '/src/assets/images/lightning_node_poster_1781855024195.jpg',
+      outcomes: [
+        "Assemble and configure dedicated node hardware or virtual private servers (VPS).",
+        "Manage channel liquidity (inbound, outbound, routing metrics) using advanced tools.",
+        "Set up dynamic fee schedules and routing algorithms to optimize node profitability.",
+        "Configure automated backups and static channel backups (SCB) for bulletproof recovery."
+      ],
+      syllabus: [
+        {
+          title: "Node Setup & Hardware Choices",
+          duration: "60 mins",
+          desc: "Raspberry Pi setups vs virtual private servers, operating system choice, and chain synchronization.",
+          videoUrl: "https://www.youtube.com/watch?v=RZOca_6vY40",
+          resourceLink: "https://raspibolt.github.io/raspibolt/",
+          quiz: [
+            {
+              id: "cl_1_1",
+              question: "Why is a high-quality SSD strongly recommended over an SD card for running a Bitcoin full node?",
+              options: {
+                A: "SD cards have slower read times that disrupt block broadcast speeds.",
+                B: "Constant read/write database operations from Bitcoin Core will rapidly wear out and corrupt SD cards.",
+                C: "SD cards cannot load modern Linux operating systems.",
+                D: "SSD hardware requires significantly less electricity than SD cards."
+              },
+              correct: "B"
+            },
+            {
+              id: "cl_1_2",
+              question: "What does running a 'headless' node server mean?",
+              options: {
+                A: "A server operated entirely with no local monitor, key entry, or pointer devices attached.",
+                B: "Running a light node that does not store block headers.",
+                C: "Creating backup channels without active private keys specified.",
+                D: "An automatic node setup that does not require an operating system."
+              },
+              correct: "A"
+            }
+          ]
+        },
+        {
+          title: "Lightning Softwares & Configurations",
+          duration: "60 mins",
+          desc: "Comparing node software client configurations and terminal shell setups.",
+          videoUrl: "https://www.youtube.com/watch?v=y6f-99fA80U",
+          resourceLink: "https://github.com/lightningnetwork/lnd",
+          quiz: [
+            {
+              id: "cl_2_1",
+              question: "Which of the following is one of the most prominent, enterprise-grade open-source Lightning node implementations?",
+              options: {
+                A: "Solc Solidity Agent",
+                B: "LND (Lightning Network Daemon) developed by Lightning Labs",
+                C: "MetaMask Client",
+                D: "ERC-20 Routing Coordinator"
+              },
+              correct: "B"
+            }
+          ]
+        },
+        {
+          title: "Liquidity Management",
+          duration: "60 mins",
+          desc: "Inbound and outbound liquidity, managing channel exhaustion, peer balancing, and loop mechanics.",
+          videoUrl: "https://www.youtube.com/watch?v=vVj448m7_pA",
+          resourceLink: "https://blog.lightning.engineering/posts/2020/02/04/lightning-loop.html",
+          quiz: [
+            {
+              id: "cl_3_1",
+              question: "In the context of the Lightning Network routing system, what is 'Inbound Liquidity'?",
+              options: {
+                A: "The maximum amount of Bitcoin that connected remote peers can route to your node.",
+                B: "The amount of funds you can currently send out of your channels.",
+                C: "The bandwidth speed of incoming connection packages.",
+                D: "Specialty backup coins held inside your hardware vault."
+              },
+              correct: "A"
+            },
+            {
+              id: "cl_3_2",
+              question: "What is the primary purpose of executing a 'Loop Out' protocol transaction?",
+              options: {
+                A: "Moving out-of-channel coins back into digital mining rigs.",
+                B: "Draining local channel capacity into an on-chain address without closing the channel, restoring local sending capacity.",
+                C: "Toggling connection variables to clear stalled routes.",
+                D: "Exporting localized routing logs into spreadsheet databases."
+              },
+              correct: "B"
+            }
+          ]
+        },
+        {
+          title: "Routing Policies & Earnings",
+          duration: "60 mins",
+          desc: "Setting node routing fees, evaluating peer connectivity, and analyzing payment trails.",
+          videoUrl: "https://www.youtube.com/watch?v=y6f-99fA80U",
+          resourceLink: "https://mempool.space/lightning",
+          quiz: [
+            {
+              id: "cl_4_1",
+              question: "How do active Lightning nodes accumulate Sats for routing payments?",
+              options: {
+                A: "By minting new block reward subsidies on the main chain.",
+                B: "By taking a minuscule base fee and a proportional fee from forward transactions.",
+                C: "By charging hourly connection rates to peer channel operators.",
+                D: "Through direct monthly grants from the central bank."
+              },
+              correct: "B"
+            }
+          ]
+        },
+        {
+          title: "Backups and Security Protocols",
+          duration: "60 mins",
+          desc: "Static Channel Backups (SCB), watchtower client creation, and emergency protocols.",
+          videoUrl: "https://www.youtube.com/watch?v=vVj448m7_pA",
+          resourceLink: "https://docs.lightning.engineering/lightning-network-tools/lnd/channel-backups",
+          quiz: [
+            {
+              id: "cl_5_1",
+              question: "Why is a standard 12-or-24 private key recovery seed alone insufficient to restore Lightning channel balances?",
+              options: {
+                A: "Because channel states change constantly with each transaction, requiring a log of active multi-sig channel balances.",
+                B: "Standard seeds are too simple to encrypt Lightning keys.",
+                C: "Peers will automatically steal coins if they detect recovery from standard seeds.",
+                D: "The private key seed cannot decrypt on-chain parameters."
+              },
+              correct: "A"
+            },
+            {
+              id: "cl_5_2",
+              question: "What service automatically monitors the main blockchain to prevent old-state channel cheating while your node is offline?",
+              options: {
+                A: "An Escrow Agent",
+                B: "Watchtowers",
+                C: "Mempool Mining Pools",
+                D: "Validation Coordinators"
+              },
+              correct: "B"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'course-markets',
+      title: 'Bitcoin in Emerging Markets',
+      description: 'Deep dive into how Bitcoin is being adopted for cross-border payments and inflation hedging across the global south.',
+      longDescription: 'Emerging economies face the highest hurdles in banking access, hyperinflation, and remittance friction. This course analyzes how grass-roots communities across Africa, Latin America, and Southeast Asia utilize Bitcoin daily to protect capital and bypass archaic banking walls.',
+      icon: 'Globe2',
+      color: 'text-emerald-400',
+      bg: 'bg-emerald-400/10',
+      tags: ['Economics', 'Intermediate'],
+      duration: '3 Weeks',
+      tag: 'Intermediate',
+      estimatedMinutes: 180,
+      imageUrl: '/src/assets/images/emerging_markets_poster_1781855059422.jpg',
+      outcomes: [
+        "Analyze fiat currency failures, capital controls, and hyperinflation history in developing countries.",
+        "Design low-friction, circular-economy Bitcoin adoption protocols for local merchants and circular communities.",
+        "Understand cross-border trade mechanics, liquidity pathways, and mobile money integration.",
+        "Identify legal and regulatory landscapes affecting community groups and P2P desks."
+      ],
+      syllabus: [
+        {
+          title: "Hyperinflation & Currency Collapse",
+          duration: "45 mins",
+          desc: "Monetary failure history and how residents safeguard local purchasing power using hard digital assets.",
+          videoUrl: "https://www.youtube.com/watch?v=41JCp5tYci0",
+          resourceLink: "https://hrf.org",
+          quiz: [
+            {
+              id: "cm_1_1",
+              question: "Under hyperinflation, why does fiat money fail as a store of value?",
+              options: {
+                A: "Citizens stop using hard coin banks.",
+                B: "The central authority print-inflates supply massively, diluting purchasing power of existing savings.",
+                C: "International fees decrease transfer velocities.",
+                D: "The physical paper wears out too quickly."
+              },
+              correct: "B"
+            }
+          ]
+        },
+        {
+          title: "Remittance Corridors & Fees",
+          duration: "45 mins",
+          desc: "Bypassing high-fee remittance agency networks using automated Lightning rails.",
+          videoUrl: "https://www.youtube.com/watch?v=IP0y984Z_V8",
+          resourceLink: "https://strike.me",
+          quiz: [
+            {
+              id: "cm_2_1",
+              question: "How does the Lightning Network optimize global remittance corridors?",
+              options: {
+                A: "By using drone logistics to transport gold bars.",
+                B: "By establishing peer-to-peer digital transaction rails that settle instantly for sub-penny fees.",
+                C: "By forcing standard bank clearing wires to stay open 24/7.",
+                D: "By converting all fiat currencies into circular credit scores."
+              },
+              correct: "B"
+            }
+          ]
+        },
+        {
+          title: "Micro-payments & Circular Economies",
+          duration: "45 mins",
+          desc: "Community-driven circular economies (like Bitcoin Ekasi) and local merchant onboarding.",
+          videoUrl: "https://www.youtube.com/watch?v=41JCp5tYci0",
+          resourceLink: "https://bitcoinekasi.com",
+          quiz: [
+            {
+              id: "cm_3_1",
+              question: "What defines a true local 'Circular Bitcoin Economy'?",
+              options: {
+                A: "An economy where users earn, negotiate, list, and pay in Bitcoin directly, bypass fiat exchanges.",
+                B: "Using physically round tokens to simulate coin transfers.",
+                C: "A mining scheme that recycles electric heat loops.",
+                D: "A central banking protocol that tracks circular capital limits."
+              },
+              correct: "A"
+            }
+          ]
+        },
+        {
+          title: "Financial Inclusion & Mobile Partnerships",
+          duration: "45 mins",
+          desc: "Interacting with local ecosystems and linking Bitcoin to mobile money systems (M-Pesa, Wave).",
+          videoUrl: "https://www.youtube.com/watch?v=vVj448m7_pA",
+          resourceLink: "https://www.machankura.com",
+          quiz: [
+            {
+              id: "cm_4_1",
+              question: "Which cellular standard allows offline phones to operate Bitcoin wallets over telecommunications networks?",
+              options: {
+                A: "Wi-Fi 6E",
+                B: "USSD (Unstructured Supplementary Service Data)",
+                C: "Bluetooth Mesh networks",
+                D: "Sub-harmonic radio links"
+              },
+              correct: "B"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      id: 'course-script',
+      title: 'Mastering Bitcoin Script',
+      description: 'Explore the technical foundations of Bitcoin. Learn about UTXOs, sighhashes, and basic smart contracts.',
+      longDescription: 'Unlock the code driving the Bitcoin protocol. This course explores the stack-based language Bitcoin Script, covering everything from simple single-key transactions to multi-signature contracts, relative time-locks, and taproot smart contracts.',
+      icon: 'BookOpen',
+      color: 'text-purple-400',
+      bg: 'bg-purple-400/10',
+      tags: ['Developer', 'Advanced'],
+      duration: '6 Weeks',
+      tag: 'Advanced',
+      estimatedMinutes: 300,
+      imageUrl: '/src/assets/images/bitcoin_script_poster_1781855074950.jpg',
+      outcomes: [
+        "Read and write raw Bitcoin Script opcodes, interpreting how they execute on the virtual stack.",
+        "Construct custom multi-signature locks to enforce organizational custody rules.",
+        "Implement absolute and relative time-locks to delay and sequence outputs.",
+        "Leverage Schnorr signatures, MAST, and Taproot trees to optimize performance and privacy."
+      ],
+      syllabus: [
+        {
+          title: "OpCodes and Stack Fundamentals",
+          duration: "75 mins",
+          desc: "Forth-like stack mechanics, arithmetic opcodes, and cryptography check verbs.",
+          videoUrl: "https://www.youtube.com/watch?v=bBC-nXj3Ng4",
+          resourceLink: "https://en.bitcoin.it/wiki/Script",
+          quiz: [
+            {
+              id: "cs_1_1",
+              question: "What technical pattern describes the execution nature of Bitcoin Script?",
+              options: {
+                A: "A compiled high-level object oriented environment.",
+                B: "A stack-based, Forth-like language executed from left-to-right (Turing-incomplete).",
+                C: "A modern visual scripting framework like Scratch.",
+                D: "A compiled recursive database engine like PostgreSQL."
+              },
+              correct: "B"
+            },
+            {
+              id: "cs_1_2",
+              question: "Which opcode will check if the top two values on the stack are equal, and assert failure if they are not?",
+              options: {
+                A: "OP_EQUALVERIFY",
+                B: "OP_CHECKSIG",
+                C: "OP_DUP",
+                D: "OP_ADD"
+              },
+              correct: "A"
+            }
+          ]
+        },
+        {
+          title: "Multi-Signature Contracts & P2SH",
+          duration: "75 mins",
+          desc: "Implementing multi-key authorization, redeem scripts, and the pay-to-script-hash standard.",
+          videoUrl: "https://www.youtube.com/watch?v=bBC-nXj3Ng4",
+          resourceLink: "https://en.bitcoin.it/wiki/Pay_to_script_hash",
+          quiz: [
+            {
+              id: "cs_2_1",
+              question: "In a 2-of-3 multi-signature script output, how many private key signatures are required to successfully spend?",
+              options: {
+                A: "Exactly 1 signature",
+                B: "At least 2 signatures",
+                C: "Exactly 3 signatures",
+                D: "No signatures are required if block-height is surpassed"
+              },
+              correct: "B"
+            }
+          ]
+        },
+        {
+          title: "Time-Locks and Payment Channels",
+          duration: "75 mins",
+          desc: "Absolute time-locks, relative time-locks, and hashed timelock contracts (HTLC).",
+          videoUrl: "https://www.youtube.com/watch?v=vVj448m7_pA",
+          resourceLink: "https://bitcoin.org/en/developer-guide#timelocks",
+          quiz: [
+            {
+              id: "cs_3_1",
+              question: "Which OP_CODE imposes an absolute, transaction-level block-height or Unix-time restriction on spending?",
+              options: {
+                A: "OP_CHECKLOCKTIMEVERIFY (CLTV)",
+                B: "OP_CHECKSEQUENCEVERIFY (CSV)",
+                C: "OP_CODESEPARATOR",
+                D: "OP_TRUE"
+              },
+              correct: "A"
+            }
+          ]
+        },
+        {
+          title: "Taproot & Masters of Script",
+          duration: "75 mins",
+          desc: "Schnorr signatures, MAST, Pay-to-Taproot (P2TR), and contract privacy.",
+          videoUrl: "https://www.youtube.com/watch?v=bBC-nXj3Ng4",
+          resourceLink: "https://bitcoinops.org/en/topics/taproot/",
+          quiz: [
+            {
+              id: "cs_4_1",
+              question: "What cryptographic signature protocol replaces ECDSA in the revolutionary Taproot protocol upgrade?",
+              options: {
+                A: "RSA-2048 keys",
+                B: "Schnorr Signatures",
+                C: "Ed25519 protocols",
+                D: "Blowfish-x64 matrices"
+              },
+              correct: "B"
+            }
+          ]
+        }
+      ]
+    }
+  ];
+
   if (!content.courses || content.courses.length === 0) {
-    content.courses = [
-      {
-        id: 'course-lightning',
-        title: 'Lightning Node Operator',
-        description: 'Learn how to set up, secure, and manage your own Lightning node. Route payments and earn routing fees.',
-        longDescription: 'Operating a Lightning Node is the pinnacle of supporting the Bitcoin network\'s scaling layer. This specialty program teaches students the theory and practice of liquidity optimization, security, channel backup, and routing policies to maximize efficiency and earn routing fees.',
-        icon: 'Server',
-        color: 'text-blue-400',
-        bg: 'bg-blue-400/10',
-        tags: ['Advanced', 'Infrastructure'],
-        duration: '4 Weeks',
-        tag: 'Advanced',
-        estimatedMinutes: 240,
-        outcomes: [
-          "Assemble and configure dedicated node hardware or virtual private servers (VPS).",
-          "Manage channel liquidity (inbound, outbound, routing metrics) using advanced tools.",
-          "Set up dynamic fee schedules and routing algorithms to optimize node profitability.",
-          "Configure automated backups and static channel backups (SCB) for bulletproof recovery."
-        ],
-        syllabus: [
-          { title: "Node Setup & Hardware Choices", duration: "60 mins", desc: "Raspberry Pi setups vs virtual private servers, operating system choice, and chain synchronization." },
-          { title: "Lightning Softwares & Configurations", duration: "60 mins", desc: "Comparing node software client configurations and terminal shell setups." },
-          { title: "Liquidity Management", duration: "60 mins", desc: "Inbound and outbound liquidity, managing channel exhaustion, peer balancing, and loop mechanics." },
-          { title: "Routing Policies & Earnings", duration: "60 mins", desc: "Setting node routing fees, evaluating peer connectivity, and analyzing payment trails." },
-          { title: "Backups and Security Protocols", duration: "60 mins", desc: "Static Channel Backups (SCB), watchtower client creation, and emergency protocols." }
-        ]
-      },
-      {
-        id: 'course-markets',
-        title: 'Bitcoin in Emerging Markets',
-        description: 'Deep dive into how Bitcoin is being adopted for cross-border payments and inflation hedging across the global south.',
-        longDescription: 'Emerging economies face the highest hurdles in banking access, hyperinflation, and remittance friction. This course analyzes how grass-roots communities across Africa, Latin America, and Southeast Asia utilize Bitcoin daily to protect capital and bypass archaic banking walls.',
-        icon: 'Globe2',
-        color: 'text-emerald-400',
-        bg: 'bg-emerald-400/10',
-        tags: ['Economics', 'Intermediate'],
-        duration: '3 Weeks',
-        tag: 'Intermediate',
-        estimatedMinutes: 180,
-        outcomes: [
-          "Analyze fiat currency failures, capital controls, and hyperinflation history in developing countries.",
-          "Design low-friction, circular-economy Bitcoin adoption protocols for local merchants and circular communities.",
-          "Understand cross-border trade mechanics, liquidity pathways, and mobile money integration.",
-          "Identify legal and regulatory landscapes affecting community groups and P2P desks."
-        ],
-        syllabus: [
-          { title: "Hyperinflation & Currency Collapse", duration: "45 mins", desc: "Monetary failure history and how residents safeguard local purchasing power using hard digital assets." },
-          { title: "Remittance Corridors & Fees", duration: "45 mins", desc: "Bypassing high-fee remittance agency networks using automated Lightning rails." },
-          { title: "Micro-payments & Circular Economies", duration: "45 mins", desc: "Community-driven circular economies (like Bitcoin Ekasi) and local merchant onboarding." },
-          { title: "Financial Inclusion & Mobile Partnerships", duration: "45 mins", desc: "Interacting with local ecosystems and linking Bitcoin to mobile money systems (M-Pesa, Wave)." }
-        ]
-      },
-      {
-        id: 'course-script',
-        title: 'Mastering Bitcoin Script',
-        description: 'Explore the technical foundations of Bitcoin. Learn about UTXOs, sighhashes, and basic smart contracts.',
-        longDescription: 'Unlock the code driving the Bitcoin protocol. This course explores the stack-based language Bitcoin Script, covering everything from simple single-key transactions to multi-signature contracts, relative time-locks, and taproot smart contracts.',
-        icon: 'BookOpen',
-        color: 'text-purple-400',
-        bg: 'bg-purple-400/10',
-        tags: ['Developer', 'Advanced'],
-        duration: '6 Weeks',
-        tag: 'Advanced',
-        estimatedMinutes: 300,
-        outcomes: [
-          "Read and write raw Bitcoin Script opcodes, interpreting how they execute on the virtual stack.",
-          "Construct custom multi-signature locks to enforce organizational custody rules.",
-          "Implement absolute and relative time-locks to delay and sequence outputs.",
-          "Leverage Schnorr signatures, MAST, and Taproot trees to optimize performance and privacy."
-        ],
-        syllabus: [
-          { title: "OpCodes and Stack Fundamentals", duration: "75 mins", desc: "Forth-like stack mechanics, arithmetic opcodes, and cryptography check verbs." },
-          { title: "Multi-Signature Contracts & P2SH", duration: "75 mins", desc: "Implementing multi-key authorization, redeem scripts, and the pay-to-script-hash standard." },
-          { title: "Time-Locks and Payment Channels", duration: "75 mins", desc: "Absolute time-locks, relative time-locks, and hashed timelock contracts (HTLC)." },
-          { title: "Taproot & Masters of Script", duration: "75 mins", desc: "Schnorr signatures, MAST, Pay-to-Taproot (P2TR), and contract privacy." }
-        ]
-      }
-    ];
+    content.courses = defaultCourses;
     localStorage.setItem('bas_content', JSON.stringify(content));
+  } else {
+    // Migrate: check if existing courses don't have premium attributes, or fill them in
+    let hasUpdated = false;
+    content.courses = content.courses.map((course: any) => {
+      // Look up in default list
+      const matchedDefault = defaultCourses.find(d => d.id === course.id);
+      if (matchedDefault) {
+        // Find if we need to migrate values (e.g. syllabus lesson missing quizzes or videoUrls)
+        const isStale = !course.syllabus || course.syllabus.some((les: any) => !les.videoUrl || !les.quiz);
+        if (isStale || !course.imageUrl) {
+          hasUpdated = true;
+          return {
+            ...course,
+            imageUrl: course.imageUrl || matchedDefault.imageUrl,
+            syllabus: matchedDefault.syllabus // enforce premium syllabus content!
+          };
+        }
+      }
+      return course;
+    });
+    if (hasUpdated) {
+      localStorage.setItem('bas_content', JSON.stringify(content));
+    }
   }
   return content;
 };

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MessageSquare, X, Send, Bot, User, Loader2 } from 'lucide-react';
+import { useTheme } from '../../contexts/ThemeContext';
 
 interface CourseCompanionProps {
   chapterTitle: string;
@@ -8,6 +9,7 @@ interface CourseCompanionProps {
 }
 
 export function CourseCompanion({ chapterTitle, chapterDescription }: CourseCompanionProps) {
+  const { theme } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<{role: 'user' | 'assistant', content: string}[]>([]);
   const [inputMessage, setInputMessage] = useState('');
@@ -89,7 +91,7 @@ export function CourseCompanion({ chapterTitle, chapterDescription }: CourseComp
       {/* Floating Chat Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 bg-brand-gold text-black p-4 rounded-full shadow-lg hover:scale-105 transition-transform z-40"
+        className="fixed bottom-20 md:bottom-6 right-6 bg-brand-gold text-black p-4 rounded-full shadow-lg hover:scale-105 transition-transform z-40"
       >
         <MessageSquare size={24} />
       </button>
@@ -101,56 +103,85 @@ export function CourseCompanion({ chapterTitle, chapterDescription }: CourseComp
             initial={{ opacity: 0, y: 50, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.9 }}
-            className="fixed bottom-24 right-6 w-80 md:w-96 h-[500px] max-h-[70vh] bg-[#1a1a1a] border border-white/10 rounded-2xl shadow-2xl flex flex-col z-50 overflow-hidden"
+            className={`fixed bottom-36 md:bottom-24 right-6 w-80 md:w-96 h-[500px] max-h-[70vh] rounded-2xl shadow-2xl flex flex-col z-50 overflow-hidden border ${
+              theme === 'light'
+                ? 'bg-[#ffffff] border-gray-200/80 text-gray-800 shadow-[0_16px_48px_rgba(0,0,0,0.06)]'
+                : 'bg-[#1a1a1a] border-white/10 text-gray-200 shadow-2xl'
+            }`}
           >
             {/* Header */}
-            <div className="flex justify-between items-center p-4 bg-black/40 border-b border-white/10">
+            <div className={`flex justify-between items-center p-4 border-b ${theme === 'light' ? 'bg-[#f8f9fa] border-gray-100' : 'bg-black/40 border-white/10'}`}>
               <div className="flex items-center gap-2">
                 <Bot className="text-brand-gold" size={20} />
-                <h3 className="font-bold text-sm">Course Companion</h3>
+                <h3 className={`font-bold text-sm ${theme === 'light' ? 'text-gray-900' : 'text-white'}`}>Course Companion</h3>
               </div>
-              <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-white transition-colors">
+              <button 
+                onClick={() => setIsOpen(false)} 
+                className={`transition-colors ${theme === 'light' ? 'text-gray-500 hover:text-gray-900' : 'text-gray-400 hover:text-white'}`}
+              >
                 <X size={20} />
               </button>
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-4">
+            <div className={`flex-1 overflow-y-auto p-4 flex flex-col gap-4 ${theme === 'light' ? 'bg-gray-50/50' : 'bg-transparent'}`}>
               {messages.length === 0 && (
-                <div className="text-center text-gray-500 text-sm mt-4">
-                  Ask a question about <strong>{chapterTitle}</strong>!
+                <div className={`text-center text-sm mt-4 p-4 border rounded-xl leading-relaxed ${theme === 'light' ? 'bg-gray-100/60 border-gray-200 text-gray-500' : 'bg-white/5 border-white/5 text-gray-400'}`}>
+                  Ask the AI Course Companion any question about <strong>{chapterTitle}</strong> to get instant clarification!
                 </div>
               )}
               {messages.map((msg, idx) => (
                 <div key={idx} className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                  <div className={`w-8 h-8 rounded-full flex justify-center items-center shrink-0 ${msg.role === 'user' ? 'bg-brand-gold text-black' : 'bg-black text-brand-gold'}`}>
-                    {msg.role === 'user' ? <User size={16} /> : <Bot size={16} />}
+                  <div className={`w-8 h-8 rounded-full flex justify-center items-center shrink-0 border ${
+                    msg.role === 'user' 
+                      ? 'bg-brand-gold text-black border-brand-gold/30 shadow-sm' 
+                      : theme === 'light' 
+                        ? 'bg-[#ffffff] text-brand-gold border-gray-200' 
+                        : 'bg-black text-brand-gold border-white/5'
+                  }`}>
+                    {msg.role === 'user' ? <User size={15} /> : <Bot size={15} />}
                   </div>
-                  <div className={`px-4 py-2 rounded-2xl max-w-[80%] text-sm ${msg.role === 'user' ? 'bg-brand-gold text-black rounded-tr-none' : 'bg-white/5 text-gray-200 rounded-tl-none'}`}>
+                  <div className={`px-4 py-2.5 rounded-2xl max-w-[80%] text-xs md:text-sm whitespace-pre-wrap leading-relaxed border ${
+                    msg.role === 'user' 
+                      ? 'bg-brand-gold text-black border-brand-gold/30 rounded-tr-none shadow-sm font-medium' 
+                      : theme === 'light'
+                        ? 'bg-[#ffffff] text-gray-800 border-gray-200 shadow-sm rounded-tl-none'
+                        : 'bg-brand-dark-2 text-gray-200 border-white/5 rounded-tl-none'
+                  }`}>
                     {msg.content}
                   </div>
                 </div>
               ))}
               {isLoading && (
                 <div className="flex gap-3 flex-row">
-                  <div className="w-8 h-8 rounded-full bg-black text-brand-gold flex justify-center items-center shrink-0">
-                    <Bot size={16} />
+                  <div className={`w-8 h-8 rounded-full flex justify-center items-center shrink-0 border ${
+                    theme === 'light' ? 'bg-[#ffffff] text-brand-gold border-gray-200' : 'bg-black text-brand-gold border-white/5'
+                  }`}>
+                    <Bot size={15} />
                   </div>
-                  <div className="px-4 py-3 rounded-2xl bg-white/5 text-gray-200 rounded-tl-none flex items-center gap-2 text-sm">
-                    <Loader2 size={14} className="animate-spin" /> Thinking...
+                  <div className={`px-4 py-3 rounded-2xl border rounded-tl-none flex items-center gap-2 text-xs md:text-sm ${
+                    theme === 'light' ? 'bg-[#ffffff] text-gray-650 border-gray-200 shadow-sm' : 'bg-brand-dark-2 text-gray-300 border-white/5'
+                  }`}>
+                    <Loader2 size={13} className="animate-spin text-brand-gold" /> Thinking...
                   </div>
                 </div>
               )}
             </div>
 
             {/* Input Form */}
-            <form onSubmit={sendMessage} className="p-3 border-t border-white/10 flex gap-2">
+            <form onSubmit={sendMessage} className={`p-3 border-t flex gap-2 ${
+              theme === 'light' ? 'bg-[#ffffff] border-gray-100' : 'border-white/10 bg-[#1a1a1a]'
+            }`}>
               <input
                 type="text"
                 placeholder="Ask about this chapter..."
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
-                className="flex-1 bg-black/50 border border-white/10 rounded-full px-4 py-2 text-sm text-white focus:border-brand-gold outline-none focus:ring-1 focus:ring-brand-gold"
+                className={`flex-1 rounded-full px-4 py-2 text-sm focus:border-brand-gold outline-none focus:ring-1 focus:ring-brand-gold ${
+                  theme === 'light'
+                    ? 'bg-[#f8f9fa] border border-gray-200 text-gray-950 placeholder-gray-400'
+                    : 'bg-black/50 border border-white/10 text-white placeholder-gray-500'
+                }`}
               />
               <button
                 type="submit"

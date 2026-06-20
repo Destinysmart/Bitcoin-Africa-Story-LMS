@@ -50,7 +50,6 @@ export default function Profile() {
 
   const [formData, setFormData] = useState({
     name: user?.name || '',
-    whatsapp: user?.whatsapp || '',
     country: user?.country || '',
     bio: user?.bio || '',
     btcAddress: user?.btcAddress || '',
@@ -363,7 +362,6 @@ export default function Profile() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Input label="Full Name" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} required />
                     <Input label="Email (Read-only)" value={user.email} readOnly disabled className="opacity-50" />
-                    <Input label="WhatsApp Number" value={formData.whatsapp} onChange={e => setFormData({ ...formData, whatsapp: e.target.value })} required />
                     <Input label="Country" value={formData.country} onChange={e => setFormData({ ...formData, country: e.target.value })} required />
                   </div>
                   
@@ -510,7 +508,7 @@ export default function Profile() {
                     </div>
                   </div>
                   <div className="flex items-center justify-between pt-2">
-                    <span className="text-sm text-gray-300">WhatsApp Updates</span>
+                    <span className="text-sm text-gray-300">Weekly Progress Reports</span>
                     <div className="w-10 h-6 bg-brand-gold rounded-full relative cursor-pointer flex items-center px-1">
                       <div className="w-4 h-4 bg-black rounded-full ml-auto shadow-md" />
                     </div>
