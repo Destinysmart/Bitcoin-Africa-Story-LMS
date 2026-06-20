@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { getCurrentUser } from '../../lib/storage';
+import { getAssistantContext } from '../../lib/assistantService';
 import { 
   MessageSquare, 
   Send, 
@@ -298,8 +299,21 @@ export function AIInstructorBot() {
     localStorage.setItem(chatKey, JSON.stringify(newMsgs));
   };
 
-  const getOfflineSatoshiResponse = (q: string): string => {
+  const getOfflineSatoshiResponse = (q: string, context?: any): string => {
     const query = q.toLowerCase();
+    
+    if (context && context.quizHistory?.stuckQuizzes?.length > 0) {
+      const stuck = context.quizHistory.stuckQuizzes[0];
+      if (query.includes('stuck') || query.includes('help') || query.includes('roadblock') || query.includes('quiz') || query.includes('fail') || query.includes('grade')) {
+        return `Satoshi here! I see you are currently facing a learning roadblock with **${stuck.chapterTitle}**. You have attempted this quiz **${stuck.attemptsCount} times** so far, with your last score being **${stuck.lastScore}%**.
+
+Remember, to master a chapter and stack your rewards (XP & SATS), you must achieve a **100% perfect score** (all questions correct).
+Our offline interactive resources are fully loaded and operational! Feel free to:
+1. Re-read the interactive study handbook on that specific chapter page.
+2. Ask me directly about any confusing concept inside "${stuck.chapterTitle}" (e.g., "explain SHA-256" or "what is inbound liquidity?"), and I'll clarify it in plain English!
+3. Re-examine other modules. What specific doubt in **${stuck.chapterTitle}** can I help you clear right now?`;
+      }
+    }
     
     if (query.includes('cantillon') || query.includes('unequal') || query.includes('print') || query.includes('fiat') || query.includes('inflation') || query.includes('power') || query.includes('depreciate') || query.includes('central bank') || query.includes('debt')) {
       return `Hey there! Since we are studying offline, let me explain **Fiat Money and Inflation** directly:
@@ -376,6 +390,17 @@ Bitcoin solves this by having a hard-coded maximum supply limit of strictly **21
 *   **Gold Standard:** Societies gold-backed paper slips until governments printed more paper than gold existed, leading to the collapse of the gold standard and the birth of infinite fiat debt.`;
     }
     
+    if (query.includes('navigation') || query.includes('nav') || query.includes('site') || query.includes('page') || query.includes('roadblock') || query.includes('stuck') || query.includes('quiz') || query.includes('leaderboard') || query.includes('certificate') || query.includes('profile')) {
+      return `Satoshi here! Let me lay out the complete **"To and Fro" Platform Map & Roadblock Guide** to navigate our Bitcoin Diploma seamlessly:
+
+*   **Dashboard:** Your student center showing current XP, Sats, weekly completions, active chapters, and this AI Study Assistant.
+*   **My Courses & Lessons:** Click on any chapter card to read high-quality lessons, interact with custom diagrams, or listen to our Audio Companion!
+*   **Perfect Quiz Score (Roadblock Warning):** To complete a chapter and unlock the next module, you **MUST score 100% correct** on its final quiz. If you are stuck, review the chapter material or ask the **Course Companion** on the lesson page for helpful hints!
+*   **Leaderboard (Hall of Fame):** View how you rank globally by XP or SATS. *Note:* We optimized the design on mobile-only by removing the Rank index column to make student data, country, and scores fit beautifully without horizontal swiping!
+*   **Profile Page:** Choose this tab in the footer/header to change your display name, upload an avatar, select your country, or update your custom weekly study goals.
+*   **Unlocking your Certificate:** Getting 100% on all 10 module quizzes automatically activates your authentic, printable **Bitcoin Diploma Certificate**! Check the Certificate navigation option to grab yours.`;
+    }
+
     return `Greetings, student! Satoshi here. We are currently operating in our highly advanced **Offline Learning Mode** which guarantees 100% stable performance with zero internet dependencies!
 
 As your Bitcoin Diploma lead instructor, I am here to discuss the entire 10-chapter curriculum:
@@ -406,7 +431,8 @@ What key concept or module would you like me to make simple for you today?`;
     // If completely offline (navigator.onLine is false), immediately run local generation with zero delay
     if (!navigator.onLine) {
       setTimeout(() => {
-        const localAnswer = getOfflineSatoshiResponse(userMsg.content);
+        const context = getAssistantContext();
+        const localAnswer = getOfflineSatoshiResponse(userMsg.content, context);
         const assistantMsg: Message = {
           role: 'assistant',
           content: localAnswer,
@@ -424,12 +450,15 @@ What key concept or module would you like me to make simple for you today?`;
         content: m.content
       }));
 
+      const context = getAssistantContext();
+
       const res = await fetch('/api/instructor-bot', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           question: userMsg.content,
-          history: apiHistory
+          history: apiHistory,
+          context: context
         })
       });
 
